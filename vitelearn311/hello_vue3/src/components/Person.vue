@@ -1,31 +1,43 @@
 <template>
     <!-- html -->
     <div class="person">
-        <h2>姓名：{{ name }}</h2>
-        <h2>年龄：{{ name }}</h2>
-        <!-- <h2>姓名：{{ name }}</h2> -->
-        <button @click="showTel">查询联系方式</button>
+        <!-- 模板中自动调用name.value -->
+        <div>
+            <h2>姓名：{{ name }}</h2>
+            <h2>年龄：{{ age }}</h2>
+        </div>
+        <button @click="change">修改</button>
+
         
     </div>
 </template>
 
-<script>
+
+
+<script lang="ts" >
     // js/ts
-    export default{
-        name:'Person',
-        data(){
-            return{
-                name:"张三",
-                age:18,
-                tel:"138888888"
-            }
-        },
-        methods:{
-            showTel(){
-                alert(this.tel);
-            }
-        }
+    export default
+    {
+        name:'Person'
     }
+</script>
+
+<script lang="ts" setup>
+import { ref, toRef ,toRefs} from 'vue';
+
+    let person=ref({
+        name:"张三",
+        age:18
+    })
+
+    let{name,age}=toRefs(person.value);
+
+    function change(){
+        name.value+="*";
+        age.value+=1;
+    }
+
+
 </script>
 
 <style>
