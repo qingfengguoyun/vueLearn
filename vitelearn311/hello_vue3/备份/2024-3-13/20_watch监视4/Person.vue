@@ -5,7 +5,7 @@
         <!-- <h1>1, watch监视【ref】定义的【基本类型】数据</h1>
         <h2>当前求和为：{{ sum }}</h2>
         <button @click="changeSum">点击+1</button> -->
-        <h1>5, watch监视【ref】定义的对象的多个数据</h1>
+        <h1>4, watch监视【ref】定义的【对象内部的数据】</h1>
         <h2> 姓名：{{ person.name }}</h2>
         <h2> 年龄：{{ person.age }}</h2>
         <button @click="changeName">修改姓名</button>
@@ -64,11 +64,12 @@
     // })
 
 
-    //监视 监视ref定义的对象的多个对象，可以将需要监视的对象置于一个数组
+    //监视 仅想监视ref定义的对象的某一个【对象属性】，可以直接使用该对象，但建议将该属性转化为【函数式】（getter函数）
     //（）函数简写形式：()=>对象
-    watch([()=>person.value.obj,()=>person.value.age],(a,b)=>{
-        console.log("person.多个对象变化了",a,b)
+    watch(()=>person.value.obj,(a,b)=>{
+        console.log("person.datas变化了",a,b)
     })
+
 
 
 </script>
