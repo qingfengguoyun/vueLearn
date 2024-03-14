@@ -5,7 +5,7 @@ export default class WaterCage{
     constructor(temp:number,height:number);
     constructor(temp?:number,height?:number)
     {
-        this.temp=temp;
-        this.height=height;
+        this.temp=temp || 0;
+        this.height=height || 0;
     }
 }

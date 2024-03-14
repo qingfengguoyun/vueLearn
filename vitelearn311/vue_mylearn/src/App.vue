@@ -1,22 +1,19 @@
 <template>
   <div class="app"> 
     <h1>hello world</h1>
-    <Person/>
-    <Card/>
+    <login/>
   </div>
 </template>
 
-<script lang="ts">
-import Person from './components/Person.vue';
-import Card from './components/Card.vue';
-  export default{
-    name:'App', //组件名
-    components:{
-      Person,
-      Card
-    }//注册主键
+<script lang="ts" >
 
+  export default
+  {
+    name:'App', //组件名
   }
+</script>
+<script lang="ts" setup>
+  import login from '@/components/login.vue'
 </script>
 <style>
   .app{
