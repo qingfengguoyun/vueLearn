@@ -1,7 +1,8 @@
 <template>
   <div class="app"> 
     <h1>hello world</h1>
-    <login/>
+    <!-- <login/> -->
+    <Card/>
   </div>
 </template>
 
@@ -12,8 +13,10 @@
     name:'App', //组件名
   }
 </script>
+
 <script lang="ts" setup>
   import login from '@/components/login.vue'
+  import Card from '@/components/MyCard.vue'
 </script>
 <style>
   .app{

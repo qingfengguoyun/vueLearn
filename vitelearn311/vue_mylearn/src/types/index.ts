@@ -16,3 +16,9 @@ export type Result={
     code:number,
     status:string
 }
+
+export type Card={
+    color: number
+    num: number
+    img: any
+}
