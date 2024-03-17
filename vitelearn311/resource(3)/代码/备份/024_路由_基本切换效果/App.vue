@@ -1,25 +1,27 @@
 <template>
-  <div class="app"> 
-    <Person/>
-
+  <div class="app">
+    <h2 class="title">Vue路由测试</h2>
+    <!-- 导航区 -->
+    <div class="navigate">
+      <RouterLink to="/home" active-class="xiaozhupeiqi">首页</RouterLink>
+      <RouterLink to="/news" active-class="xiaozhupeiqi">新闻</RouterLink>
+      <RouterLink to="/about" active-class="xiaozhupeiqi">关于</RouterLink>
+    </div>
+    <!-- 展示区 -->
+    <div class="main-content">
+      <RouterView></RouterView>
+    </div>
   </div>
 </template>
-<script lang="ts">
-  export default
-  {
-    name:'App'
-  }
+
+<script lang="ts" setup name="App">
+  import {RouterView,RouterLink} from 'vue-router'
+
 </script>
 
-<script lang="ts" setup>
-
-
- 
-</script>
-<!-- scoped： 局部样式 -->
-<style scoped>
+<style>
     /* App */
-    .title {
+  .title {
     text-align: center;
     word-spacing: 5px;
     margin: 30px 0;

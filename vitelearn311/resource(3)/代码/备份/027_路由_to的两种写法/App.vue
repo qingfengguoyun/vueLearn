@@ -1,35 +1,27 @@
 <template>
-  <div class="app"> 
-    <Person/>
-
+  <div class="app">
+    <Header/>
+    <!-- 导航区 -->
+    <div class="navigate">
+      <RouterLink to="/home" active-class="active">首页</RouterLink>
+      <RouterLink to="/news" active-class="active">新闻</RouterLink>
+      <RouterLink :to="{path:'/about'}" active-class="active">关于</RouterLink>
+    </div>
+    <!-- 展示区 -->
+    <div class="main-content">
+      <RouterView></RouterView>
+    </div>
   </div>
 </template>
-<script lang="ts">
-  export default
-  {
-    name:'App'
-  }
+
+<script lang="ts" setup name="App">
+  import {RouterView,RouterLink} from 'vue-router'
+  import Header from './components/Header.vue'
+
 </script>
 
-<script lang="ts" setup>
-
-
- 
-</script>
-<!-- scoped： 局部样式 -->
-<style scoped>
+<style>
     /* App */
-    .title {
-    text-align: center;
-    word-spacing: 5px;
-    margin: 30px 0;
-    height: 70px;
-    line-height: 70px;
-    background-image: linear-gradient(45deg, gray, white);
-    border-radius: 10px;
-    box-shadow: 0 0 2px;
-    font-size: 30px;
-  }
   .navigate {
     display: flex;
     justify-content: space-around;
@@ -48,7 +40,7 @@
     font-size: 18px;
     letter-spacing: 5px;
   }
-  .navigate a.xiaozhupeiqi {
+  .navigate a.active {
     background-color: #64967E;
     color: #ffc268;
     font-weight: 900;
