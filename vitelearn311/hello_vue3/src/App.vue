@@ -1,6 +1,17 @@
 <template>
   <div class="app"> 
-    <Person/>
+    <h2>Vue路由测试</h2>
+    <div class="navigate">
+
+      <a href="#">首页 </a>
+      <a href="#">新闻 </a>
+      <a href="#">关于 </a>
+
+    </div>
+
+    <div class="main-content">
+      展示各种组件
+    </div>
 
   </div>
 </template>
