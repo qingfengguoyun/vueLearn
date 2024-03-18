@@ -3,9 +3,6 @@
         <h2> 花色： </h2><input v-model="card.color">
         <h2> 牌号： </h2><input v-model="card.num">
     </p>
-    <p>
-        
-    </p>
     <div class="card" ref="tempImg" @mouseenter="mouseEnterAction" @mouseleave="mouseLeaveAction">
         <img :src="getImage(card.img)" >
     </div>

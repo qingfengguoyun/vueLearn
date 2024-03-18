@@ -1,6 +1,6 @@
 <template>
   <div class="app"> 
-    <h2 class="title">Vue路由测试</h2>
+    <h2>Vue路由测试</h2>
     <div class="navigate">
 
       <!-- <a href="/home">首页 </a>
@@ -33,7 +33,6 @@
 
 <script lang="ts" setup>
   import { RouterView ,RouterLink} from 'vue-router';
-
 
 
  

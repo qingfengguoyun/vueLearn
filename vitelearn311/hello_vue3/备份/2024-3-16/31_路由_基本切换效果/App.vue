@@ -1,6 +1,6 @@
 <template>
   <div class="app"> 
-    <h2 class="title">Vue路由测试</h2>
+    <h2>Vue路由测试</h2>
     <div class="navigate">
 
       <!-- <a href="/home">首页 </a>
@@ -10,8 +10,7 @@
       <!-- RouterLink组件标签享受a标签的样式 -->
       <RouterLink to="/home" active-class="xiaozhupeiqi">首页</RouterLink>
       <RouterLink to="/news" active-class="xiaozhupeiqi">新闻</RouterLink>
-      <!-- to的对象写法 -->
-      <RouterLink :to="{path:'/about'}" active-class="xiaozhupeiqi">关于</RouterLink>
+      <RouterLink to="/about" active-class="xiaozhupeiqi">关于</RouterLink>
 
 
     </div>
@@ -21,7 +20,10 @@
       <RouterView></RouterView>
     </div>
 
+    <div class="main-content">
 
+    <RouterView></RouterView> 
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -33,7 +35,6 @@
 
 <script lang="ts" setup>
   import { RouterView ,RouterLink} from 'vue-router';
-
 
 
  
