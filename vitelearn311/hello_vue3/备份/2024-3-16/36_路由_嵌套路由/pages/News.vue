@@ -20,11 +20,11 @@
       import { ref,reactive } from 'vue';
       import { RouterLink,RouterView } from 'vue-router';
       
-      let newsList=[
+      let newsList=reactive([
       new newsIns(0,'一种抗癌食物','苦瓜'),
       new newsIns(0,'原神启动','233'),
       new newsIns(0,'怪物猎人崛起','虾头太刀')
-    ]
+    ])
   </script>
   
   <style scoped>
