@@ -31,7 +31,7 @@
         val.value+="~";
     }
 
-    //常用生命周期函数
+    //常用生命周期hook
     //on(Before)Mounted,on(Before)Updated,on(Before)Unmount
     //实质为调用对应方法，执行函数
     onMounted(()=>{
