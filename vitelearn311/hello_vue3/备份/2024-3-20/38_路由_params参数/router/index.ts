@@ -27,21 +27,9 @@ let router = createRouter(
                     {
                         name:'newsDetail',
                         //子路由路径不添加'/'
-                        //使用params传参，需提前在路由中进行占位,?表示该参数不必须
-                        // path:'detail/:id?/:title?/:content?',
-
-                        path:'detail',
-                        component:Detail,
-                        //props配置：params参数：将路由接收到的所有params参数添加至组件的props中
-                        // props:true,
-
-                        //props配置：query参数：指定props的对象
-                        props(to) {
-                            //此处的to即是路由router本身
-                            console.log("router",to)
-                            return to.query
-                            
-                        },
+                        //使用params传参，需提前在路由中进行占位
+                        path:'detail/:id/:title/:content',
+                        component:Detail
                     }
                 ],
             },

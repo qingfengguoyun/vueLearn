@@ -3,14 +3,17 @@
       <ul  >
         <li v-for="news in newsList" :key="news.id">
 
+          <!-- params方式传参 :to传递对象-->
           <RouterLink :to="{
+            // params传参必须使用name进行标识
+            // params无法传递对象和数组
             name:'newsDetail',
-            query:{
+            params:{
               id:news.id,
               title:news.title,
-              content:news.content,
-            },
-          }" >
+              content:news.content
+            }
+          }">
             {{ news.title }}
           </RouterLink>
         </li>
