@@ -4,7 +4,6 @@ import { defineStore } from "pinia";
 //defineStore('仓库名'，{配置})，其中仓库名建议与文件名相同
 export const useCountStore =defineStore('count',{
 
-
     actions:{
         addSum(value:number){
             //action方法的好处，可以添加自定义逻辑
