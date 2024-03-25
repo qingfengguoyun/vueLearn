@@ -1,30 +1,45 @@
 <template>
-  <div>
-    <h2>App组件Count</h2>
-    <Count/>
-    <h2>App组件Talk</h2>
-    <LoveTalk/>
+  <div class="app"> 
+    <h2 class="title">Vue路由测试</h2>
+    <div class="navigate">
+
+      <!-- <a href="/home">首页 </a>
+      <a href="/news">新闻 </a>
+      <a href="/about">关于 </a> -->
+
+      <!-- RouterLink组件标签享受a标签的样式 -->
+      <!-- replace属性表示使用该路由跳转后无法通过浏览器的‘后退’返回上一界面，默认不添加时为push模式 -->
+      <RouterLink  to="/home" active-class="xiaozhupeiqi">首页</RouterLink>
+      <RouterLink to="/news" active-class="xiaozhupeiqi">新闻</RouterLink>
+      <!-- to的对象写法 -->
+      <RouterLink  replace :to="{path:'/about'}" active-class="xiaozhupeiqi">关于</RouterLink>
+
+
+    </div>
+
+    <div class="main-content">
+
+      <RouterView></RouterView>
+    </div>
+
+
   </div>
-
 </template>
-<script lang='ts'>
-export default
-{
-  name: 'App'
-}
+<script lang="ts">
+  export default
+  {
+    name:'App'
+  }
 </script>
-<script lang='ts' setup>
-  import { ref,reactive } from 'vue';
-  import Count from './components/Count.vue';
-  import LoveTalk from './components/LoveTalk.vue'
 
-  
+<script lang="ts" setup>
+  import { RouterView ,RouterLink} from 'vue-router';
 
+
+
+ 
 </script>
-<style  scoped>
-
-</style>
-<!-- scoped： 局部样式
+<!-- scoped： 局部样式 -->
 <style scoped>
     /* App */
     .title {
@@ -71,4 +86,4 @@ export default
     height: 400px;
     border: 1px solid;
   }
-</style> -->
+</style>

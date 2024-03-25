@@ -66,8 +66,8 @@
 
     //监视 监视ref定义的对象的多个对象，可以将需要监视的对象置于一个数组
     //（）函数简写形式：()=>对象
-    watch([()=>person.value.obj,()=>person.value.age],(a,b)=>{
-        console.log("person.多个对象变化了",a,b)
+    watch([()=>person.value.obj,()=>person.value.age],(newIns,oldIns)=>{
+        console.log("person.多个对象变化了",newIns,oldIns)
     })
 
 
