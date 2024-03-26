@@ -2,12 +2,18 @@
 <template>
   <div class="app">
     <h2>AppPage</h2>
-    <loginPage/>
+    <div>
+      <RouterLink :to="{path:'/signUp'}">注册</RouterLink>
+    </div>
+    <!-- <loginPage/> -->
+    <RouterView></RouterView>
   </div>
 </template>
 
 <script setup lang="ts">
-  import loginPage from './pages/loginPage.vue';
+  import { useRouter,RouterView,RouterLink } from 'vue-router';
+  let router=useRouter();
+  
 </script>
 
 <style scoped>

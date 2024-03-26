@@ -19,7 +19,7 @@ export default
     import { type UserInter ,UserClass} from "@/types/UserType";
     import { type ResultInter }from "@/types/ResultType";
     import axios from "axios";
-    import { useRouter,RouterLink } from "vue-router";
+    import { useRouter,RouterLink,RouterView } from "vue-router";
 
     let router=useRouter();
 
@@ -33,12 +33,18 @@ export default
     async function login(){
         // let res:ResultInter= await axios.post("localhost:8200/login",user);
         console.log("用户",user.userName,"尝试登录")
+        console.log("用户",user.userName,"登录成功")
+        router.push({
+            name:"frontPage"
+        })
     }
 
     async function signUp(){
         // let res:ResultInter= await axios.post("localhost:8200/login",user);
         console.log("跳转至注册界面")
-        router.push("signUpPage")
+        router.push({
+            path:"/signUp"
+        })
         // console.log("用户",user.userName,"尝试注册")
     }
     
