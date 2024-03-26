@@ -20,8 +20,9 @@ export default
     import { reactive,ref } from 'vue';
     import axios from 'axios';
     import {nanoid} from 'nanoid';
-    import { userLoveTalk} from "@/store/LoveTalk";
-    let talkStore=userLoveTalk()
+    import { useLoveTalk} from "@/store/LoveTalk";
+    let talkStore=useLoveTalk()
+
     console.log("@@@@@@@@",talkStore)
 
     //$subscribe：pinia的订阅方法，类似watch

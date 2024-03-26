@@ -33,26 +33,7 @@ export default
     let {sum}=storeToRefs(countStore)
     console.log(storeToRefs(countStore))
 
-    /*
-        特别注意:ref类型对象嵌套时，访问内部的ref类型数据的值不再需要.value
-        例:
-        let obj=ref({
-        a:1,
-        b:2,
-        c:ref(3)
-        })
-        console.log(obj.value.c)
-    */
 
-    // 第一种方式：直接修改
-    // function add(){
-    //     countStore.sum +=n.value
-    // }
-
-    //第二种方式：$patch
-    // countStore.$patch({
-    //     sum:123
-    // })
     function add(){
         countStore.addSum(n.value);
     }

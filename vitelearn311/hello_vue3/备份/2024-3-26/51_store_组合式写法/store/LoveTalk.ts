@@ -45,7 +45,9 @@ interface talk{
 import { reactive } from "vue";
 
 // pinia store组合式写法，第二参数变为函数式，类似vue的setup函数
-export const userLoveTalk = defineStore('loveTalk',()=>{
+export const useLoveTalk = defineStore('loveTalk',()=>{
+
+        //actions
 
         async function addTalk(){
             let res= await axios.get('https://api.uomg.com/api/rand.qinghua?format=json');
@@ -62,8 +64,11 @@ export const userLoveTalk = defineStore('loveTalk',()=>{
             console.log("清空talkList")
         }
 
-        // let talkList=reactive(JSON.parse(localStorage.getItem('talkList') as string) as Array<talk> || [] as Array<talk>)
-        let talkList=JSON.parse(localStorage.getItem('talkList') as string) as Array<talk> || [] as Array<talk>
+        //state
+        //注意：使用组合式写法时，定义的对象需手动包裹为reactive或ref对象 !!!
+        //使用选项式时，useLoveTalk的state被自动封装为proxy对象，但使用组合式时需手动封装
+        let talkList=reactive(JSON.parse(localStorage.getItem('talkList') as string) as Array<talk> || [] as Array<talk>)
+        // let talkList=JSON.parse(localStorage.getItem('talkList') as string) as Array<talk> || [] as Array<talk>
 
         return { addTalk,removeAll,talkList}
 })

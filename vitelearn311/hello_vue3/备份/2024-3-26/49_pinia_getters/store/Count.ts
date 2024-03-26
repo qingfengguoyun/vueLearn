@@ -25,6 +25,7 @@ export const useCountStore =defineStore('count',{
         }
     },
     //getters，和state类似，但getters是一个对象，其内部的对象为函数形式，state中的内容可作为函数的参数
+    //作用类似vue的computed
     getters:{
         bigSum( state ){
             return state.sum*10;
