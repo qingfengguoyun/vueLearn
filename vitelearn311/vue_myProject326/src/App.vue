@@ -1,10 +1,10 @@
 
 <template>
   <div class="app">
-    <h2>AppPage</h2>
+    <!-- <h2>AppPage</h2>
     <div>
       <RouterLink :to="{path:'/signUp'}">注册</RouterLink>
-    </div>
+    </div> -->
     <!-- <loginPage/> -->
     <RouterView></RouterView>
   </div>
