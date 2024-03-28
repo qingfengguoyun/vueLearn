@@ -42,17 +42,20 @@ import type { Socket } from "dgram";
         // let res2:UserInter=res.data.data;
         // console.log(res2)
         if(res.data.code===200){
-            let {userName,password}=res.data.data
+            let {userId,userName,password}=res.data.data
             user.userName=userName;
             user.password=password;
+            user.id=userId;
             console.log("用户",user.userName,"登录成功")
-            socket=socketInstance(user.password as string,user.userName as string)
+            sessionStorage.setItem("userInfo",JSON.stringify(user))
+            socket=socketInstance(user.id as number,user.userName as string,user.password as string)
             router.push({
-            name:"frontPage",
+                name:"frontPage",
             })
         }
         else{
-            console.log("用户",user.userName,"登录失败",res.data)
+            console.log("用户",user.userName,"登录失败",res.data.data)
+            alert("用户"+user.userName+"登录失败"+res.data.data)
         }
         
         
