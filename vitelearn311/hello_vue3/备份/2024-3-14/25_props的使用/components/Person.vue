@@ -24,8 +24,13 @@
     import { defineProps,withDefaults } from 'vue';
     import { MyPerson, type MyPersons } from './types';
 
-    //仅接收list
+    // 仅接收list，数组式
     // defineProps(["list"])
+    // 或对象式
+    // let props=defineProps({
+    //     list:Object
+    // })
+    // let x=props.list
 
     //接收list + 限制类型
     // let x=defineProps<{list:MyPersons}>()
@@ -40,6 +45,16 @@
             new MyPerson("123","asd",16)
         ]
     })
+
+    // 本质写法如下
+    // interface propsInter{
+    //     list?:MyPersons
+    // }
+    // let props=withDefaults(defineProps<propsInter>(),{
+    //     list:()=>[
+    //         new MyPerson("123","asd",16)
+    //     ]
+    // })
 
     console.log(x)
 

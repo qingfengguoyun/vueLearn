@@ -20,9 +20,8 @@ export default
     import { type ResultInter }from "@/types/ResultType";
     import axios from "axios";
     import { useRouter,RouterLink,RouterView } from "vue-router";
-    import {io} from 'socket.io-client'
     import {socketInstance} from '@/utils/socketIo';
-import type { Socket } from "dgram";
+
 
     let router=useRouter();
 

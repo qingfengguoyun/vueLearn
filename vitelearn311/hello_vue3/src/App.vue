@@ -24,10 +24,24 @@
 				</div>
 			</div>
 		</div>
+		<!-- <div> {{value}} </div>
+		<button @click="add"> 添加value</button> -->
 	</div>
 </template>
 
 <script setup lang="ts" name="App">
+
+	// import { watch,reactive,ref, type Ref} from "vue";
+	// let array:Ref<String[]> =ref([])
+	// let value=ref("")
+	// watch(()=>array.value,()=>{
+	// 	console.log("@@@@@",array.value.length)
+	// },{deep:true,immediate:true})
+	// function add(){
+	// 	array.value.push("instance");
+	// 	console.log(array.value)
+	// 	value.value=array.value.join(",")
+	// }
 </script>
 
 <style>
