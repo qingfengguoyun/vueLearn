@@ -3,8 +3,8 @@
         <h2>This is loginPage</h2>
         <p><label>用户</label><input v-model="user.userName"></p>
         <p><label>密码</label><input v-model="user.password"></p>
-        <button @click="login">登录</button>
-        <button @click="signUp">注册</button>
+        <el-button @click="login">登录</el-button>
+        <el-button @click="signUp">注册</el-button>
     </div>
 </template>
 <script lang='ts'>
@@ -20,6 +20,8 @@ export default
     import { type ResultInter }from "@/types/ResultType";
     import axios from "axios";
     import { useRouter,RouterLink,RouterView } from "vue-router";
+    import {socketInstance} from '@/utils/socketIo';
+
 
     let router=useRouter();
 
@@ -31,12 +33,31 @@ export default
     })
 
     async function login(){
-        // let res:ResultInter= await axios.post("localhost:8200/login",user);
         console.log("用户",user.userName,"尝试登录")
-        console.log("用户",user.userName,"登录成功")
-        router.push({
-            name:"frontPage"
-        })
+        let res:ResultInter= await axios.post("http://localhost:8200/api/user/login",user);
+        console.log(res)
+        let socket
+        // console.log(res.data.code)
+        // let res2:UserInter=res.data.data;
+        // console.log(res2)
+        if(res.data.code===200){
+            let {userId,userName,password}=res.data.data
+            user.userName=userName;
+            user.password=password;
+            user.id=userId;
+            console.log("用户",user.userName,"登录成功")
+            sessionStorage.setItem("userInfo",JSON.stringify(user))
+            socket=socketInstance(user.id as number,user.userName as string,user.password as string)
+            router.push({
+                name:"frontPage",
+            })
+        }
+        else{
+            console.log("用户",user.userName,"登录失败",res.data.data)
+            alert("用户"+user.userName+"登录失败"+res.data.data)
+        }
+        
+        
     }
 
     async function signUp(){

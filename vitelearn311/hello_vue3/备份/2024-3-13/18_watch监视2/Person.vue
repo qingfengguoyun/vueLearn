@@ -44,7 +44,9 @@
         
     }
 
-    //监视 监视【ref】定义的【对象类型】数据，监视的是对象的地址值，若想监视对象内部属性的变化，需开启深度监视(deep:true)
+    //监视 监视【ref】定义的【对象类型】数据，监视的是对象的地址值，若想监视对象内部属性的变化，
+    // 需开启深度监视(deep:true)
+    // immediate表示在watch函数启动时时立即执行一次监视
     watch(person,function(newValue,oldValue){
         console.log("person变化了",newValue,oldValue)
         // console.log(name.value,age.value)
