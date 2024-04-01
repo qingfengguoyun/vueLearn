@@ -32,9 +32,12 @@ export default
         password:""
     })
 
+    
+    const baseIP = import.meta.env.BASE_IP;
+
     async function login(){
         console.log("用户",user.userName,"尝试登录")
-        let res:ResultInter= await axios.post("http://localhost:8200/api/user/login",user);
+        let res:ResultInter= await axios.post( baseIP+":8200/api/user/login"||"http://localhost:8200/api/user/login",user);
         console.log(res)
         let socket
         // console.log(res.data.code)

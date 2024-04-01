@@ -3,11 +3,12 @@ import io from 'socket.io-client';
 import { type UserInter } from '@/types/UserType'
 
 
-
+const baseIP = import.meta.env.BASE_IP;
 let socket:Socket;
 export function socketInstance(id:number,userName:string, password:string):Socket {
     // console.log('io:',io)
     // console.log("Socekt",Socket)
+    const baseIP = import.meta.env.BASE_IP;
     socket = io('http://localhost:8271', {
         // path:"/",
         transports: ['websocket'],//默认是HTTP轮训，设置这个就是为ws

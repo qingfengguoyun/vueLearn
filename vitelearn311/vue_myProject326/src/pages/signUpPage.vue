@@ -32,8 +32,10 @@ function backToLogin(){
     })
 }
 
+const baseIP = import.meta.env.BASE_IP;
+
 async function signUpUser(){
-    let res:AxiosResponse<ResultInter>=await axios.post("http://localhost:8200/api/user/sign",user);
+    let res:AxiosResponse<ResultInter>=await axios.post( baseIP+":8200/api/user/sign"||"http://localhost:8200/api/user/sign",user);
     if(res.data.code==200){
         console.log(res.data.data)
         let newUser=res.data.data as UserInter
