@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Vue 测试实例 - 菜鸟教程(runoob.com)</title>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<div id="myDiv">
+			{{msg}}
+			<p>
+				{{count}}
+			</p>
+		</div>
+	</body>
+</html>
+<script src="https://cdn.staticfile.org/vue/3.2.36/vue.global.min.js"></script>
+<script>
+	const app={
+		data(){
+			return{
+				msg:"mylearn2",
+				count:3
+			}
+		}
+		methods: {
+			increasment() {
+				this.count++
+			}
+		}
+	}
+	const vm=Vue.createApp(app).mount("#myDiv");
+	vm.increasment()
+
+</script>

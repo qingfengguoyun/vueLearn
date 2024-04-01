@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="https://cdn.staticfile.org/vue/3.2.36/vue.global.min.js"></script>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body id="myDiv">
+		<div :class="{'testStyle':isActive}">
+			qwe
+		</div>
+		<div :class="{'testStyle':isActive}" >
+			{{msg}}
+			{{check}}
+		</div>
+		<div>
+			<img v-bind:src="src">
+		</div>
+		<p v-if="check">
+			v-if Test check is true;
+		</p>
+		<button onclick="change()">
+			qwedasd
+		</button>
+	</body>
+</html>
+<script src="https://cdn.staticfile.org/vue/3.2.36/vue.global.min.js"></script>
+<script>
+	let msg="132"
+	let check2=true
+	const app={
+		data(){
+			return {
+				msg: msg,
+				isActive: true ,
+				// src: "https://img1.baidu.com/it/u=411046095,1036987584&fm=253&fmt=auto&app=138&f=JPEG?w=952&h=500"
+				check:check2
+			}
+		}
+	}
+	function change(){
+			
+		vm.check=!vm.check
+		console.log(check2)	
+	}
+	const vm=Vue.createApp(app).mount("#myDiv")
+</script>
+<style>
+	.testStyle {
+	  /* background-color: blue; */
+	  color: blue;
+	  padding: 10px;
+	}
+	
+</style>

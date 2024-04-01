@@ -8,6 +8,7 @@
                 <el-main>Main
                     <!-- <loginPage></loginPage> -->
                     <mainChatRoom></mainChatRoom>
+                    <!-- <test></test> -->
                 </el-main>
                 <el-aside width="200px" style="height: 500px;">
                   Aside
@@ -30,7 +31,9 @@ export default
     import headerMenu from '@/components/headerMenu.vue'
     import onlineUser from '@/components/onlineUser.vue'
     import mainChatRoom from "@/components/mainChatRoom.vue";
+    import test from "@/components/test.vue";
     import { useOnlineUser } from "@/store/onlineUser";
+    
 
 
     let onlineUserStore=useOnlineUser()

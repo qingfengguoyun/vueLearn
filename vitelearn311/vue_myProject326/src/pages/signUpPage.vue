@@ -19,10 +19,10 @@ export default
 import { ref,reactive,type Ref } from "vue";
 import { type UserInter } from "@/types/UserType";
 import { type ResultInter } from "@/types/ResultType";
-import {useRouter} from "vue-router"
+import {useRouter,type Router} from "vue-router"
 import axios, { type AxiosResponse } from "axios";
 
-let router=useRouter()
+let router:Router=useRouter()
 
 let user:UserInter=reactive({})
 

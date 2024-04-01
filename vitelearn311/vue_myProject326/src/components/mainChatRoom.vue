@@ -6,14 +6,28 @@
             </el-header>
             <el-container >
                 <el-main>
-                    <!-- v-for循环一定要指定:key，否则已经渲染的dom元素不会被移除 -->
+                    <!-- v-for循环一定要指定:key，否则已经渲染的dom元素不会被移除  -->
                     <!-- 最好使用对象中的唯一属性指定key -->
                     <!-- 如果对象中没有可以作为key的属性，可以直接将对象本身作为key（前提为每个对象均不同）
-                    或使用数组索引作为key(不推荐，因为性能较低)
-                    <div v-for="(message,index) in messages" :key="index"> </div> -->
-                    <div v-for="message in messages" :key="message.messageId">
+                    或使用数组索引作为key(不推荐，因为性能较低)-->
+                    <!-- eg: <div v-for="(message,index) in messages" :key="index"> </div>  -->
+                     <!-- <div v-for="message in messages" :key="message.messageId">
                         <message :receivedMessage="message"></message>
+                    </div> -->
+                    <div class="ibox " >
+                        <div class="ibox-content">
+
+                                <div class="feed-activity-list"  v-for="message in messages" :key="message.messageId">
+
+                                    <message :receivedMessage="message"></message>
+
+
+                                </div>
+
+                                <button class="btn btn-primary btn-block m-t"><i class="fa fa-arrow-down"></i> Show More</button>
+                        </div>
                     </div>
+
                 </el-main>               
             </el-container>
     </el-container>
