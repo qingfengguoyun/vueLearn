@@ -9,9 +9,12 @@
                             <button type="button" class="btn btn-primary">Go!</button> </span> <input type="text"
                             class="form-control">
                     </div> -->
-                    <div class="input-group"><input type="text" class="form-control" v-model="inputMessage"> <span class="input-group-append">
+                    <div class="input-group"><input type="text" class="form-control" v-model="inputMessage"> 
+                        <span class="input-group-append">
                             <button type="button" class="btn btn-primary"  @click="sendMessage">Go!
-                            </button> </span></div>
+                            </button> 
+                        </span>
+                    </div>
                 </div>
             </div>
             <!-- <div class="input-group">
