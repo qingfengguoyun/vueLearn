@@ -25,14 +25,22 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
+  
   server:{
     host: '0.0.0.0',
-    port: 3000
+    port: 3000,
+    proxy:{
+      '/ws': {
+        target: `http://${getNetworkIp()}:8271`,
+        ws: true,
+      },
+    },
   },
   // 设置环境变量(重点)
   // 注意：define 中的键名应该是 'import.meta.env.BASE_IP'，这是 Vite 中用于定义环境变量的方式。
   define: {
     'import.meta.env.BASE_IP': JSON.stringify(`http://${getNetworkIp()}`),
+    'import.meta.env.SERVER_IP': JSON.stringify(`${getNetworkIp()}`)
   },
 })
 
