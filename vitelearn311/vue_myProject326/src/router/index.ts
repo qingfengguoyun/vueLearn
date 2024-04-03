@@ -1,7 +1,9 @@
 import { createRouter , createWebHistory} from "vue-router";// 第二步:创建路由器
-import loginPage from "@/pages/loginPage.vue";
-import frontPage from "@/pages/frontPage.vue";
-import signUpPage from "@/pages/signUpPage.vue";
+import LoginPage from "@/pages/LoginPage.vue";
+import FrontPage from "@/pages/FrontPage.vue";
+import SignUpPage from "@/pages/SignUpPage.vue";
+import TestPage from "@/pages/Test.vue"
+import TestPage2 from "@/pages/Test2.vue"
 const router = createRouter(  
     {
         history:createWebHistory(), //指定路由器工作模式
@@ -9,23 +11,34 @@ const router = createRouter(
         routes:[
             
             {
-                name:"frontPage",
+                name:"FrontPage",
                 path:"/front",
-                component: frontPage
+                component: FrontPage
             },
             {
-                name:"signUpPage",
+                name:"SignUpPage",
                 path:"/signUp",
-                component: signUpPage
+                component: SignUpPage
             },
             {
-                name:"loginPage",
+                name:"LoginPage",
                 path:"/login",
-                component: loginPage
+                component: LoginPage
             },
             {
                 path:"/",
-                component:loginPage
+                // component:LoginPage,
+                redirect:LoginPage
+            },
+            {
+                name:"TestPage",
+                path:"/test",
+                component: TestPage
+            },
+            {
+                name:"TestPage2",
+                path:"/test2",
+                component: TestPage2
             }
         ]
     }

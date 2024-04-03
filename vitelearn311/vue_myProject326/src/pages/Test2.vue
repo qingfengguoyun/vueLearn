@@ -1,5 +1,5 @@
 <template>
-    <div class="ibox-content" style="width: 400px; ">
+    <div class="ibox-content">
         <h2>用户列表</h2>
 
         <div class="input-group">
@@ -21,9 +21,8 @@
                                 <table class="table table-striped table-hover">
                                     <tbody>
                                         <tr>
-                                            <td class="client-avatar"><img alt="image"> </td>
-                                            <td><a href="clients.html#contact-1" class="client-link">Anthony
-                                                    Jackson</a>
+                                            <td class="client-avatar"><img alt="image" > </td>
+                                            <td><a href="clients.html#contact-1" class="client-link">Anthony Jackson</a>
                                             </td>
                                             <td> Tellus Institute</td>
                                             <td class="contact-type"><i class="fa fa-envelope"> </i></td>
@@ -33,8 +32,7 @@
                                         </tr>
                                         <tr>
                                             <td class="client-avatar"><img alt="image"> </td>
-                                            <td><a href="clients.html#contact-2" class="client-link">Rooney
-                                                    Lindsay</a>
+                                            <td><a href="clients.html#contact-2" class="client-link">Rooney Lindsay</a>
                                             </td>
                                             <td>Proin Limited</td>
                                             <td class="contact-type"><i class="fa fa-envelope"> </i></td>
@@ -44,15 +42,14 @@
                                         </tr>
                                         <tr>
                                             <td class="client-avatar"><img alt="image"> </td>
-                                            <td><a href="clients.html#contact-3" class="client-link">Lionel
-                                                    Mcmillan</a>
+                                            <td><a href="clients.html#contact-3" class="client-link">Lionel Mcmillan</a>
                                             </td>
                                             <td>Et Industries</td>
                                             <td class="contact-type"><i class="fa fa-phone"> </i></td>
                                             <td> +432 955 908</td>
                                             <td class="client-status"></td>
                                         </tr>
-
+                                        
                                     </tbody>
                                 </table>
                             </div>
@@ -69,33 +66,14 @@
 
         </div>
     </div>
-
 </template>
 <script lang='ts'>
 export default
     {
-        name: "onlineUser"
-    }
+        name:"TestPage2"
+}
 </script>
 <script lang='ts' setup>
-let userList = [
-    {
-        id: 1,
-        userName: "qwe",
-        password: "123"
-    },
-    {
-        id: 2,
-        userName: "asd",
-        password: "123"
-    },
-    {
-        id: 3,
-        userName: "zxc",
-        password: "123"
-    },
-]
-
 
 </script>
 <style scoped></style>

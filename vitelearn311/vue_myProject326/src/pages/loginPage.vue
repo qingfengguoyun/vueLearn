@@ -10,7 +10,7 @@
 <script lang='ts'>
 export default
 {
-    name:"loginPage"
+    name:"LoginPage"
 }
 </script>
 <script lang='ts' setup>
@@ -52,7 +52,7 @@ export default
             sessionStorage.setItem("userInfo",JSON.stringify(user))
             socket=socketInstance(user.id as number,user.userName as string,user.password as string)
             router.push({
-                name:"frontPage",
+                name:"FrontPage",
             })
         }
         else{

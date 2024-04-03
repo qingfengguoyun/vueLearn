@@ -1,59 +1,23 @@
 <template>
-    <el-container class="layout-container-demo">
-        <el-header>
-            <div class="form-group row"><label class="col-sm-2 col-form-label "><h3>输入内容</h3></label>
-
-                <div class="col-sm-10">
-
-                    <!-- <div class="input-group m-b"><span class="input-group-prepend">
-                            <button type="button" class="btn btn-primary">Go!</button> </span> <input type="text"
-                            class="form-control">
-                    </div> -->
-                    <div class="input-group"><input type="text" class="form-control" v-model="inputMessage"> 
-                        <span class="input-group-append">
-                            <button type="button" class="btn btn-primary"  @click="sendMessage">Go!
-                            </button> 
-                        </span>
-                    </div>
-                </div>
+    <div class="ibox-content" style="width: calc(100% - 400px);">
+        <div class="chat-form p-xs border-bottom">
+            <div class="form-group">
+                <textarea class="form-control" style="height: auto;" placeholder="Message" v-model="inputMessage"></textarea>
             </div>
-            <!-- <div class="input-group">
-                    <input type="text" class="form-control" v-model="inputMessage"> 
-                    <span class="input-group-append"> 
-                        <button type="button" class="btn btn-primary" @click="sendMessage">发送
-                        </button> 
-                    </span>
-                </div> -->
-            <!-- 输入内容：<input v-model="inputMessage">
-                <button @click="sendMessage"> 发送</button> -->
-        </el-header>
-        <el-container>
-            <el-main>
-                <!-- v-for循环一定要指定:key，否则已经渲染的dom元素不会被移除  -->
-                <!-- 最好使用对象中的唯一属性指定key -->
-                <!-- 如果对象中没有可以作为key的属性，可以直接将对象本身作为key（前提为每个对象均不同）
-                    或使用数组索引作为key(不推荐，因为性能较低)-->
-                <!-- eg: <div v-for="(message,index) in messages" :key="index"> </div>  -->
-                <!-- <div v-for="message in messages" :key="message.messageId">
-                        <message :receivedMessage="message"></message>
-                    </div> -->
-                <div class="ibox ">
-                    <div class="ibox-content">
+            <div class="text-right">
+                <button  class="btn btn-sm btn-primary m-t-n-xs" @click="sendMessage">
+                    <strong>Send message</strong></button>
+            </div>
+            
+        </div>
+        <div>
+            <div class="chat-activity-list" v-for="message in messages" :key="message.messageId">
+                <message  :receivedMessage="message"></message>
+                
+            </div>
+        </div>
 
-                        <div class="feed-activity-list" v-for="message in messages" :key="message.messageId">
-
-                            <message :receivedMessage="message"></message>
-
-
-                        </div>
-
-                        <!-- <button class="btn btn-primary btn-block m-t"><i class="fa fa-arrow-down"></i> Show More</button> -->
-                    </div>
-                </div>
-
-            </el-main>
-        </el-container>
-    </el-container>
+    </div>
 
 </template>
 <script lang='ts'>
@@ -67,7 +31,9 @@ import { watch, ref, reactive, type Ref } from "vue";
 import { useSocket } from "@/utils/socketIo";
 import { Socket } from 'socket.io-client';
 import message from "@/components/message.vue";
+import messageRight from "@/components/messageRight.vue";
 import { type MessageVo } from "@/types";
+import { type UserInter } from "@/types/UserType";
 
 let socket = useSocket()
 console.log(socket)
@@ -97,17 +63,9 @@ function sendMessage() {
     socket.emit("send_message", inputMessage.value)
 }
 
+let userInfo=JSON.parse(sessionStorage.getItem('userInfo') as string) as UserInter
+
 </script>
+
 <style scoped>
-.layout-container-demo .el-header {
-    position: relative;
-
-    background-color: var(--el-color-primary-light-7);
-    color: var(--el-text-color-primary);
-}
-
-textarea {
-    height: 400px;
-    width: 100%;
-}
 </style>
