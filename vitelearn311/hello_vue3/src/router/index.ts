@@ -10,6 +10,8 @@ import ProvideInject from '@/pages/07_provide-inject/Father.vue'
 import Pinia from '@/pages/08_pinia/Father.vue'
 import Slot from '@/pages/09_slot/Father.vue'
 import MyGrand from '@/pages/05_$attrs/MyGrand.vue'
+import Parent06 from "@/pages/06_$refs-$parent/Parent06.vue"
+import level_0 from "@/pages/07_provide-inject/level_0.vue"
 
 export default createRouter({
 	history: createWebHistory(),
@@ -54,6 +56,14 @@ export default createRouter({
 			path: '/myAttr',
 			component: MyGrand
 		},
+		{
+			path: '/myRefLearn',
+			component: Parent06
+		},
+		{
+			path:'/myProvideInjectLearn',
+			component: level_0
+		}
 	]
 })
 

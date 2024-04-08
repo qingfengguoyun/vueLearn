@@ -16,7 +16,9 @@
 				<router-link active-class="active" class="list-group-item" to="/attrs">5. $attrs</router-link>
 				<router-link active-class="active" class="list-group-item" to="/myAttr">5.1 MyAttr</router-link>
 				<router-link active-class="active" class="list-group-item" to="/ref-parent">6. <span class="small">$refs、$parent</span></router-link>
+				<router-link active-class="active" class="list-group-item" to="/myRefLearn">6.2 <span class="small">$refs、$parent</span></router-link>
 				<router-link active-class="active" class="list-group-item" to="/provide-inject">7. provide、inject</router-link>
+				<router-link active-class="active" class="list-group-item" to="/myProvideInjectLearn">7.2 provide、inject</router-link>
 				<router-link active-class="active" class="list-group-item" to="/pinia">8. pinia</router-link>
 				<router-link active-class="active" class="list-group-item" to="/slot">9. slot</router-link>
 			</div>
