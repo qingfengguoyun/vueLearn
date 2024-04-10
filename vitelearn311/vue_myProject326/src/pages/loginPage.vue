@@ -27,7 +27,7 @@ export default
 
 
     let user:UserInter=reactive({
-        id:-1,
+        id:"-1",
         userName:"",
         password:""
     })
@@ -44,13 +44,14 @@ export default
         // let res2:UserInter=res.data.data;
         // console.log(res2)
         if(res.data.code===200){
+            console.log("res:",res.data.data)
             let {userId,userName,password}=res.data.data
             user.userName=userName;
             user.password=password;
-            user.id=userId;
+            user.id=userId.toString();
             console.log("用户",user.userName,"登录成功")
             sessionStorage.setItem("userInfo",JSON.stringify(user))
-            socket=socketInstance(user.id as number,user.userName as string,user.password as string)
+            socket=socketInstance(userId,user.userName as string,user.password as string)
             router.push({
                 name:"FrontPage",
             })

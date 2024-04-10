@@ -1,6 +1,18 @@
+
+
+interface User{
+    userId?:string
+    userName?:string
+}
+
+interface Message{
+
+}
+
 export interface MessageVo{
-    userId:number,
-    userName: string,
-    messageId: number,
-    messageContent: string
+    sendUser:User
+    receiveUser?:User
+    messageId:number
+    messageContent:string
+    date:Date
 }

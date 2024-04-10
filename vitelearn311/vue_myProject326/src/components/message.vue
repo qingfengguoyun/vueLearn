@@ -7,7 +7,7 @@
         </a>
         <div class="media-body " >
             <small class="float-right text-navy ">1m ago</small>
-            <strong class="h5">用户：{{ message.userName }}</strong>
+            <strong class="h5">用户：{{ message.sendUser.userName }} 用户Id：{{ message.sendUser.userId }}</strong>
             <p class="m-b-xs h6 p-xs">
                 {{ message.messageContent }}
             </p>
@@ -30,12 +30,12 @@ export default
     let props = defineProps({
         receivedMessage: Object
     })
-    interface MessageVo {
-        userId: number,
-        userName: string,
-        messageId: number,
-        messageContent: string
-    }
+    // interface MessageVo {
+    //     userId: number,
+    //     userName: string,
+    //     messageId: number,
+    //     messageContent: string
+    // }
     let message: MessageVo = reactive(props.receivedMessage as MessageVo)
     console.log("@@@@@", message)
     function getImage(imgSrc: any) {

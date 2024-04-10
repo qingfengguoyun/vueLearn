@@ -60,7 +60,10 @@ socket.on("receive_message", (data: string) => {
 
 function sendMessage() {
     console.log("do sendMessage")
-    socket.emit("send_message", inputMessage.value)
+    let pojo={
+        content:inputMessage.value
+    }
+    socket.emit("send_message", pojo)
 }
 
 let userInfo=JSON.parse(sessionStorage.getItem('userInfo') as string) as UserInter
