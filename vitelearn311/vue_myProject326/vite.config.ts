@@ -40,9 +40,12 @@ export default defineConfig({
   // 注意：define 中的键名应该是 'import.meta.env.BASE_IP'，这是 Vite 中用于定义环境变量的方式。
   define: {
     'import.meta.env.BASE_IP': JSON.stringify(`http://${getNetworkIp()}`),
-    'import.meta.env.SERVER_IP': JSON.stringify(`${getNetworkIp()}`)
+    'import.meta.env.SERVER_IP': JSON.stringify(`${getNetworkIp()}`),
+    'import.meta.env.SERVER_PORT': 8200
   },
 })
+
+
 
 function getNetworkIp() {
   let needHost = '';

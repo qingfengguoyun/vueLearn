@@ -18,7 +18,7 @@
             </div>
             <div class="col-sm-8">
                 <div class="title-action">
-                    <a href="empty_page.html" class="btn btn-primary">This is action area</a>
+                    <button type="button" class="btn btn-w-m btn-primary" @click="testAnimate()"><strong>testAnimate</strong></button>
                 </div>
             </div>
         </div>
@@ -26,7 +26,9 @@
         <div class="wrapper wrapper-content row">
             <mainChatRoom></mainChatRoom>
             <onlineUser></onlineUser>
+            
         </div>
+        <!-- footer -->
         <div class="footer">
             <div class="float-right">
                 10GB of <strong>250GB</strong> Free.
@@ -35,8 +37,10 @@
                 <strong>Copyright</strong> Example Company © 2014-2018
             </div>
         </div>
+        <rightBottomWindow ref="rbw"></rightBottomWindow>
 
     </div>
+
 </template>
 
 <script lang='ts'>
@@ -51,13 +55,22 @@ export default
     import onlineUser from '@/components/onlineUser.vue'
     import mainChatRoom from "@/components/mainChatRoom.vue";
     import test from "@/components/test.vue";
-    import { useOnlineUser } from "@/store/onlineUser";
+    import rightBottomWindow from '@/components/rightBottomWindow.vue';
+    import { ref,onMounted } from 'vue';
+    let rbw=ref();
+    // onMounted(()=>{
+    //     console.log(rbw.value);
+    //     rbw.value.startAnimation()
+    //     // startAnimation
+    // })
+    function testAnimate(){
+        rbw.value.startAnimation()
+    }
     
 
 
-    let onlineUserStore=useOnlineUser()
 
-    let user=onlineUserStore.user
+
 
 </script>
 <style scoped>

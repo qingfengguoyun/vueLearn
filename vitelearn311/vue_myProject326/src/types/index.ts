@@ -5,6 +5,12 @@ interface User{
     userName?:string
 }
 
+export interface UserVo{
+    userId?:string
+    userName?:string
+    isOnline?:boolean
+}
+
 interface Message{
 
 }

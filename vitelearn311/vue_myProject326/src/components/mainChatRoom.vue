@@ -29,7 +29,6 @@ export default
 <script lang='ts' setup>
 import { watch, ref, reactive, type Ref } from "vue";
 import { useSocket } from "@/utils/socketIo";
-import { Socket } from 'socket.io-client';
 import message from "@/components/message.vue";
 import messageRight from "@/components/messageRight.vue";
 import { type MessageVo } from "@/types";

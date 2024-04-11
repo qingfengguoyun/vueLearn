@@ -20,37 +20,14 @@
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover">
                                     <tbody>
-                                        <tr>
-                                            <td class="client-avatar"><img alt="image"> </td>
-                                            <td><a href="clients.html#contact-1" class="client-link">Anthony
-                                                    Jackson</a>
+                                        <tr v-for="userVo in onlineUser.userList" :key="userVo.userId">
+                                            <td class="client-avatar"><img alt="image" :src="getImage('img/a1.jpg')">
                                             </td>
-                                            <td> Tellus Institute</td>
-                                            <td class="contact-type"><i class="fa fa-envelope"> </i></td>
-                                            <td> gravida@rbisit.com</td>
-                                            <td class="client-status"><span class="label label-primary">Active</span>
+                                            <td>{{ userVo.userName }}
                                             </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="client-avatar"><img alt="image"> </td>
-                                            <td><a href="clients.html#contact-2" class="client-link">Rooney
-                                                    Lindsay</a>
+                                            <td class="client-status"><span class="label label-primary"
+                                                    v-if="userVo.isOnline == true">Active</span>
                                             </td>
-                                            <td>Proin Limited</td>
-                                            <td class="contact-type"><i class="fa fa-envelope"> </i></td>
-                                            <td> rooney@proin.com</td>
-                                            <td class="client-status"><span class="label label-primary">Active</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="client-avatar"><img alt="image"> </td>
-                                            <td><a href="clients.html#contact-3" class="client-link">Lionel
-                                                    Mcmillan</a>
-                                            </td>
-                                            <td>Et Industries</td>
-                                            <td class="contact-type"><i class="fa fa-phone"> </i></td>
-                                            <td> +432 955 908</td>
-                                            <td class="client-status"></td>
                                         </tr>
 
                                     </tbody>
@@ -78,24 +55,56 @@ export default
     }
 </script>
 <script lang='ts' setup>
-let userList = [
-    {
-        id: 1,
-        userName: "qwe",
-        password: "123"
-    },
-    {
-        id: 2,
-        userName: "asd",
-        password: "123"
-    },
-    {
-        id: 3,
-        userName: "zxc",
-        password: "123"
-    },
-]
+// let userList = [
+//     {
+//         id: 1,
+//         userName: "qwe",
+//         password: "123"
+//     },
+//     {
+//         id: 2,
+//         userName: "asd",
+//         password: "123"
+//     },
+//     {
+//         id: 3,
+//         userName: "zxc",
+//         password: "123"
+//     },
+// ]
 
+import { ref, type Ref, onMounted } from 'vue';
+
+import { useOnlineUser } from '@/store/onlineUser';
+import { getImage } from '@/utils/commonUtils';
+import { useSocket } from '@/utils/socketIo';
+const onlineUser = useOnlineUser()
+onlineUser.getAllUserInfo()
+let socket = useSocket()
+socket.on("user_online", (data: string) => {
+    console.log("topic:userOnline" + data)
+    // vueMessage += (message + "\n");
+    let mes = JSON.parse(data)
+    for (let i = 0; i < onlineUser.userList.length; i++) {
+        if (onlineUser.userList[i].userId == mes) {
+            onlineUser.userList[i].isOnline = true;
+        }
+    }
+})
+socket.on("user_offline", (data: string) => {
+    console.log("topic:userOffline" + data)
+    // vueMessage += (message + "\n");
+    let mes = JSON.parse(data)
+    for (let i = 0; i < onlineUser.userList.length; i++) {
+        if (onlineUser.userList[i].userId == mes) {
+            onlineUser.userList[i].isOnline = false;
+        }
+    }
+})
+// onMounted(()=>{
+//     console.log("down")
+//     onlineUser.getAllUserInfo()
+// })
 
 </script>
 <style scoped></style>

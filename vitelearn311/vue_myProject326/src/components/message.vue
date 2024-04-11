@@ -3,7 +3,7 @@
 
     <div class="chat-element m-t-sm" >
         <a href="widgets.html#" class="float-left">
-            <img alt="image" class="rounded-circle" :src="getImage('img/a4.jpg')" style="width: 38px; height: 38px;">
+            <img alt="image" class="rounded-circle" :src="getImage('img/a1.jpg')" style="width: 38px; height: 38px;">
         </a>
         <div class="media-body " >
             <small class="float-right text-navy ">1m ago</small>
@@ -27,6 +27,7 @@ export default
     import { ref, defineProps, type Ref, reactive } from "vue";
     import { type MessageVo } from "@/types";
     import { type UserInter } from "@/types/UserType";
+    import {getImage} from "@/utils/commonUtils"
     let props = defineProps({
         receivedMessage: Object
     })
@@ -38,11 +39,7 @@ export default
     // }
     let message: MessageVo = reactive(props.receivedMessage as MessageVo)
     console.log("@@@@@", message)
-    function getImage(imgSrc: any) {
-        let url = new URL(imgSrc, import.meta.url).href
-        console.log("@@url:", url)
-        return url;
-    }
+
 
     
 </script>
