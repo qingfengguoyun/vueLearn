@@ -44,15 +44,13 @@ export default
     let show=ref(false)
     function startAnimation(){
         console.log("startAni",rbw.value)
-        // 此处的rbw.value即为dom元素本身，常用对象包括
+        // 此处的rbw.value即为dom元素本身，类型为内置类型HTMLElement
+        // 常用对象包括
         // setAttribute(name, value): 设置指定名称的属性值。
         // getAttribute(name): 获取指定名称的属性值。
         // removeAttribute(name): 移除指定名称的属性。
         // style: 可以直接访问元素的内联样式，例如 rbw.value.style.color = 'red'。
-        // parentNode: 获取父节点。
-        // childNodes: 获取子节点列表。
-        // querySelector(selector): 使用 CSS 选择器获取匹配的第一个子元素。
-        // querySelectorAll(selector): 使用 CSS 选择器获取匹配的所有子元素。
+        // classList
         show.value=!show.value
         rbw.value.classList.add('bounce')
         setTimeout(()=>{
