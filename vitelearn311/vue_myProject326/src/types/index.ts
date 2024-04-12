@@ -9,6 +9,7 @@ export interface UserVo{
     userId?:string
     userName?:string
     isOnline?:boolean
+    lastOnlineTime?:Date
 }
 
 interface Message{

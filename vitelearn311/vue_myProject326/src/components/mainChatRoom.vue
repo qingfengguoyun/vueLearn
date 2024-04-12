@@ -33,6 +33,7 @@ import message from "@/components/message.vue";
 import messageRight from "@/components/messageRight.vue";
 import { type MessageVo } from "@/types";
 import { type UserInter } from "@/types/UserType";
+import { getUserId,getUserInfo } from "@/utils/commonUtils";
 
 let socket = useSocket()
 console.log(socket)
@@ -60,6 +61,7 @@ socket.on("receive_message", (data: string) => {
 function sendMessage() {
     console.log("do sendMessage")
     let pojo={
+        sendUserId:getUserInfo().id,
         content:inputMessage.value
     }
     socket.emit("send_message", pojo)

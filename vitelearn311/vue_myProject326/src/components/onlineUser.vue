@@ -25,8 +25,13 @@
                                             </td>
                                             <td>{{ userVo.userName }}
                                             </td>
-                                            <td class="client-status"><span class="label label-primary"
+                                            <td class="client-status">
+                                                <span class="label label-primary"
                                                     v-if="userVo.isOnline == true">Active</span>
+                                            </td>
+                                            <td >
+                                                <span class="label label-primary"
+                                                    >Connect</span>
                                             </td>
                                         </tr>
 
@@ -81,6 +86,7 @@ import { useSocket } from '@/utils/socketIo';
 const onlineUser = useOnlineUser()
 onlineUser.getAllUserInfo()
 let socket = useSocket()
+
 socket.on("user_online", (data: string) => {
     console.log("topic:userOnline" + data)
     // vueMessage += (message + "\n");
@@ -101,10 +107,10 @@ socket.on("user_offline", (data: string) => {
         }
     }
 })
-// onMounted(()=>{
-//     console.log("down")
-//     onlineUser.getAllUserInfo()
-// })
+onMounted(()=>{
+    console.log("down")
+    onlineUser.getAllUserInfo()
+})
 
 </script>
 <style scoped></style>
