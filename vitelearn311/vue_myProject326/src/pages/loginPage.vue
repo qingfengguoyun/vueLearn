@@ -18,9 +18,10 @@ export default
     import { ref,reactive } from "vue";
     import { type UserInter ,UserClass} from "@/types/UserType";
     import { type ResultInter }from "@/types/ResultType";
-    import axios from "axios";
+    import axios, { type AxiosResponse, type AxiosResponseHeaders } from "axios";
     import { useRouter,RouterLink,RouterView } from "vue-router";
     import {socketInstance} from '@/utils/socketIo';
+    import { postRequest } from "@/utils/axiosUtils";
 
 
     let router=useRouter();
@@ -37,7 +38,8 @@ export default
 
     async function login(){
         console.log("用户",user.userName,"尝试登录")
-        let res:ResultInter= await axios.post( baseIP+":8200/api/user/login"||"http://localhost:8200/api/user/login",user);
+        // let res:AxiosResponse= await axios.post( baseIP+":8200/api/user/login"||"http://localhost:8200/api/user/login",user);
+        let res:AxiosResponse= await postRequest("/api/user/login",user);
         console.log(res)
         let socket
         // console.log(res.data.code)
@@ -51,6 +53,11 @@ export default
             user.id=userId.toString();
             console.log("用户",user.userName,"登录成功")
             sessionStorage.setItem("userInfo",JSON.stringify(user))
+            if(res.headers){
+                let token = (res.headers as any).get("authorization")
+                console.log("authorization",token)
+                sessionStorage.setItem("Authorization",JSON.stringify(token))
+            }           
             socket=socketInstance(userId,user.userName as string,user.password as string)
             router.push({
                 name:"FrontPage",

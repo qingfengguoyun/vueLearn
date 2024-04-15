@@ -27,19 +27,21 @@ export default
     }
 </script>
 <script lang='ts' setup>
-import { watch, ref, reactive, type Ref } from "vue";
+import { watch, ref, reactive, type Ref, onMounted } from "vue";
 import { useSocket } from "@/utils/socketIo";
 import message from "@/components/message.vue";
-import messageRight from "@/components/messageRight.vue";
+// import messageRight from "@/components/messageRight.vue";
 import { type MessageVo } from "@/types";
 import { type UserInter } from "@/types/UserType";
 import { getUserId,getUserInfo } from "@/utils/commonUtils";
+import { useMainChatRoom } from "@/store/mainChatRoom";
 
 let socket = useSocket()
-console.log(socket)
+let mainChatRoom =useMainChatRoom();
 let messages: Ref<MessageVo[]> = ref([])
 let inputMessage = ref("")
-let showMessage: Ref<String> = ref("")
+
+
 
 watch(messages, () => {
     if (messages.value.length > 5) {
@@ -61,13 +63,17 @@ socket.on("receive_message", (data: string) => {
 function sendMessage() {
     console.log("do sendMessage")
     let pojo={
-        sendUserId:getUserInfo().id,
+        sendUserId:getUserId(),
         content:inputMessage.value
     }
     socket.emit("send_message", pojo)
 }
+onMounted(()=>{
+    console.log("mainChatroom get")
+    mainChatRoom.getMessageVo();
+    messages.value=mainChatRoom.messageVoList
+})
 
-let userInfo=JSON.parse(sessionStorage.getItem('userInfo') as string) as UserInter
 
 </script>
 

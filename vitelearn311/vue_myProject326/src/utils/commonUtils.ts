@@ -5,7 +5,7 @@ const baseIP = import.meta.env.BASE_IP;
 const serverPort=import.meta.env.SERVER_PORT
 
 // axios请求的前缀，包括服务器地址和端口号
-export let requestPrefix=baseIP+":"+serverPort+"/"
+export let requestPrefix=baseIP+":"+serverPort || "http://localhost:8200"
 
 export function getUserId(){
     let userInfo=JSON.parse(sessionStorage.getItem('userInfo') as string) as UserInter
@@ -25,3 +25,4 @@ export function getImage(imgSrc: any) {
     console.log("@@url:", url)
     return url;
 }
+

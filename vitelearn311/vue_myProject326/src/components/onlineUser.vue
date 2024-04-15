@@ -84,7 +84,7 @@ import { useOnlineUser } from '@/store/onlineUser';
 import { getImage } from '@/utils/commonUtils';
 import { useSocket } from '@/utils/socketIo';
 const onlineUser = useOnlineUser()
-onlineUser.getAllUserInfo()
+// onlineUser.getAllUserInfo()
 let socket = useSocket()
 
 socket.on("user_online", (data: string) => {
