@@ -1,7 +1,10 @@
 <template>
     <div class="ibox-content" style="width: calc(100% - 400px);">
         <div>
-            <h2> This is MainChatRoom</h2>
+            <h2> This is PrivateChatRoom</h2>
+        </div>
+        <div>
+            <h4> Connect with :{{ privateChat.connectUser.userName }}</h4>
         </div>
         <div class="chat-form p-xs border-bottom">
             <div class="form-group">
@@ -24,10 +27,9 @@
 </template>
 <script lang='ts'>
 export default
-    {
-        name: "mainChatRoom"
-    }
-    
+{
+    name: "privateChatRoom"
+}
 </script>
 <script lang='ts' setup>
 import { watch, ref, reactive, type Ref, onMounted } from "vue";
@@ -35,13 +37,14 @@ import { useSocket } from "@/utils/socketIo";
 import message from "@/components/message.vue";
 // import messageRight from "@/components/messageRight.vue";
 import { type MessageVo } from "@/types";
-import { getUserId,getUserInfo } from "@/utils/commonUtils";
+import { getUserId} from "@/utils/commonUtils";
 import { useMainChatRoom } from "@/store/mainChatRoom";
+import { usePrivateChatRoom } from "@/store/privteChatRoom";
 
 let socket = useSocket()
-let mainChatRoom =useMainChatRoom();
 let messages: Ref<MessageVo[]> = ref([])
 let inputMessage = ref("")
+let privateChat=usePrivateChatRoom()
 
 watch(messages, () => {
     if (messages.value.length > 5) {
@@ -51,13 +54,17 @@ watch(messages, () => {
 
 socket.on("receive_message", (data: string) => {
     console.log("收到消息" + data)
+    // vueMessage += (message + "\n");
     let mes = JSON.parse(data) as MessageVo
     console.log("qqqq", mes)
     messages.value.unshift(mes)
+    // console.log(messages.length)
+    // showMessage.value=messages.value.join("\n");
+    // console.log(showMessage)
 })
 
 function sendMessage() {
-    console.log("do sendMessage")
+    console.log("send private message")
     let pojo={
         sendUserId:getUserId(),
         content:inputMessage.value
@@ -65,12 +72,12 @@ function sendMessage() {
     socket.emit("send_message", pojo)
 }
 onMounted(async ()=>{
-    console.log("mainChatroom onMounted")
-    await mainChatRoom.getMessageVo();
-    messages.value=mainChatRoom.messageVoList
+    console.log("privateChatroom onMounted")
+    // await mainChatRoom.getMessageVo();
+    // messages.value=mainChatRoom.messageVoList
 })
 
 </script>
-
 <style scoped>
+
 </style>

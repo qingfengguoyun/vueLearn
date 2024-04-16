@@ -29,7 +29,7 @@ export default
     import { type UserInter } from "@/types/UserType";
     import {getImage} from "@/utils/commonUtils"
     let props = defineProps({
-        receivedMessage: Object
+        receivedMessage: Object 
     })
     // interface MessageVo {
     //     userId: number,
@@ -38,7 +38,6 @@ export default
     //     messageContent: string
     // }
     let message: MessageVo = reactive(props.receivedMessage as MessageVo)
-    console.log("@@@@@", message)
 
 
     

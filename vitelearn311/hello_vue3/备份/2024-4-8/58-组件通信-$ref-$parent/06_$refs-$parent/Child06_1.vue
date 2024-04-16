@@ -21,6 +21,7 @@ import { type Ref, ref } from 'vue';
 let cModels: Ref<string[]> = ref([]);
 function getModelFromParent(ins: any) {
     console.log("done")
+    // ins为父组件本身
     console.log(ins)
     try {
         let model = (ins.models as string[]).pop()

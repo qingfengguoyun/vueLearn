@@ -47,10 +47,11 @@ export default
         // console.log(res2)
         if(res.data.code===200){
             console.log("res:",res.data.data)
-            let {userId,userName,password}=res.data.data
-            user.userName=userName;
-            user.password=password;
-            user.id=userId.toString();
+            // let {id,userName,password}=res.data.data
+            // user.userName=userName;
+            // user.password=password;
+            // user.id=id.toString();
+            user=res.data.data
             console.log("用户",user.userName,"登录成功")
             sessionStorage.setItem("userInfo",JSON.stringify(user))
             if(res.headers){
@@ -58,7 +59,7 @@ export default
                 console.log("authorization",token)
                 sessionStorage.setItem("Authorization",JSON.stringify(token))
             }           
-            socket=socketInstance(userId,user.userName as string,user.password as string)
+            socket=socketInstance(user.id as string,user.userName as string,user.password as string)
             router.push({
                 name:"FrontPage",
             })

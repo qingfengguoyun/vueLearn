@@ -10,7 +10,7 @@
         </div>
         <div class="clients-list">
             <ul class="nav nav-tabs">
-                <li><a class="nav-link active" data-toggle="tab" href="clients.html#tab-1"><i class="fa fa-user"></i>
+                <li><a class="nav-link active" data-toggle="tab" ><i class="fa fa-user"></i>
                         全部用户</a></li>
             </ul>
             <div class="tab-content">
@@ -30,8 +30,11 @@
                                                     v-if="userVo.isOnline == true">Active</span>
                                             </td>
                                             <td >
-                                                <span class="label label-primary"
+                                                <span class="label label-primary" @click="toPrivateChat(userVo)"
                                                     >Connect</span>
+                                            </td>
+                                            <td >
+                                                <button type="button" class="btn btn-info m-r-sm">20</button>
                                             </td>
                                         </tr>
 
@@ -78,13 +81,17 @@ export default
 //     },
 // ]
 
-import { ref, type Ref, onMounted } from 'vue';
+import { ref, type Ref, onMounted, inject } from 'vue';
 
 import { useOnlineUser } from '@/store/onlineUser';
 import { getImage } from '@/utils/commonUtils';
 import { useSocket } from '@/utils/socketIo';
-const onlineUser = useOnlineUser()
-// onlineUser.getAllUserInfo()
+import type { UserVo } from '@/types';
+import { usePrivateChatRoom } from '@/store/privteChatRoom';
+
+let {toMainChatRoom,toPrivateChatRoom}=inject("changeChatRoom",{toMainChatRoom:()=>{},toPrivateChatRoom:()=>{}})
+let onlineUser = useOnlineUser()
+let privateChat=usePrivateChatRoom()
 let socket = useSocket()
 
 socket.on("user_online", (data: string) => {
@@ -107,6 +114,11 @@ socket.on("user_offline", (data: string) => {
         }
     }
 })
+
+function toPrivateChat(param:UserVo){
+   privateChat.setConnectUser(param);
+    toPrivateChatRoom();
+}
 onMounted(()=>{
     console.log("down")
     onlineUser.getAllUserInfo()

@@ -1,7 +1,7 @@
 import { createRouter , createWebHistory} from "vue-router";// 第二步:创建路由器
-import LoginPage from "@/pages/loginPage.vue";
-import FrontPage from "@/pages/frontPage.vue";
-import SignUpPage from "@/pages/signUpPage.vue";
+import LoginPage from "@/pages/LoginPage.vue";
+import FrontPage from "@/pages/FrontPage.vue";
+import SignUpPage from "@/pages/SignUpPage.vue";
 import TestPage from "@/pages/Test.vue"
 import TestPage2 from "@/pages/Test2.vue"
 const router = createRouter(  

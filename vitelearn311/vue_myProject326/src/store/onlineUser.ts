@@ -36,7 +36,7 @@ export const useOnlineUser=defineStore("onlineUser",{
         return{
             user:JSON.parse(sessionStorage.getItem("userInfo") as string) as UserInter || {},
             userList:[] as UserVo[],
-            userToken:JSON.parse(sessionStorage.getItem("userToken") as string) as String || ""
+            userToken:JSON.parse(sessionStorage.getItem("userToken") as string) as String || "",
         }
     }
     

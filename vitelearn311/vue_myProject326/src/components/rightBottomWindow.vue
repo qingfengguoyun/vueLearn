@@ -51,6 +51,7 @@ export default
         // removeAttribute(name): 移除指定名称的属性。
         // style: 可以直接访问元素的内联样式，例如 rbw.value.style.color = 'red'。
         // classList
+    
         show.value=!show.value
         rbw.value.classList.add('bounce')
         setTimeout(()=>{

@@ -16,7 +16,7 @@ async function getSocketIoPort(){
     return socketIoPort;
 }
 
-export function socketInstance(id:number,userName:string, password:string):Socket {
+export function socketInstance(id:string,userName:string, password:string):Socket {
     // console.log('io:',io)
     // console.log("Socekt",Socket)
     const baseIP = import.meta.env.BASE_IP;

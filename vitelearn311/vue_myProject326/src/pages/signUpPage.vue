@@ -42,7 +42,7 @@ async function signUpUser(){
         alert("欢迎新用户："+newUser.userName+" 三秒后返回登录页面")
         setTimeout(()=>{
             router.replace({
-                name:"loginPage"
+                name:"LoginPage"
             });
         },3000)
     }else{

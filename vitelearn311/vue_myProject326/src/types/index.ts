@@ -1,4 +1,4 @@
-
+import { type DefineComponent } from "vue"
 
 interface User{
     userId?:string
@@ -19,7 +19,11 @@ interface Message{
 export interface MessageVo{
     sendUser:User
     receiveUser?:User
-    messageId:number
+    id:string
     messageContent:string
     date:Date
+}
+
+export interface ComponentsMap {
+    [key: string]: any;
 }

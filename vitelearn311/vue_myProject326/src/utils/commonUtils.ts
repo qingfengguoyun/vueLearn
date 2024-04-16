@@ -22,7 +22,6 @@ export function getImage(imgSrc: any) {
     // import.meta.url表示当前模块的url
     // let url = new URL(imgSrc, import.meta.url).href
     let url = `${imgSrc}`
-    console.log("@@url:", url)
     return url;
 }
 

@@ -20,11 +20,15 @@
                 <div class="title-action">
                     <button type="button" class="btn btn-w-m btn-primary" @click="testAnimate()"><strong>testAnimate</strong></button>
                 </div>
+                <div class="title-action">
+                    <button type="button" class="btn btn-w-m btn-primary" @click="toMainChatRoom()"><strong>backToMainChatRoom</strong></button>
+                </div>
             </div>
         </div>
         <!-- mainContent -->
         <div class="wrapper wrapper-content row">
-            <mainChatRoom></mainChatRoom>
+            <!-- vue动态组件，通过特殊的:is属性指定组件 -->
+            <component :is="chatConList[chatCon]" ref="chatComponentRef"></component>
             <onlineUser></onlineUser>
             
         </div>
@@ -54,22 +58,40 @@ export default
     import headerMenu from '@/components/headerMenu.vue'
     import onlineUser from '@/components/onlineUser.vue'
     import mainChatRoom from "@/components/mainChatRoom.vue";
-    import test from "@/components/test.vue";
+    import privateChatRoom from "@/components/privateChatRoom.vue";
     import rightBottomWindow from '@/components/rightBottomWindow.vue';
-    import { ref,onMounted } from 'vue';
+    import { ref,onMounted,type ComponentOptions,type Ref, provide } from 'vue';
+    import {type ComponentsMap} from '@/types'
     let rbw=ref();
-    // onMounted(()=>{
-    //     console.log(rbw.value);
-    //     rbw.value.startAnimation()
-    //     // startAnimation
-    // })
     function testAnimate(){
         rbw.value.startAnimation()
     }
+    let chatCon=ref('mainChatRoom')
+    let chatConList:ComponentsMap={
+        "mainChatRoom":mainChatRoom,
+        "privateChatRoom":privateChatRoom,
+    }
+    function test(){
+        console.log("@@@@")
+        chatCon.value='privateChatRoom'
+    }
+
+    //setup阶段，chatComponentRef=ref()还没有被赋值，在onMounted生命周期中才可获取值
+    let chatComponentRef=ref();
+    onMounted(()=>{
+        // chatComponentRef.value确实获得了mainCharRoom的组件实例，但只能访问组件defineExpose的内容
+        // console.log("chatComponent name",chatComponentRef.value)
+        
+    })
+
+    function toPrivateChatRoom(){
+        chatCon.value="privateChatRoom";
+    }
+    function toMainChatRoom(){
+        chatCon.value="mainChatRoom";
+    }
+    provide("changeChatRoom",{toMainChatRoom,toPrivateChatRoom})
     
-
-
-
 
 
 </script>
