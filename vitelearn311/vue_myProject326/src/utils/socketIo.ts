@@ -25,9 +25,9 @@ export function socketInstance(id:string,userName:string, password:string):Socke
     // console.log("@@@socketIOPort:",socketIoPort)
     socket = io("ws://"+serverIP+":8271", {
         // path:"/",
-        // auth:{
-        //     token: JSON.parse( sessionStorage.getItem("token") as string) as String || ""
-        // },
+        auth:{
+            Authorization : sessionStorage.getItem("Authorization") as string || ""
+        },
         transports: ['websocket'],//默认是HTTP轮训，设置这个就是为ws
         upgrade: false,//关闭自动升级ws，开启的话监听的通过消息会收不到
         query: { //通过参数的形式传参
@@ -46,9 +46,9 @@ export function useSocket():Socket{
         let user=JSON.parse(sessionStorage.getItem("userInfo") as string) as UserInter
         socket = io("ws://"+serverIP+":8271", {
             // path:"/",
-            // auth:{
-            //     token: JSON.parse( sessionStorage.getItem("token") as string) as String || ""
-            // },
+            auth:{
+                Authorization :  sessionStorage.getItem("Authorization") as string || ""
+            },
             transports: ['websocket'],//默认是HTTP轮训，设置这个就是为ws
             upgrade: false,//关闭自动升级ws，开启的话监听的通过消息会收不到
             query: { //通过参数的形式传参

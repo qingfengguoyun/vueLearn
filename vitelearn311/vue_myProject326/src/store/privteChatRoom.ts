@@ -1,7 +1,8 @@
 
 import {defineStore} from 'pinia'
 import { type UserInter } from '@/types/UserType'
-import type { UserVo } from '@/types'
+import type { UserVo,MessageVo } from '@/types'
+import { watch } from 'vue';
 
 export let usePrivateChatRoom=defineStore("usePrivateChatRoom",{
     
@@ -10,12 +11,13 @@ export let usePrivateChatRoom=defineStore("usePrivateChatRoom",{
         setConnectUser(param:UserVo){
             this.connectUser.id=param.userId;
             this.connectUser.userName=param.userName;
-        }
+        },
     },
     state() {
         return{
-           connectUser:{} as UserInter
+           connectUser:{} as UserInter,
+           messageVoList:[] as MessageVo[]
         }
     },
-
+    
 })

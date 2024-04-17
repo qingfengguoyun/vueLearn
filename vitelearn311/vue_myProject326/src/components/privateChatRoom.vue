@@ -11,13 +11,13 @@
                 <textarea class="form-control" style="height: auto;" placeholder="Message" v-model="inputMessage"></textarea>
             </div>
             <div class="text-right">
-                <button  class="btn btn-sm btn-primary m-t-n-xs" @click="sendMessage">
+                <button  class="btn btn-sm btn-primary m-t-n-xs" @click="sendPrivateMessage()">
                     <strong>Send message</strong></button>
             </div>
             
         </div>
         <div>
-            <div class="chat-activity-list" v-for="message in messages" :key="message.id">
+            <div class="chat-activity-list" v-for="message in messages" :key="message.messageId">
                 <message  :receivedMessage="message"></message>               
             </div>
         </div>
@@ -36,15 +36,16 @@ import { watch, ref, reactive, type Ref, onMounted } from "vue";
 import { useSocket } from "@/utils/socketIo";
 import message from "@/components/message.vue";
 // import messageRight from "@/components/messageRight.vue";
-import { type MessageVo } from "@/types";
+import type { MessageVo,MessagePojo } from "@/types";
 import { getUserId} from "@/utils/commonUtils";
-import { useMainChatRoom } from "@/store/mainChatRoom";
 import { usePrivateChatRoom } from "@/store/privteChatRoom";
+import { postRequest } from "@/utils/axiosUtils";
 
-let socket = useSocket()
-let messages: Ref<MessageVo[]> = ref([])
-let inputMessage = ref("")
 let privateChat=usePrivateChatRoom()
+let socket = useSocket()
+let messages: Ref<MessageVo[]> = ref(privateChat.messageVoList)
+let inputMessage = ref("")
+
 
 watch(messages, () => {
     if (messages.value.length > 5) {
@@ -63,13 +64,22 @@ socket.on("receive_message", (data: string) => {
     // console.log(showMessage)
 })
 
-function sendMessage() {
+async function sendPrivateMessage() {
     console.log("send private message")
-    let pojo={
-        sendUserId:getUserId(),
-        content:inputMessage.value
+    let pojo:MessagePojo={
+        sendUserId:getUserId() ,
+        content:inputMessage.value,
+        receiveUserId: privateChat.connectUser.id,
+        isBroadcast:false
     }
-    socket.emit("send_message", pojo)
+    let res=await postRequest("/api/message/sendPrivateMessage",pojo)
+    if(res.data.code==200){
+        console.log("receive message",res.data.data)
+        let mes:MessageVo=res.data.data as MessageVo
+        messages.value.unshift(mes);
+
+    }
+    // socket.emit("send_message", pojo)
 }
 onMounted(async ()=>{
     console.log("privateChatroom onMounted")

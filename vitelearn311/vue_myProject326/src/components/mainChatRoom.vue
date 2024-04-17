@@ -14,7 +14,7 @@
             
         </div>
         <div>
-            <div class="chat-activity-list" v-for="message in messages" :key="message.id">
+            <div class="chat-activity-list" v-for="message in messages" :key="message.messageId">
                 <message  :receivedMessage="message"></message>               
             </div>
         </div>
@@ -40,7 +40,7 @@ import { useMainChatRoom } from "@/store/mainChatRoom";
 
 let socket = useSocket()
 let mainChatRoom =useMainChatRoom();
-let messages: Ref<MessageVo[]> = ref([])
+let messages: Ref<MessageVo[]> = ref(mainChatRoom.messageVoList)
 let inputMessage = ref("")
 
 watch(messages, () => {
@@ -54,6 +54,7 @@ socket.on("receive_message", (data: string) => {
     let mes = JSON.parse(data) as MessageVo
     console.log("qqqq", mes)
     messages.value.unshift(mes)
+    console.log("messages",messages.value)
 })
 
 function sendMessage() {

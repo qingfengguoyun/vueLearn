@@ -16,10 +16,22 @@ interface Message{
 
 }
 
+export interface MessagePojo{
+    sendUserId?:String;
+
+    content?:String;
+
+    replyMessageId?:String;
+
+    receiveUserId?:String;
+
+    isBroadcast?:Boolean;
+}
+
 export interface MessageVo{
     sendUser:User
     receiveUser?:User
-    id:string
+    messageId:string
     messageContent:string
     date:Date
 }

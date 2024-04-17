@@ -57,7 +57,7 @@ export default
             if(res.headers){
                 let token = (res.headers as any).get("authorization")
                 console.log("authorization",token)
-                sessionStorage.setItem("Authorization",JSON.stringify(token))
+                sessionStorage.setItem("Authorization",token)
             }           
             socket=socketInstance(user.id as string,user.userName as string,user.password as string)
             router.push({
