@@ -53,12 +53,14 @@ watch(messages, () => {
     }
 }, { deep: true })
 
-socket.on("receive_message", (data: string) => {
-    console.log("收到消息" + data)
+socket.on("receive_private_message", (data: string) => {
+    console.log("private_message收到消息" + data)
     // vueMessage += (message + "\n");
     let mes = JSON.parse(data) as MessageVo
     console.log("qqqq", mes)
-    messages.value.unshift(mes)
+    if(mes.sendUser.userId==privateChat.connectUser.id){
+        messages.value.unshift(mes)
+    }
     // console.log(messages.length)
     // showMessage.value=messages.value.join("\n");
     // console.log(showMessage)
@@ -70,7 +72,7 @@ async function sendPrivateMessage() {
         sendUserId:getUserId() ,
         content:inputMessage.value,
         receiveUserId: privateChat.connectUser.id,
-        isBroadcast:false
+        isBroadcast: false
     }
     let res=await postRequest("/api/message/sendPrivateMessage",pojo)
     if(res.data.code==200){
