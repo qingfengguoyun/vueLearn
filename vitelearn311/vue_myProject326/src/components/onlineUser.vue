@@ -10,7 +10,7 @@
         </div>
         <div class="clients-list">
             <ul class="nav nav-tabs">
-                <li><a class="nav-link active" data-toggle="tab" ><i class="fa fa-user"></i>
+                <li><a class="nav-link active" data-toggle="tab"><i class="fa fa-user"></i>
                         全部用户</a></li>
             </ul>
             <div class="tab-content">
@@ -29,11 +29,11 @@
                                                 <span class="label label-primary"
                                                     v-if="userVo.isOnline == true">Active</span>
                                             </td>
-                                            <td >
-                                                <span class="label label-primary" @click="toPrivateChat(userVo)"
-                                                    >Connect</span>
+                                            <td>
+                                                <span class="label label-primary"
+                                                    @click="toPrivateChat(userVo)">Connect</span>
                                             </td>
-                                            <td >
+                                            <td>
                                                 <button type="button" class="btn btn-info m-r-sm">20</button>
                                             </td>
                                         </tr>
@@ -89,9 +89,9 @@ import { useSocket } from '@/utils/socketIo';
 import type { UserVo } from '@/types';
 import { usePrivateChatRoom } from '@/store/privteChatRoom';
 
-let {toMainChatRoom,toPrivateChatRoom}=inject("changeChatRoom",{toMainChatRoom:()=>{},toPrivateChatRoom:()=>{}})
+let { toMainChatRoom, toPrivateChatRoom } = inject("changeChatRoom", { toMainChatRoom: () => { }, toPrivateChatRoom: () => { } })
 let onlineUser = useOnlineUser()
-let privateChat=usePrivateChatRoom()
+let privateChat = usePrivateChatRoom()
 let socket = useSocket()
 
 socket.on("user_online", (data: string) => {
@@ -115,11 +115,13 @@ socket.on("user_offline", (data: string) => {
     }
 })
 
-function toPrivateChat(param:UserVo){
-   privateChat.setConnectUser(param);
-    toPrivateChatRoom();
+function toPrivateChat(param: UserVo) {
+    privateChat.setConnectUser(param);
+    privateChat.getMessageVoList({ connectUserId: privateChat.connectUser.id }).then(()=>{
+        toPrivateChatRoom();
+    })
 }
-onMounted(()=>{
+onMounted(() => {
     console.log("down")
     onlineUser.getAllUserInfo()
 })

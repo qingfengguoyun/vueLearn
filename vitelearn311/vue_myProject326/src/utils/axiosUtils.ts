@@ -1,8 +1,10 @@
 import axios ,{type AxiosResponse} from 'axios';
 import { requestPrefix } from './commonUtils';
 
+
+
 //封装axios的post方法，主要自动用来添加token
-export async function postRequest(url:string,params:any):Promise<AxiosResponse> {
+export async function postRequest<T>(url:string,params:any):Promise<AxiosResponse<T>> {
 
     let token=sessionStorage.getItem('Authorization') as String || ""
     try {
@@ -23,7 +25,7 @@ export async function postRequest(url:string,params:any):Promise<AxiosResponse> 
 
 
 //封装axios的get方法，主要自动用来添加token
-export async function getRequest(url: string, params?: any): Promise<AxiosResponse<any, any>> {
+export async function getRequest<T>(url: string, params?: any): Promise<AxiosResponse<T, any>> {
     try {
         // 从sessionStorage中获取token
         const token = sessionStorage.getItem('Authorization');

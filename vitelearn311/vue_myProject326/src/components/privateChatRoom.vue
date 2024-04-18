@@ -32,18 +32,20 @@ export default
 }
 </script>
 <script lang='ts' setup>
-import { watch, ref, reactive, type Ref, onMounted } from "vue";
+import { watch, ref, type Ref, onMounted } from "vue";
 import { useSocket } from "@/utils/socketIo";
 import message from "@/components/message.vue";
 // import messageRight from "@/components/messageRight.vue";
 import type { MessageVo,MessagePojo } from "@/types";
 import { getUserId} from "@/utils/commonUtils";
 import { usePrivateChatRoom } from "@/store/privteChatRoom";
+import { storeToRefs } from "pinia";
 import { postRequest } from "@/utils/axiosUtils";
 
 let privateChat=usePrivateChatRoom()
+let {messageVoList,connectUser} =storeToRefs(privateChat)
 let socket = useSocket()
-let messages: Ref<MessageVo[]> = ref(privateChat.messageVoList)
+let messages: Ref<MessageVo[]> = messageVoList
 let inputMessage = ref("")
 
 
@@ -57,13 +59,9 @@ socket.on("receive_private_message", (data: string) => {
     console.log("private_message收到消息" + data)
     // vueMessage += (message + "\n");
     let mes = JSON.parse(data) as MessageVo
-    console.log("qqqq", mes)
     if(mes.sendUser.userId==privateChat.connectUser.id){
         messages.value.unshift(mes)
     }
-    // console.log(messages.length)
-    // showMessage.value=messages.value.join("\n");
-    // console.log(showMessage)
 })
 
 async function sendPrivateMessage() {
@@ -74,17 +72,14 @@ async function sendPrivateMessage() {
         receiveUserId: privateChat.connectUser.id,
         isBroadcast: false
     }
-    let res=await postRequest("/api/message/sendPrivateMessage",pojo)
-    if(res.data.code==200){
-        console.log("receive message",res.data.data)
-        let mes:MessageVo=res.data.data as MessageVo
-        messages.value.unshift(mes);
-
-    }
+    privateChat.sendPrivateMessage(pojo);
     // socket.emit("send_message", pojo)
 }
 onMounted(async ()=>{
     console.log("privateChatroom onMounted")
+    // await privateChat.getMessageVoList({connectUserId:privateChat.connectUser.id})
+    // messages=ref(privateChat.messageVoList)
+    // console.log("messages",messages.value)
     // await mainChatRoom.getMessageVo();
     // messages.value=mainChatRoom.messageVoList
 })

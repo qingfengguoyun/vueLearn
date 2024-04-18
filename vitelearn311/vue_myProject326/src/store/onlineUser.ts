@@ -19,7 +19,7 @@ export const useOnlineUser=defineStore("onlineUser",{
     actions:{
         async getAllUserInfo(){
             // let res= await axios.post(requestPrefix+"/api/user/queryAllUserStatus"||"http://localhost:8200/api/user/queryAllUserStatus")
-            let res= await postRequest("/api/user/queryAllUserStatus",{})
+            let res= await postRequest<any>("/api/user/queryAllUserStatus",{})
             if(res.data.code===200){
                 console.log("resdata:",res.data.data)
                 this.userList=res.data.data
