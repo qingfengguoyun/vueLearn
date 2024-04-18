@@ -17,7 +17,7 @@
             
         </div>
         <div>
-            <div class="chat-activity-list" v-for="message in messages" :key="message.messageId">
+            <div class="chat-activity-list" v-for="message in messageVoList" :key="message.messageId">
                 <message  :receivedMessage="message"></message>               
             </div>
         </div>
@@ -45,13 +45,13 @@ import { postRequest } from "@/utils/axiosUtils";
 let privateChat=usePrivateChatRoom()
 let {messageVoList,connectUser} =storeToRefs(privateChat)
 let socket = useSocket()
-let messages: Ref<MessageVo[]> = messageVoList
+// let messages: Ref<MessageVo[]> = messageVoList
 let inputMessage = ref("")
 
 
-watch(messages, () => {
-    if (messages.value.length > 5) {
-        messages.value.pop();
+watch(messageVoList, () => {
+    if (messageVoList.value.length > 5) {
+        messageVoList.value.pop();
     }
 }, { deep: true })
 
@@ -59,8 +59,9 @@ socket.on("receive_private_message", (data: string) => {
     console.log("private_message收到消息" + data)
     // vueMessage += (message + "\n");
     let mes = JSON.parse(data) as MessageVo
-    if(mes.sendUser.userId==privateChat.connectUser.id){
-        messages.value.unshift(mes)
+ 
+    if(mes.sendUser.id==privateChat.connectUser.id){
+        messageVoList.value.unshift(mes)
     }
 })
 
@@ -73,6 +74,7 @@ async function sendPrivateMessage() {
         isBroadcast: false
     }
     privateChat.sendPrivateMessage(pojo);
+    inputMessage.value=""
     // socket.emit("send_message", pojo)
 }
 onMounted(async ()=>{

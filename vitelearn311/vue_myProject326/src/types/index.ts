@@ -1,8 +1,9 @@
 import { type DefineComponent } from "vue"
 
 interface User{
-    userId?:string
+    id?:string
     userName?:string
+    password?:string
 }
 
 export interface UserVo{
