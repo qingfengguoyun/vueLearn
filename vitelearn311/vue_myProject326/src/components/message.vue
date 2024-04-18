@@ -7,7 +7,7 @@
         </a>
         <div class="media-body " >
             <small class="float-right text-navy ">1m ago</small>
-            <strong class="h5">用户：{{ message.sendUser.userName }} 用户Id：{{ message.sendUser.userId }}</strong>
+            <strong class="h5">用户：{{ message.sendUser.userName }} 用户Id：{{ message.sendUser.id }}</strong>
             <p class="m-b-xs h6 p-xs">
                 {{ message.messageContent }}
             </p>
