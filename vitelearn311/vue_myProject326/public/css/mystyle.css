@@ -1,0 +1,10 @@
+.chat-list{
+    /* background: #ffffff; */
+    padding: 15px;
+    height: 600px;
+    overflow-y: auto;
+}
+
+.font-message{
+    font-size: 1.5rem;
+}

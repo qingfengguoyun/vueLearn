@@ -9,7 +9,7 @@ export let useMainChatRoom=defineStore("mainChatRoom",{
     actions:{
         async getMessageVo(){
             // let res=await axios.post(requestPrefix+"/api/message/getMessages");           
-            let res=await getRequest("/api/message/queryLatestMessages",{num:5});
+            let res=await getRequest("/api/message/queryLatestMessages",{num:8});
             let r=res.data as ResultInter
             console.log("res.data",r)
             if(r.code===200){

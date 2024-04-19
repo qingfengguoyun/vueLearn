@@ -16,7 +16,7 @@
             </div>
             
         </div>
-        <div>
+        <div class="chat-discussion chat-list">
             <div class="chat-activity-list" v-for="message in messageVoList" :key="message.messageId">
                 <message  :receivedMessage="message"></message>               
             </div>
@@ -50,7 +50,7 @@ let inputMessage = ref("")
 
 
 watch(messageVoList, () => {
-    if (messageVoList.value.length > 5) {
+    if (messageVoList.value.length > 10) {
         messageVoList.value.pop();
     }
 }, { deep: true })

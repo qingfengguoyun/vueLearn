@@ -26,12 +26,13 @@
                                             <td>{{ userVo.userName }}
                                             </td>
                                             <td class="client-status">
-                                                <span class="label label-primary"
+                                                <span class="label label-primary" style="height: auto;"
                                                     v-if="userVo.isOnline == true">Active</span>
                                             </td>
                                             <td>
-                                                <span class="label label-primary"
-                                                    @click="toPrivateChat(userVo)">Connect</span>
+                                                <button type="button" class="btn btn-primary" style="height: auto;" v-if="userVo.userId!=getUserId()"
+                                                    @click="toPrivateChat(userVo)">Connect
+                                            </button>
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-info m-r-sm">20</button>
@@ -88,6 +89,7 @@ import { getImage } from '@/utils/commonUtils';
 import { useSocket } from '@/utils/socketIo';
 import type { UserVo } from '@/types';
 import { usePrivateChatRoom } from '@/store/privteChatRoom';
+import { getUserId } from '@/utils/commonUtils';
 
 let { toMainChatRoom, toPrivateChatRoom } = inject("changeChatRoom", { toMainChatRoom: () => { }, toPrivateChatRoom: () => { } })
 let onlineUser = useOnlineUser()

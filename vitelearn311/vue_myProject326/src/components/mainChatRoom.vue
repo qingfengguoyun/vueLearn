@@ -1,5 +1,5 @@
 <template>
-    <div class="ibox-content" style="width: calc(100% - 400px);">
+    <div class="ibox-content" style="width: calc(100% - 400px); ">
         <div>
             <h2> This is MainChatRoom</h2>
         </div>
@@ -13,10 +13,11 @@
             </div>
             
         </div>
-        <div>
-            <div class="chat-activity-list" v-for="message in messages" :key="message.messageId">
-                <message  :receivedMessage="message"></message>               
+        <div class="chat-discussion chat-list">
+            <div class="chat-activity-list" v-for="message in messages" :key="message.messageId" >
+                <message  :receivedMessage="message"></message>                     
             </div>
+            <div class="slimScrollBar" style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px;  height: 166px;"></div>         
         </div>
 
     </div>
@@ -44,7 +45,7 @@ let messages: Ref<MessageVo[]> = ref(mainChatRoom.messageVoList)
 let inputMessage = ref("")
 
 watch(messages, () => {
-    if (messages.value.length > 5) {
+    if (messages.value.length > 10) {
         messages.value.pop();
     }
 }, { deep: true })
