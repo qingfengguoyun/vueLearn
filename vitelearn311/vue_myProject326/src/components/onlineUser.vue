@@ -13,6 +13,7 @@
                 <li><a class="nav-link active" data-toggle="tab"><i class="fa fa-user"></i>
                         全部用户</a></li>
             </ul>
+            {{ unReadMessageMap }}
             <div class="tab-content">
                 <div id="tab-1" class="tab-pane active">
                     <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;">
@@ -30,12 +31,17 @@
                                                     v-if="userVo.isOnline == true">Active</span>
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-primary" style="height: auto;" v-if="userVo.userId!=getUserId()"
+                                                <button type="button" class="btn btn-primary" style="height: auto;"
+                                                    v-if="userVo.userId != getUserId()"
                                                     @click="toPrivateChat(userVo)">Connect
-                                            </button>
+                                                </button>
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-info m-r-sm">20</button>
+                                                <span class="label label-warning"
+                                                    v-if="unReadMessageMap.has(userVo.userId as string)">
+                                                    {{ unReadMessageMap.get(userVo.userId as string)?.unReadMessageCount
+                                                    }}
+                                                </span>
                                             </td>
                                         </tr>
 
@@ -64,38 +70,28 @@ export default
     }
 </script>
 <script lang='ts' setup>
-// let userList = [
-//     {
-//         id: 1,
-//         userName: "qwe",
-//         password: "123"
-//     },
-//     {
-//         id: 2,
-//         userName: "asd",
-//         password: "123"
-//     },
-//     {
-//         id: 3,
-//         userName: "zxc",
-//         password: "123"
-//     },
-// ]
 
-import { ref, type Ref, onMounted, inject } from 'vue';
+import { ref, type Ref, onMounted, inject, reactive } from 'vue';
 
 import { useOnlineUser } from '@/store/onlineUser';
 import { getImage } from '@/utils/commonUtils';
 import { useSocket } from '@/utils/socketIo';
-import type { UserVo } from '@/types';
+import type { UserVo, MessageVo, UnReadMessageCount } from '@/types';
 import { usePrivateChatRoom } from '@/store/privteChatRoom';
 import { getUserId } from '@/utils/commonUtils';
+import { storeToRefs } from 'pinia'
+import { useCommonStore } from '@/store/commonStore';
 
-let { toMainChatRoom, toPrivateChatRoom } = inject("changeChatRoom", { toMainChatRoom: () => { }, toPrivateChatRoom: () => { } })
+// let { toMainChatRoom, toPrivateChatRoom } = inject("changeChatRoom", { toMainChatRoom: () => { }, toPrivateChatRoom: () => { } })
+
+let commonStore = useCommonStore();
+let toMainChatRoom = commonStore.toMainChatRoom;
+let toPrivateChatRoom = commonStore.toPrivateChatRoom;
 let onlineUser = useOnlineUser()
 let privateChat = usePrivateChatRoom()
 let socket = useSocket()
 
+let unReadMessageMap = ref(new Map<String, UnReadMessageCount>());
 socket.on("user_online", (data: string) => {
     console.log("topic:userOnline" + data)
     // vueMessage += (message + "\n");
@@ -119,13 +115,41 @@ socket.on("user_offline", (data: string) => {
 
 function toPrivateChat(param: UserVo) {
     privateChat.setConnectUser(param);
-    privateChat.getMessageVoList({ connectUserId: privateChat.connectUser.id }).then(()=>{
+    privateChat.getMessageVoList({ connectUserId: privateChat.connectUser.id }).then(() => {
         toPrivateChatRoom();
     })
 }
-onMounted(() => {
+
+socket.on("receive_private_message", (data: string) => {
+    console.log("onlineUser收到私发消息" + data)
+    // vueMessage += (message + "\n");
+    let mes = JSON.parse(data) as MessageVo
+    let userId = mes.sendUser.id as string
+    //如果接到的消息的发送者不为自身
+    if (mes.sendUser.id != getUserId()) {
+        if (unReadMessageMap.value.has(userId)) {
+            let count = unReadMessageMap.value.get(userId)?.unReadMessageCount as number;
+            (unReadMessageMap.value.get(userId) as UnReadMessageCount).unReadMessageCount = count + 1;
+        } else {
+            let obj: UnReadMessageCount = {};
+            obj.id = userId;
+            obj.unReadMessageCount = 1;
+            obj.userName = mes.sendUser.userName
+            unReadMessageMap.value.set(userId, obj)
+        }
+    }
+
+
+})
+
+onMounted(async () => {
     console.log("down")
-    onlineUser.getAllUserInfo()
+
+    await onlineUser.getAllUserInfo()
+    await onlineUser.getUnReadMessageCount().then(() => {
+        unReadMessageMap.value = onlineUser.unReadMessageCount;
+    })
+
 })
 
 </script>

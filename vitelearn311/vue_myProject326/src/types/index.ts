@@ -38,5 +38,11 @@ export interface MessageVo{
 }
 
 export interface ComponentsMap {
-    [key: string]: any;
+    [key: string ]: any;
+}
+
+export interface UnReadMessageCount{
+    id?:string,
+    unReadMessageCount?:number,
+    userName?:string
 }

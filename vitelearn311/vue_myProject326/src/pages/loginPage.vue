@@ -27,11 +27,7 @@ export default
     let router=useRouter();
 
 
-    let user:UserInter=reactive({
-        id:"-1",
-        userName:"",
-        password:""
-    })
+    let user:UserInter={}
 
     
     const baseIP = import.meta.env.BASE_IP;
@@ -47,10 +43,6 @@ export default
         // console.log(res2)
         if(res.data.code===200){
             console.log("res:",res.data.data)
-            // let {id,userName,password}=res.data.data
-            // user.userName=userName;
-            // user.password=password;
-            // user.id=id.toString();
             user=res.data.data
             console.log("用户",user.userName,"登录成功")
             sessionStorage.setItem("userInfo",JSON.stringify(user))
@@ -58,8 +50,11 @@ export default
                 let token = (res.headers as any).get("authorization")
                 console.log("authorization",token)
                 sessionStorage.setItem("Authorization",token)
-            }           
+            }
+            //初始化socket
             socket=socketInstance(user.id as string,user.userName as string,user.password as string)
+            //初始化chatCon
+            // sessionStorage.setItem('chatCom','mainChatRoom')
             router.push({
                 name:"FrontPage",
             })

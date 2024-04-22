@@ -23,12 +23,15 @@
                 <div class="title-action">
                     <button type="button" class="btn btn-w-m btn-primary" @click="toMainChatRoom()"><strong>backToMainChatRoom</strong></button>
                 </div>
+                <div>
+                    {{ chatCom}}
+                </div>
             </div>
         </div>
         <!-- mainContent -->
         <div class="wrapper wrapper-content row">
             <!-- vue动态组件，通过特殊的:is属性指定组件 -->
-            <component :is="chatConList[chatCon]" ref="chatComponentRef"></component>
+            <component :is="chatConList[chatCom]" ref="chatComponentRef"></component>
             <onlineUser></onlineUser>
             
         </div>
@@ -62,18 +65,24 @@ export default
     import rightBottomWindow from '@/components/rightBottomWindow.vue';
     import { ref,onMounted,type ComponentOptions,type Ref, provide } from 'vue';
     import {type ComponentsMap} from '@/types'
+    import { useCommonStore } from '@/store/commonStore';
+    import { storeToRefs } from 'pinia';
+
+
+    let commonStore=useCommonStore();
     let rbw=ref();
     function testAnimate(){
         rbw.value.startAnimation()
     }
-    let chatCon=ref('mainChatRoom')
+    // 这两种写法都无法使chatCon变为响应式数据，暂不清楚第二种方式失败的原因
+    // 只有storeToRefs()方法成功
+    // let chatCon=commonStore.chatCon
+    // let chatCon=ref(commonStore.chatCon)
+    let {chatCom} =storeToRefs(commonStore);
+    //用于记录动态组件为哪个组件的map
     let chatConList:ComponentsMap={
         "mainChatRoom":mainChatRoom,
         "privateChatRoom":privateChatRoom,
-    }
-    function test(){
-        console.log("@@@@")
-        chatCon.value='privateChatRoom'
     }
 
     //setup阶段，chatComponentRef=ref()还没有被赋值，在onMounted生命周期中才可获取值
@@ -83,14 +92,17 @@ export default
         // console.log("chatComponent name",chatComponentRef.value)
         
     })
+    let toPrivateChatRoom=commonStore.toPrivateChatRoom;
+    let toMainChatRoom=commonStore.toMainChatRoom;
 
-    function toPrivateChatRoom(){
-        chatCon.value="privateChatRoom";
-    }
-    function toMainChatRoom(){
-        chatCon.value="mainChatRoom";
-    }
-    provide("changeChatRoom",{toMainChatRoom,toPrivateChatRoom})
+
+    // function toPrivateChatRoom(){
+    //     chatCon.value="privateChatRoom";
+    // }
+    // function toMainChatRoom(){
+    //     chatCon.value="mainChatRoom";
+    // }
+    // provide("changeChatRoom",{toMainChatRoom,toPrivateChatRoom})
     
 
 
