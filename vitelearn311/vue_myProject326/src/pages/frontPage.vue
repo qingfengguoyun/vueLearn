@@ -93,7 +93,7 @@ export default
         
     })
     let toPrivateChatRoom=commonStore.toPrivateChatRoom;
-    let toMainChatRoom=commonStore.toMainChatRoom;
+    let toMainChatRoom=commonStore.toMainChatRoom; 
 
 
     // function toPrivateChatRoom(){
