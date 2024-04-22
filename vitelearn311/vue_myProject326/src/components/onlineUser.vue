@@ -39,8 +39,7 @@
                                             <td>
                                                 <span class="label label-warning"
                                                     v-if="unReadMessageMap.has(userVo.userId as string)">
-                                                    {{ unReadMessageMap.get(userVo.userId as string)?.unReadMessageCount
-                                                    }}
+                                                    {{ unReadMessageMap.get(userVo.userId as string)?.unReadMessageCount}}
                                                 </span>
                                             </td>
                                         </tr>
