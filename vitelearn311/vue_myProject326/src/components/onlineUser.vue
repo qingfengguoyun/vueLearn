@@ -13,7 +13,6 @@
                 <li><a class="nav-link active" data-toggle="tab"><i class="fa fa-user"></i>
                         全部用户</a></li>
             </ul>
-            {{ unReadMessageMap }}
             <div class="tab-content">
                 <div id="tab-1" class="tab-pane active">
                     <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;">
@@ -39,7 +38,8 @@
                                             <td>
                                                 <span class="label label-warning"
                                                     v-if="unReadMessageMap.has(userVo.userId as string)">
-                                                    {{ unReadMessageMap.get(userVo.userId as string)?.unReadMessageCount}}
+                                                    {{ unReadMessageMap.get(userVo.userId as
+                                                    string)?.unReadMessageCount}}
                                                 </span>
                                             </td>
                                         </tr>
@@ -89,8 +89,8 @@ let toPrivateChatRoom = commonStore.toPrivateChatRoom;
 let onlineUser = useOnlineUser()
 let privateChat = usePrivateChatRoom()
 let socket = useSocket()
-
 let unReadMessageMap = ref(new Map<String, UnReadMessageCount>());
+
 socket.on("user_online", (data: string) => {
     console.log("topic:userOnline" + data)
     // vueMessage += (message + "\n");
@@ -114,9 +114,12 @@ socket.on("user_offline", (data: string) => {
 
 function toPrivateChat(param: UserVo) {
     privateChat.setConnectUser(param);
-    privateChat.getMessageVoList({ connectUserId: privateChat.connectUser.id }).then(() => {
+    //在用户界面直接更新privateCharRoomStore的消息，虽然不太合理（因为privateChatRoom组件初始化时会重新查一遍，但切换私聊对象时不会触发组件的初始化）
+    privateChat.getMessageVoList({"connectUserId":param.userId}).then(()=>{
         toPrivateChatRoom();
     })
+    //移除与connectUser的未读消息
+    onlineUser.unReadMessageCount.delete(param.userId as String)    
 }
 
 socket.on("receive_private_message", (data: string) => {
@@ -126,19 +129,26 @@ socket.on("receive_private_message", (data: string) => {
     let userId = mes.sendUser.id as string
     //如果接到的消息的发送者不为自身
     if (mes.sendUser.id != getUserId()) {
-        if (unReadMessageMap.value.has(userId)) {
-            let count = unReadMessageMap.value.get(userId)?.unReadMessageCount as number;
-            (unReadMessageMap.value.get(userId) as UnReadMessageCount).unReadMessageCount = count + 1;
+        //若当前界面为私聊且对象为发送者则不执行任何操作
+        let connectUserVo = JSON.parse(sessionStorage.getItem("connectUser") as string) as UserVo
+        let chatCom = sessionStorage.getItem("chatCom") as string
+        console.log("connectUserVo.userId",connectUserVo.userId,"chatCom",chatCom)
+        if (connectUserVo.userId == mes.sendUser.id && chatCom == 'privateChatRoom') {
+
         } else {
-            let obj: UnReadMessageCount = {};
-            obj.id = userId;
-            obj.unReadMessageCount = 1;
-            obj.userName = mes.sendUser.userName
-            unReadMessageMap.value.set(userId, obj)
+            if (unReadMessageMap.value.has(userId)) {
+                let count = unReadMessageMap.value.get(userId)?.unReadMessageCount as number;
+                (unReadMessageMap.value.get(userId) as UnReadMessageCount).unReadMessageCount = count + 1;
+            } else {
+                let obj: UnReadMessageCount = {};
+                obj.id = userId;
+                obj.unReadMessageCount = 1;
+                obj.userName = mes.sendUser.userName
+                unReadMessageMap.value.set(userId, obj)
+            }
         }
+
     }
-
-
 })
 
 onMounted(async () => {

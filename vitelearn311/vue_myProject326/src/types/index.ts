@@ -35,6 +35,7 @@ export interface MessageVo{
     messageId:string
     messageContent:string
     date:Date
+    isUnRead:Boolean 
 }
 
 export interface ComponentsMap {

@@ -19,7 +19,7 @@
 
     <div class="chat-message " :class="{left: !isOnlineUser,right :isOnlineUser}">
         <img class="message-avatar" :src="getImage('img/a1.jpg')" alt="">
-        <div class="message" style="font-size: 1.25em;">
+        <div class="message" style="font-size: 1.25em;" ref="mes">
             <a class="message-author" href="#" :style="{'color':isOnlineUser?'black':'','font-weight': isOnlineUser ? 'bold' : ''}"> 
                 {{ message.sendUser.userName }} 
             </a>
@@ -39,24 +39,30 @@ export default
     }
 </script>
 <script lang='ts' setup>
-import { ref, defineProps, type Ref, reactive } from "vue";
+import { ref, defineProps, type Ref, reactive, onMounted } from "vue";
 import { type MessageVo } from "@/types";
 import { type UserInter } from "@/types/UserType";
 import { getImage, getUserId } from "@/utils/commonUtils"
 let props = defineProps({
-    receivedMessage: Object
+    receivedMessage: {} 
 })
-// interface MessageVo {
-//     userId: number,
-//     userName: string,
-//     messageId: number,
-//     messageContent: string
-// }
+
 let message: MessageVo = reactive(props.receivedMessage as MessageVo)
 let isOnlineUser:Ref<boolean> = ref(false)
+let mes:Ref<any>=ref() 
+
 if (message.sendUser.id == getUserId()) {
     isOnlineUser.value = true
 }
+
+// onMounted(()=>{
+//     if((props.receivedMessage as MessageVo).isUnRead==true){
+//     mes.value.classList.add('bounce')
+//     setTimeout(() => {
+//         mes.value.classList.remove('bounce')
+//     }, 2000)
+// }
+// })
 
 
 </script>

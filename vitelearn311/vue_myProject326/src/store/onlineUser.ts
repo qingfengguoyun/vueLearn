@@ -30,10 +30,16 @@ export const useOnlineUser=defineStore("onlineUser",{
             let res=await postRequest<any>("/api/message/queryUnReadMessageCount",{});
             if(res.data.code===200){
                 let array=res.data.data as UnReadMessageCount[]
+                //使用reduce方法将数组对象转化为map，第二个参数为map实例，用于指定key和value的类型
                 this.unReadMessageCount=array.reduce((map,obj)=>{
                     map.set(obj.id as string ,obj);
                     return map;
                 },new Map<String,UnReadMessageCount>)
+            }
+        },
+        clearUnReadMessage(connectUserId:String){
+            if(this.unReadMessageCount.has(connectUserId)){
+                this.unReadMessageCount.delete(connectUserId)
             }
         },
 
