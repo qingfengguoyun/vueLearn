@@ -31,7 +31,7 @@
         <!-- mainContent -->
         <div class="wrapper wrapper-content row">
             <!-- vue动态组件，通过特殊的:is属性指定组件 -->
-            <component :is="chatConList[chatCom]" ref="chatComponentRef"></component>
+            <component :is="chatConList[chatCom] || chatConList[0]" ref="chatComponentRef"></component>
             <onlineUser></onlineUser>
             
         </div>
