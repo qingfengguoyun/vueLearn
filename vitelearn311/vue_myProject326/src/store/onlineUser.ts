@@ -30,7 +30,9 @@ export const useOnlineUser=defineStore("onlineUser",{
             let res=await postRequest<any>("/api/message/queryUnReadMessageCount",{});
             if(res.data.code===200){
                 let array=res.data.data as UnReadMessageCount[]
-                //使用reduce方法将数组对象转化为map，第二个参数为map实例，用于指定key和value的类型
+                //使用reduce方法将数组对象转化为map，第二个参数为map对象的初始化，用于指定key和value的类型
+                // reduce方法((newIns,arrayObj)=>{（逻辑块） return newIns}), newIns初始化对象）
+                // 表示对每一个数组对象执行逻辑块后，转变为一个newIns对象
                 this.unReadMessageCount=array.reduce((map,obj)=>{
                     map.set(obj.id as string ,obj);
                     return map;

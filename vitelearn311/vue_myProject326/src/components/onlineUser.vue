@@ -27,12 +27,12 @@
                                             </td>
                                             <td class="client-status">
                                                 <span class="label label-primary" style="height: auto;"
-                                                    v-if="userVo.isOnline == true">Active</span>
+                                                    v-if="userVo.isOnline == true">在线</span>
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-primary" style="height: auto;"
                                                     v-if="userVo.userId != getUserId()"
-                                                    @click="toPrivateChat(userVo)">Connect
+                                                    @click="toPrivateChat(userVo)">私聊
                                                 </button>
                                             </td>
                                             <td>
@@ -40,6 +40,10 @@
                                                     v-if="unReadMessageMap.has(userVo.userId as string)">
                                                     {{ unReadMessageMap.get(userVo.userId as
                                                     string)?.unReadMessageCount}}
+                                                </span>
+                                                <span class="label label-warning" style="visibility: hidden;"
+                                                    v-if="!unReadMessageMap.has(userVo.userId as string)">
+                                                    
                                                 </span>
                                             </td>
                                         </tr>
@@ -130,8 +134,9 @@ socket.on("receive_private_message", (data: string) => {
     //如果接到的消息的发送者不为自身
     if (mes.sendUser.id != getUserId()) {
         //若当前界面为私聊且对象为发送者则不执行任何操作
-        let connectUserVo = JSON.parse(sessionStorage.getItem("connectUser") as string) as UserVo
-        let chatCom = sessionStorage.getItem("chatCom") as string
+        //初次登录时sessionStorage中，connectUser，chatCom可能为空，需设置默认值
+        let connectUserVo = JSON.parse(sessionStorage.getItem("connectUser") as string) as UserVo || {} as UserVo
+        let chatCom = sessionStorage.getItem("chatCom") as string || 'mainChatRoom'
         console.log("connectUserVo.userId",connectUserVo.userId,"chatCom",chatCom)
         if (connectUserVo.userId == mes.sendUser.id && chatCom == 'privateChatRoom') {
 

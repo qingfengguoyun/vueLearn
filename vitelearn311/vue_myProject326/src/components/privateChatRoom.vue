@@ -1,10 +1,10 @@
 <template>
     <div class="ibox-content" style="width: calc(100% - 400px);">
         <div>
-            <h2> This is PrivateChatRoom</h2>
+            <h2> 单独聊天室</h2>
         </div>
         <div>
-            <h4> Connect with :{{ privateChat.connectUser.userName }}</h4>
+            <h4> 私聊对象 :{{ privateChat.connectUser.userName }}</h4>
         </div>
         <div class="chat-form p-xs border-bottom">
             <div class="form-group">
@@ -13,7 +13,7 @@
             </div>
             <div class="text-right">
                 <button class="btn btn-sm btn-primary m-t-n-xs" @click="sendPrivateMessage()">
-                    <strong>Send message</strong></button>
+                    <strong>发送消息</strong></button>
             </div>
 
         </div>
@@ -38,7 +38,7 @@ import { useSocket } from "@/utils/socketIo";
 import message from "@/components/message.vue";
 // import messageRight from "@/components/messageRight.vue";
 import type { MessageVo, MessagePojo, UserVo } from "@/types";
-import { getUserId } from "@/utils/commonUtils";
+import { arrayDuplicate, getUserId, isArrayHasDuplicates } from "@/utils/commonUtils";
 import { usePrivateChatRoom } from "@/store/privteChatRoom";
 import { storeToRefs } from "pinia";
 import { postRequest } from "@/utils/axiosUtils";
@@ -50,13 +50,17 @@ let privateChat = usePrivateChatRoom()
 let { messageVoList, connectUser } = storeToRefs(privateChat)
 let socket = useSocket()
 let inputMessage = ref("")
-let onlineUser=useOnlineUser();
+let onlineUser = useOnlineUser();
 //私聊对象信息ConnectUserVo 从sessionStorage中获取
-let connectUserVo=JSON.parse(sessionStorage.getItem("connectUser") as string) as UserVo
+let connectUserVo = JSON.parse(sessionStorage.getItem("connectUser") as string) as UserVo
 
 
 
-watch(messageVoList, () => {
+watch(messageVoList, (newIns, oldIns) => {
+    //判断newIns中是否有重复,如果有则去重
+    if (isArrayHasDuplicates(newIns)) {
+        messageVoList.value = arrayDuplicate(newIns);
+    }
     if (messageVoList.value.length > 10) {
         messageVoList.value.pop();
     }
@@ -68,16 +72,16 @@ socket.on("receive_private_message", (data: string) => {
     let mes = JSON.parse(data) as MessageVo
 
     // 如果收到的消息为connectUser发送的，则加入消息显示队列
-    connectUserVo=JSON.parse(sessionStorage.getItem("connectUser") as string) as UserVo
+    connectUserVo = JSON.parse(sessionStorage.getItem("connectUser") as string) as UserVo
     if (mes.sendUser.id == connectUserVo.userId) {
         messageVoList.value.unshift(mes)
-        console.log("@@@@list",messageVoList.value)
+        console.log("@@@@list", messageVoList.value)
     }
 })
 
 async function sendPrivateMessage() {
     console.log("send private message")
-    connectUserVo=JSON.parse(sessionStorage.getItem("connectUser") as string) as UserVo
+    connectUserVo = JSON.parse(sessionStorage.getItem("connectUser") as string) as UserVo
     let pojo: MessagePojo = {
         sendUserId: getUserId(),
         content: inputMessage.value,
@@ -88,16 +92,16 @@ async function sendPrivateMessage() {
     inputMessage.value = ""
     // socket.emit("send_message", pojo)
 }
-onBeforeMount(async()=>{
+onBeforeMount(async () => {
     console.log("privateChatroom onBeforeMount")
     // 刷新后 privateChat.connectUser.id 也被清空，因此只能从sessionStorage中取Userid    
-    if(connectUserVo && connectUserVo.userId!=null){
+    if (connectUserVo && connectUserVo.userId != null) {
         await privateChat.getMessageVoList({ connectUserId: connectUserVo.userId })
-        messageVoList.value=privateChat.messageVoList
+        messageVoList.value = privateChat.messageVoList
     }
     //清除和ConnectUser的未读记录
     onlineUser.unReadMessageCount.delete(connectUserVo.userId as string);
-    
+
 })
 onMounted(async () => {
     console.log("privateChatroom onMounted")
