@@ -66,6 +66,14 @@ watch(messageVoList, (newIns, oldIns) => {
     }
 }, { deep: true })
 
+//可以添加针对connectUser的watch方法
+watch(connectUser,async (newIns,oldIns)=>{
+    console.log("WATCH",newIns,oldIns)
+    console.log("update MessageVoList")
+    await privateChat.getMessageVoList({ connectUserId: newIns.id })
+    messageVoList.value = privateChat.messageVoList
+},{ deep: true })
+
 socket.on("receive_private_message", (data: string) => {
     console.log("private_message收到消息" + data)
     // vueMessage += (message + "\n");

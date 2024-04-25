@@ -117,11 +117,13 @@ socket.on("user_offline", (data: string) => {
 })
 
 function toPrivateChat(param: UserVo) {
+    console.log('paramUSERVO',param)
     privateChat.setConnectUser(param);
-    //在用户界面直接更新privateCharRoomStore的消息，虽然不太合理（因为privateChatRoom组件初始化时会重新查一遍，但切换私聊对象时不会触发组件的初始化）
-    privateChat.getMessageVoList({"connectUserId":param.userId}).then(()=>{
-        toPrivateChatRoom();
-    })
+    toPrivateChatRoom();
+    // //在用户界面直接更新privateCharRoomStore的消息，虽然不太合理（因为privateChatRoom组件初始化时会重新查一遍，但切换私聊对象时不会触发组件的初始化）
+    // privateChat.getMessageVoList({"connectUserId":param.userId}).then(()=>{
+        
+    // })
     //移除与connectUser的未读消息
     onlineUser.unReadMessageCount.delete(param.userId as String)    
 }
