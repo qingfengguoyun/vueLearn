@@ -12,9 +12,9 @@
         </div>
         <ul class="nav navbar-top-links navbar-right">
             <li>
-                <span class="m-r-sm text-muted welcome-message">Welcome {{ user.userName }}</span>
+                <span class="m-r-sm text-muted welcome-message">欢迎 {{ user.userName }}</span>
             </li>
-            <li class="dropdown">
+            <!-- <li class="dropdown">
                 <a class="dropdown-toggle count-info" data-toggle="dropdown" href="empty_page.html#">
                     <i class="fa fa-envelope"></i> <span class="label label-warning">16</span>
                 </a>
@@ -23,12 +23,12 @@
                 <a class="dropdown-toggle count-info" data-toggle="dropdown" href="empty_page.html#">
                     <i class="fa fa-bell"></i> <span class="label label-primary">8</span>
                 </a>
-            </li>
+            </li> -->
 
 
             <li>
-                <a href="login.html">
-                    <i class="fa fa-sign-out"></i> Log out
+                <a href="#" @click="logOut">
+                    <i class="fa fa-sign-out" ></i> 退出登录
                 </a>
             </li>
         </ul>
@@ -48,7 +48,9 @@ import { type UserInter } from '@/types/UserType'
 let user = JSON.parse(sessionStorage.getItem("userInfo") as string) as UserInter || {}
 let router = useRouter();
 
-function signOut() {
+
+function logOut() {
+    console.log("logout")
     router.replace({
         name: "LoginPage"
     })
