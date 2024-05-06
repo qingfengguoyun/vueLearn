@@ -17,26 +17,25 @@
                 </div>
                 <div class="col-md-6">
                     <div class="ibox-content">
-                        <form class="m-t">
-                            <div class="form-group">
-                                <input type="email" class="form-control" placeholder="Username" required="true"
-                                    v-model="user.userName">
-                            </div>
-                            <div class="form-group">
-                                <input type="password" class="form-control" placeholder="Password" required="true"
-                                    v-model="user.password">
-                            </div>
-                            <button class="btn btn-primary block full-width m-b" @click="login">登录</button>
 
-                            <a href="#">
-                                <small>忘记密码</small>
-                            </a>
+                        <div class="form-group">
+                            <input class="form-control" placeholder="Username" required="true" v-model="user.userName">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" placeholder="Password" required="true"
+                                v-model="user.password">
+                        </div>
+                        <button class="btn btn-primary block full-width m-b" @click="login">登录</button>
 
-                            <p class="text-muted text-center">
-                                <small>没有注册？</small>
-                            </p>
-                            <a class="btn btn-sm btn-white btn-block" @click="signUp">前往注册</a>
-                        </form>
+                        <a href="#">
+                            <small>忘记密码</small>
+                        </a>
+
+                        <p class="text-muted text-center">
+                            <small>没有注册？</small>
+                        </p>
+                        <a class="btn btn-sm btn-white btn-block" @click="signUp">前往注册</a>
+
                         <p class="m-t">
                             <small>Inspinia we app framework base on Bootstrap 3 &copy; 2014</small>
                         </p>

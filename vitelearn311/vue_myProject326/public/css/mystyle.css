@@ -8,3 +8,13 @@
 .font-message{
     font-size: 1.5rem;
 }
+
+.chatRoomStyle{
+    width: calc(100% - 400px);
+}
+
+@media screen and (max-width: 768px) {
+    .chatRoomStyle{
+        width: 100%;
+    }
+}

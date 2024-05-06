@@ -1,5 +1,5 @@
 <template>
-    <div class="ibox-content" style="width: calc(100% - 400px); ">
+    <div class="ibox-content chatRoomStyle" >
         <div>
             <h2> 公共聊天室 </h2>
         </div>
@@ -81,4 +81,5 @@ onMounted(async ()=>{
 </script>
 
 <style scoped>
+
 </style>

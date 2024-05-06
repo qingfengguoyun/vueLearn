@@ -22,5 +22,6 @@ declare module 'vue' {
     RightBottomWindow: typeof import('./src/components/rightBottomWindow.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SideBar: typeof import('./src/components/sideBar.vue')['default']
   }
 }

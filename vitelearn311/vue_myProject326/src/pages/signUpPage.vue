@@ -19,7 +19,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="ibox-content">
-                        <form class="m-t">
+
                             <div class="form-group">
                                 <input type="text" class="form-control" placeholder="Name" required="true"
                                     v-model="user.userName">
@@ -41,7 +41,7 @@
 
                             <p class="text-muted text-center"><small>已有账号？</small></p>
                             <a class="btn btn-sm btn-white btn-block" @click="backToLogin">登录</a>
-                        </form>
+
                         <p class="m-t"> <small>Inspinia we app framework base on Bootstrap 3 © 2014</small> </p>
                     </div>
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="ibox-content" style="width: calc(100% - 400px);">
+    <div class="ibox-content chatRoomStyle" >
         <div>
             <h2> 单独聊天室</h2>
         </div>

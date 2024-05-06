@@ -1,5 +1,5 @@
 <template>
-    <div class="ibox-content" style="width: 400px; ">
+    <div class="ibox-content onlineUserStyle" >
         <h2>用户列表</h2>
 
         <div class="input-group">
@@ -39,11 +39,11 @@
                                                 <span class="label label-warning"
                                                     v-if="unReadMessageMap.has(userVo.userId as string)">
                                                     {{ unReadMessageMap.get(userVo.userId as
-                                                    string)?.unReadMessageCount}}
+                                                        string)?.unReadMessageCount }}
                                                 </span>
                                                 <span class="label label-warning" style="visibility: hidden;"
                                                     v-if="!unReadMessageMap.has(userVo.userId as string)">
-                                                    
+
                                                 </span>
                                             </td>
                                         </tr>
@@ -117,15 +117,15 @@ socket.on("user_offline", (data: string) => {
 })
 
 function toPrivateChat(param: UserVo) {
-    console.log('paramUSERVO',param)
+    console.log('paramUSERVO', param)
     privateChat.setConnectUser(param);
     toPrivateChatRoom();
     // //在用户界面直接更新privateCharRoomStore的消息，虽然不太合理（因为privateChatRoom组件初始化时会重新查一遍，但切换私聊对象时不会触发组件的初始化）
     // privateChat.getMessageVoList({"connectUserId":param.userId}).then(()=>{
-        
+
     // })
     //移除与connectUser的未读消息
-    onlineUser.unReadMessageCount.delete(param.userId as String)    
+    onlineUser.unReadMessageCount.delete(param.userId as String)
 }
 
 socket.on("receive_private_message", (data: string) => {
@@ -139,7 +139,7 @@ socket.on("receive_private_message", (data: string) => {
         //初次登录时sessionStorage中，connectUser，chatCom可能为空，需设置默认值
         let connectUserVo = JSON.parse(sessionStorage.getItem("connectUser") as string) as UserVo || {} as UserVo
         let chatCom = sessionStorage.getItem("chatCom") as string || 'mainChatRoom'
-        console.log("connectUserVo.userId",connectUserVo.userId,"chatCom",chatCom)
+        console.log("connectUserVo.userId", connectUserVo.userId, "chatCom", chatCom)
         if (connectUserVo.userId == mes.sendUser.id && chatCom == 'privateChatRoom') {
 
         } else {
@@ -169,4 +169,17 @@ onMounted(async () => {
 })
 
 </script>
-<style scoped></style>
+<style scoped>
+    .onlineUserStyle {
+        width: 400px;
+        display: block;
+    }
+
+    @media screen and (max-width: 768px) {
+        .onlineUserStyle {
+            width: 100%;
+            display: block;
+        }
+    }
+
+</style>
