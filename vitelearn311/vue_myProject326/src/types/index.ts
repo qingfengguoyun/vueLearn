@@ -4,7 +4,7 @@ interface User{
     id?:string
     userName?:string
     password?:string
-    userPhotoId?:string
+    userImageId?:string
 }
 
 export interface UserVo{
@@ -12,7 +12,7 @@ export interface UserVo{
     userName?:string
     isOnline?:boolean
     lastOnlineTime?:Date
-    userPhotoId?:string
+    userImageId?:string
 }
 
 interface Message{
