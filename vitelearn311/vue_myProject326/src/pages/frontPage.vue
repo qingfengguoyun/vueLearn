@@ -31,15 +31,15 @@
                             @click="toMainChatRoom()"><strong>backToMainChatRoom</strong></button>
                     </div>
                     <div>
-                        {{ chatCom }}
+                        {{ mainCom }}
                     </div>
                 </div>
             </div>
             <!-- mainContent -->
             <div class="wrapper wrapper-content row">
                 <!-- vue动态组件，通过特殊的:is属性指定组件 -->
-                <component :is="chatConList[chatCom] || chatConList[0]" ref="chatComponentRef"></component>
-                <onlineUser></onlineUser>
+                <component :is="mainConList[mainCom] || mainConList[0]" ref="chatComponentRef"></component>
+                <onlineUser v-if="commonStore.showOnlineUser"></onlineUser>
 
             </div>
             <!-- footer -->
@@ -72,6 +72,7 @@ import headerMenu from '@/components/headerMenu.vue'
 import onlineUser from '@/components/onlineUser.vue'
 import mainChatRoom from "@/components/mainChatRoom.vue";
 import privateChatRoom from "@/components/privateChatRoom.vue";
+import gallary from '@/components/gallary.vue';
 import rightBottomWindow from '@/components/rightBottomWindow.vue';
 import sideBar from '@/components/sideBar.vue';
 import { ref, onMounted, type ComponentOptions, type Ref, provide } from 'vue';
@@ -89,11 +90,12 @@ function testAnimate() {
 // 只有storeToRefs()方法成功
 // let chatCon=commonStore.chatCon
 // let chatCon=ref(commonStore.chatCon)
-let { chatCom } = storeToRefs(commonStore);
-//用于记录动态组件为哪个组件的map
-let chatConList: ComponentsMap = {
+let { mainCom } = storeToRefs(commonStore);
+// 用于记录动态组件为哪个组件的map
+let mainConList: ComponentsMap = {
     "mainChatRoom": mainChatRoom,
     "privateChatRoom": privateChatRoom,
+    "gallary": gallary
 }
 
 //setup阶段，chatComponentRef=ref()还没有被赋值，在onMounted生命周期中才可获取值
