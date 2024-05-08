@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { type UserInter} from "@/types/UserType"
-import { type UserVo, type UnReadMessageCount }from "@/types"
+import { type UserVo, type UnReadMessageCount, type User }from "@/types"
 import { requestPrefix } from "@/utils/commonUtils";
 import { useSocket } from "@/utils/socketIo";
 import { postRequest } from "@/utils/axiosUtils";
@@ -52,7 +52,7 @@ export const useOnlineUser=defineStore("onlineUser",{
     
     state(){
         return{
-            user:JSON.parse(sessionStorage.getItem("userInfo") as string) as UserInter || {},
+            user:JSON.parse(sessionStorage.getItem("userInfo") as string) as User || {},
             userList:[] as UserVo[],
             userToken:JSON.parse(sessionStorage.getItem("userToken") as string) as String || "",
             unReadMessageCount:new Map<String,UnReadMessageCount>()

@@ -1,10 +1,11 @@
 import { type DefineComponent } from "vue"
 
-interface User{
+export interface User{
     id?:string
     userName?:string
     password?:string
     userImageId?:string
+    userDefaultImage?:string
 }
 
 export interface UserVo{
@@ -13,6 +14,7 @@ export interface UserVo{
     isOnline?:boolean
     lastOnlineTime?:Date
     userImageId?:string
+    userDefaultImage?:string
 }
 
 interface Message{

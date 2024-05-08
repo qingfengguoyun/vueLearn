@@ -5,7 +5,7 @@
                 <ul class="nav metismenu" id="side-menu" style="background-color: #2F4050;">
                     <li class="nav-header">
                         <div class="dropdown profile-element">
-                            <img alt="image" class="rounded-circle message-avatar" :src="getImage('img/a1.jpg')">
+                            <img alt="image" class="rounded-circle message-avatar" :src="getImage('img/'+onlineUser.user.userDefaultImage || 'img/a1.jpg')">
                             <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                                 <span class="block m-t-xs font-bold">{{ user.userName }}</span>
                                 <span class="text-muted text-xs block">Art Director <b class="caret"></b></span>
@@ -69,9 +69,11 @@ import { useRouter, RouterLink } from 'vue-router';
 import { type UserInter } from '@/types/UserType'
 import { getImage } from '@/utils/commonUtils';
 import { useCommonStore } from '@/store/commonStore';
+import { useOnlineUser } from '@/store/onlineUser';
+
 
 let commonStore=useCommonStore();
-
+let onlineUser=useOnlineUser();
 
 let user = JSON.parse(sessionStorage.getItem("userInfo") as string) as UserInter || {}
 let router = useRouter();
