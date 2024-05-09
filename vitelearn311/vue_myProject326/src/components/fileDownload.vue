@@ -1,12 +1,12 @@
-
 <template>
-    <h2> This is gallary Component</h2>
+    
+    <h2> This is FilesRoom Component</h2>
 
 </template>
 <script lang='ts'>
 export default
 {
-    name: "gallary"
+    name: "fileDownload"
 }
 </script>
 <script lang='ts' setup>

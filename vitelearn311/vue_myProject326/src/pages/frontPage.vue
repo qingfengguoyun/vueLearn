@@ -72,13 +72,16 @@ import headerMenu from '@/components/headerMenu.vue'
 import onlineUser from '@/components/onlineUser.vue'
 import mainChatRoom from "@/components/mainChatRoom.vue";
 import privateChatRoom from "@/components/privateChatRoom.vue";
-import gallary from '@/components/gallary.vue';
+import fileDownload from '@/components/fileDownload.vue';
+import fileUpload from '@/components/fileUpload.vue';
 import rightBottomWindow from '@/components/rightBottomWindow.vue';
 import sideBar from '@/components/sideBar.vue';
 import { ref, onMounted, type ComponentOptions, type Ref, provide } from 'vue';
 import { type ComponentsMap } from '@/types'
 import { useCommonStore } from '@/store/commonStore';
 import { storeToRefs } from 'pinia';
+import gallary from '@/components/gallary.vue';
+
 
 
 let commonStore = useCommonStore();
@@ -95,7 +98,9 @@ let { mainCom } = storeToRefs(commonStore);
 let mainConList: ComponentsMap = {
     "mainChatRoom": mainChatRoom,
     "privateChatRoom": privateChatRoom,
-    "gallary": gallary
+    "gallary": gallary,
+    "fileDownload": fileDownload,
+    "fileUpload": fileUpload
 }
 
 //setup阶段，chatComponentRef=ref()还没有被赋值，在onMounted生命周期中才可获取值

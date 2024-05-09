@@ -71,6 +71,7 @@ function sendMessage() {
         content:inputMessage.value
     }
     socket.emit("send_message", pojo)
+    inputMessage.value=""
 }
 onMounted(async ()=>{
     console.log("mainChatroom onMounted")

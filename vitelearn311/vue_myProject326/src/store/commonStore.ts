@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import type { ComponentsMap } from "@/types";
 import mainChatRoom from "@/components/mainChatRoom.vue";
 import privateChatRoom from "@/components/privateChatRoom.vue";
-import gallary from "@/components/gallary.vue";
+import gallary from "@/components/fileDownload.vue";
 
 
 export let useCommonStore=defineStore('commonStore',{
@@ -22,7 +22,17 @@ export let useCommonStore=defineStore('commonStore',{
             console.log("toGallary")
             sessionStorage.setItem("mainCom","gallary");
             this.mainCom="gallary";
-        }
+        },
+        toFileDownload(){
+            console.log("toFileDownload")
+            sessionStorage.setItem("mainCom","fileDownload");
+            this.mainCom="fileDownload";
+        },
+        toFileUpload(){
+            console.log("toFileUpload")
+            sessionStorage.setItem("mainCom","fileUpload");
+            this.mainCom="fileUpload";
+        },
 
     },
     state(){
