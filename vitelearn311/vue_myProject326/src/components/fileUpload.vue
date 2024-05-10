@@ -3,7 +3,7 @@
     <div class="p-md">
         <el-button type="primary" @click="handleUploadAll">上传全部文件</el-button>
     </div>
-    <el-upload v-model:file-list="fileList" class="upload-demo" action="http://192.168.5.31" :on-preview="handlePreview"
+    <el-upload v-model:file-list="fileList" class="upload-demo" :action="requestPrefix+'/api/file/uploadByBatch'" :on-preview="handlePreview" :multiple="true"
         :on-remove="handleRemove" list-type="picture" :auto-upload="false" drag ref="uploadRef">
 
 
@@ -30,9 +30,8 @@ export default
 import { ref, type Ref } from 'vue'
 import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue'
 import { UploadFilled } from '@element-plus/icons-vue'
-
 import type { UploadFile, UploadProps, UploadUserFile } from 'element-plus'
-
+import { requestPrefix } from '@/utils/commonUtils'
 
 
 const fileList: Ref<UploadUserFile[]> = ref([])
