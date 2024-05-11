@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { type UserInter} from "@/types/UserType"
-import { type UserVo, type UnReadMessageCount, type User }from "@/types"
-import { requestPrefix } from "@/utils/commonUtils";
+import type {  UserVo, UnReadMessageCount,  User }from "@/types"
+import { requestPrefix,imageRequestPrefix } from "@/utils/commonUtils";
 import { useSocket } from "@/utils/socketIo";
 import { postRequest } from "@/utils/axiosUtils";
 import type { ResultInter } from "@/types/ResultType";
@@ -42,6 +42,18 @@ export const useOnlineUser=defineStore("onlineUser",{
         clearUnReadMessage(connectUserId:String){
             if(this.unReadMessageCount.has(connectUserId)){
                 this.unReadMessageCount.delete(connectUserId)
+            }
+        },
+        getUserImageUrl():String{
+            if(!this.user.userImageId){
+                if(this.user.userDefaultImage){
+                    return ('img/'+this.user.userDefaultImage) as String;
+                }else{
+                    return 'img/a1.jpg'
+                }
+                
+            }else{
+                return requestPrefix+"/api/file/getImage/"+this.user.userImageId
             }
         },
 
