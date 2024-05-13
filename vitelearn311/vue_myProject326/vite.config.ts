@@ -41,7 +41,8 @@ export default defineConfig({
   define: {
     'import.meta.env.BASE_IP': JSON.stringify(`http://${getNetworkIp()}`),
     'import.meta.env.SERVER_IP': JSON.stringify(`${getNetworkIp()}`),
-    'import.meta.env.SERVER_PORT': 8200
+    'import.meta.env.SERVER_PORT': 8200,
+    'import.meta.env.SOCKETIO_PORT': 8271
   },
 })
 

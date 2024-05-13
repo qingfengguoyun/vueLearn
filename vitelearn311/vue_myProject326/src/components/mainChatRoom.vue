@@ -32,14 +32,15 @@ export default
 </script>
 <script lang='ts' setup>
 import { watch, ref, reactive, type Ref, onMounted } from "vue";
-import { useSocket } from "@/utils/socketIo";
+import useSocketIo from "@/utils/socketIo";
 import message from "@/components/message.vue";
 // import messageRight from "@/components/messageRight.vue";
 import { type MessageVo } from "@/types";
 import { arrayDuplicate, getUserId,getUserInfo, isArrayHasDuplicates } from "@/utils/commonUtils";
 import { useMainChatRoom } from "@/store/mainChatRoom";
+// import { useSocket } from '../utils/socketIo';
 
-let socket = useSocket()
+let socket = useSocketIo().getSocket();
 let mainChatRoom =useMainChatRoom();
 let messages: Ref<MessageVo[]> = ref(mainChatRoom.messageVoList)
 let inputMessage = ref("")

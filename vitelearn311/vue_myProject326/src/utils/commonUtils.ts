@@ -5,6 +5,7 @@ import type { MessageVo } from '../types/index';
 const baseIP = import.meta.env.BASE_IP;
 const serverPort=import.meta.env.SERVER_PORT
 const serverIp=import.meta.env.SERVER_IP;
+const socketIoPort=import.meta.env.SOCKETIO_PORT
 
 // axios请求的前缀，包括服务器地址和端口号
 export let requestPrefix=baseIP+":"+serverPort || "http://localhost:8200"

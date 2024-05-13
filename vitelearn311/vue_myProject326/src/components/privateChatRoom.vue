@@ -34,7 +34,7 @@ export default
 </script>
 <script lang='ts' setup>
 import { watch, ref, type Ref, onMounted, onBeforeMount } from "vue";
-import { useSocket } from "@/utils/socketIo";
+import  useSocketIo from "@/utils/socketIo";
 import message from "@/components/message.vue";
 // import messageRight from "@/components/messageRight.vue";
 import type { MessageVo, MessagePojo, UserVo } from "@/types";
@@ -48,7 +48,7 @@ let privateChat = usePrivateChatRoom()
 //setup 函数中不能使用await 方法，除非使用then执行后续操作
 // await privateChat.getMessageVoList({ connectUserId: privateChat.connectUser.id })
 let { messageVoList, connectUser } = storeToRefs(privateChat)
-let socket = useSocket()
+let socket = useSocketIo().getSocket();
 let inputMessage = ref("")
 let onlineUser = useOnlineUser();
 //私聊对象信息ConnectUserVo 从sessionStorage中获取
@@ -113,12 +113,6 @@ onBeforeMount(async () => {
 })
 onMounted(async () => {
     console.log("privateChatroom onMounted")
-    //挂载时查询全部私聊信息
-    // await privateChat.getMessageVoList({connectUserId:privateChat.connectUser.id})
-    // messages=ref(privateChat.messageVoList)
-    // console.log("messages",messages.value)
-    // await mainChatRoom.getMessageVo();
-    // messages.value=mainChatRoom.messageVoList
 })
 
 </script>

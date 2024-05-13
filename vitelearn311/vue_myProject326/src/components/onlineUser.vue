@@ -78,7 +78,7 @@ import { ref, type Ref, onMounted, inject, reactive } from 'vue';
 
 import { useOnlineUser } from '@/store/onlineUser';
 import { getImage } from '@/utils/commonUtils';
-import { useSocket } from '@/utils/socketIo';
+import  useSocketIo  from '@/utils/socketIo';
 import type { UserVo, MessageVo, UnReadMessageCount } from '@/types';
 import { usePrivateChatRoom } from '@/store/privteChatRoom';
 import { getUserId } from '@/utils/commonUtils';
@@ -92,7 +92,7 @@ let toMainChatRoom = commonStore.toMainChatRoom;
 let toPrivateChatRoom = commonStore.toPrivateChatRoom;
 let onlineUser = useOnlineUser()
 let privateChat = usePrivateChatRoom()
-let socket = useSocket()
+let socket = useSocketIo().getSocket();
 let unReadMessageMap = ref(new Map<String, UnReadMessageCount>());
 
 socket.on("user_online", (data: string) => {

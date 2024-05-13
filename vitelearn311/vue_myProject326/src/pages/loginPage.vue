@@ -59,12 +59,12 @@ import { type UserInter, UserClass } from "@/types/UserType";
 import { type ResultInter } from "@/types/ResultType";
 import axios, { type AxiosResponse, type AxiosResponseHeaders } from "axios";
 import { useRouter, RouterLink, RouterView } from "vue-router";
-import { socketInstance } from '@/utils/socketIo';
+import useSocketIo from '@/utils/socketIo';
 import { postRequest } from "@/utils/axiosUtils";
 
 
 let router = useRouter();
-
+let socketIo=useSocketIo();
 
 let user: UserInter = {}
 
@@ -91,7 +91,7 @@ async function login() {
             sessionStorage.setItem("Authorization", token)
         }
         //初始化socket
-        socket = socketInstance(user.id as string, user.userName as string, user.password as string)
+        socket = socketIo.socketInstance(user.id as string, user.userName as string, user.password as string)
         //初始化chatCon
         // sessionStorage.setItem('chatCom','mainChatRoom')
         router.push({
