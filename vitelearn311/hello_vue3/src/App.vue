@@ -1,65 +1,42 @@
 <template>
-
-
-	<div class="container-fluid wraper">
-		<h1 class="title">
-			Vue3 组件间通信
-		</h1>
-		<hr>
-		<div class="row">
-			<div class="col-xs-3 col-md-3 col-lg-3 col-xl-3">
-				<!-- 导航区 -->
-				<router-link active-class="active" class="list-group-item" to="/props">1. props</router-link>
-				<router-link active-class="active" class="list-group-item" to="/event">2. 自定义事件</router-link>
-				<router-link active-class="active" class="list-group-item" to="/mitt">3. mitt</router-link>
-				<router-link active-class="active" class="list-group-item" to="/model">4. v-model</router-link>
-				<router-link active-class="active" class="list-group-item" to="/attrs">5. $attrs</router-link>
-				<router-link active-class="active" class="list-group-item" to="/myAttr">5.1 MyAttr</router-link>
-				<router-link active-class="active" class="list-group-item" to="/ref-parent">6. <span class="small">$refs、$parent</span></router-link>
-				<router-link active-class="active" class="list-group-item" to="/myRefLearn">6.2 <span class="small">$refs、$parent</span></router-link>
-				<router-link active-class="active" class="list-group-item" to="/provide-inject">7. provide、inject</router-link>
-				<router-link active-class="active" class="list-group-item" to="/myProvideInjectLearn">7.2 provide、inject</router-link>
-				<router-link active-class="active" class="list-group-item" to="/pinia">8. pinia</router-link>
-				<router-link active-class="active" class="list-group-item" to="/slot">9. slot</router-link>
-				<router-link active-class="active" class="list-group-item" to="/practiceShot1">9.1 slot基本使用</router-link>
-			</div>
-			<div class="col-xs-9 col-md-9 col-lg-9 col-xl-9">
-				<div class="panel-body">
-					<!-- 占位一个展示区 -->
-					<router-view></router-view>
-				</div>
-			</div>
-		</div>
-		<!-- <div> {{value}} </div>
-		<button @click="add"> 添加value</button> -->
+	<div class="app">
+		<h2>{{ msg }}</h2>
+		<input type="text" v-model="msg">
+	</div>
+	<div class="app">
+		<h2>{{ privateRefMsg }}</h2>
+		<input type="text" v-model="privateRefMsg">
 	</div>
 </template>
 
 <script setup lang="ts" name="App">
+import { ref } from 'vue'
+import useMsgRef from './useMsgRef'
+import { usePrivateRef } from './usePrivateRef';
 
-	// import { watch,reactive,ref, type Ref} from "vue";
-	// let array:Ref<String[]> =ref([])
-	// let value=ref("")
-	// watch(()=>array.value,()=>{
-	// 	console.log("@@@@@",array.value.length)
-	// },{deep:true,immediate:true})
-	// function add(){
-	// 	array.value.push("instance");
-	// 	console.log(array.value)
-	// 	value.value=array.value.join(",")
-	// }
+
+// 使用Vue提供的默认ref定义响应式数据，数据一变，页面就更新
+// let msg = ref('你好')
+
+// 使用useMsgRef来定义一个响应式数据且有延迟效果
+let { msg } = useMsgRef('你好', 2000)
+
+let privateRefMsg=usePrivateRef("初始值",500);
+console.log( privateRefMsg)
+
+
+
 </script>
 
-<style>
-	.wraper .title {
-		padding: 20px;
-		text-align: center;
-		min-width: 610px;
+<style scoped>
+	.app {
+		background-color: #ddd;
+		border-radius: 10px;
+		box-shadow: 0 0 10px;
+		padding: 10px;
 	}
-	.wraper .small{
-		font-size: 15px;
-	}
-	.wraper .list-group-item {
-		min-width: 230px;
+
+	button {
+		margin: 0 5px;
 	}
 </style>

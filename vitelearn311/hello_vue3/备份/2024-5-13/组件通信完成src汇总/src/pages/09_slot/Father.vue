@@ -1,6 +1,5 @@
 <template>
   <div class="father">
-    <h3>作用域插槽：子组件的数据在子组件中，父组件需要通过v-slot 获取子组件内容</h3>
     <h3>父组件</h3>
     <div class="content">
       <Game>
