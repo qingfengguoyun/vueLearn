@@ -2,7 +2,7 @@
     <div style="display: flex;">
         <sideBar></sideBar>
 
-        <div id="page-wrapper"  class="gray-bg"  :style="sideBarStore.isDisplay?{}:{width:'100%'}">
+        <div id="page-wrapper"  class="gray-bg"  :style="sideBarStore.isDisplay?{}:{width:'100% '}">
 
 
             <!-- header -->
