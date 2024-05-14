@@ -2,7 +2,7 @@
     <div style="display: flex;">
         <sideBar></sideBar>
 
-        <div id="page-wrapper" class="gray-bg" style="width: calc(100%-220px);">
+        <div id="page-wrapper"  class="gray-bg"  :style="sideBarStore.isDisplay?{}:{width:'100%'}">
 
 
             <!-- header -->
@@ -81,10 +81,11 @@ import { type ComponentsMap } from '@/types'
 import { useCommonStore } from '@/store/commonStore';
 import { storeToRefs } from 'pinia';
 import gallary from '@/components/gallary.vue';
+import { useSideBar } from '@/store/sidebar';
 
-
-
+let sideBarStore=useSideBar();
 let commonStore = useCommonStore();
+
 let rbw = ref();
 function testAnimate() {
     rbw.value.startAnimation()
@@ -113,14 +114,6 @@ onMounted(() => {
 let toPrivateChatRoom = commonStore.toPrivateChatRoom;
 let toMainChatRoom = commonStore.toMainChatRoom;
 
-
-// function toPrivateChatRoom(){
-//     chatCon.value="privateChatRoom";
-// }
-// function toMainChatRoom(){
-//     chatCon.value="mainChatRoom";
-// }
-// provide("changeChatRoom",{toMainChatRoom,toPrivateChatRoom})
 
 
 

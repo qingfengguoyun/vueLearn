@@ -32,7 +32,7 @@ export default
 </script>
 <script lang='ts' setup>
 import { watch, ref, reactive, type Ref, onMounted } from "vue";
-import useSocketIo from "@/utils/socketIo";
+import useSocketIo from "@/hooks/socketIo";
 import message from "@/components/message.vue";
 // import messageRight from "@/components/messageRight.vue";
 import { type MessageVo } from "@/types";

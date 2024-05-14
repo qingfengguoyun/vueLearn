@@ -22,8 +22,7 @@ let models:String[]=[
 </script>
 <style scoped>
     .scopeChildren{
-        border: 1px solid black;
-        
+        border: 1px solid black;       
     }
 
 </style>

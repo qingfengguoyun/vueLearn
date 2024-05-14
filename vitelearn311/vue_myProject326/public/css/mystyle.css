@@ -13,8 +13,28 @@
     width: calc(100% - 400px);
 }
 
+.sidebar{
+    width: 220px;
+}
+.front-page-main{
+    width: calc(100%-220px)
+}
+
+.sidebar-display{
+    width: 220px;
+}
+.front-page-main-with-sidebar{
+    width: calc(100%-220px)
+}
+
 @media screen and (max-width: 768px) {
     .chatRoomStyle{
         width: 100%;
+    }
+    .sidebar{
+        display: none;
+    }
+    .front-page-main{
+        width: calc(100%)
     }
 }

@@ -3,8 +3,9 @@
     <div class="p-md">
         <el-button type="primary" @click="handleUploadAll">上传全部文件</el-button>
     </div>
-    <el-upload v-model:file-list="fileList" class="upload-demo" :action="requestPrefix+'/api/file/uploadByBatch'" :on-preview="handlePreview" :multiple="true"
-        :on-remove="handleRemove" list-type="picture" :auto-upload="false" drag ref="uploadRef">
+    <el-upload v-model:file-list="fileList" class="upload-demo" action="#"
+        :on-preview="handlePreview" :multiple="true" :on-remove="handleRemove" list-type="picture" :auto-upload="false"
+        drag ref="uploadRef">
 
 
         <div class="el-upload__text">
@@ -30,8 +31,12 @@ export default
 import { ref, type Ref } from 'vue'
 import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue'
 import { UploadFilled } from '@element-plus/icons-vue'
-import type { UploadFile, UploadProps, UploadUserFile } from 'element-plus'
+import type { UploadFile, UploadProps, UploadUserFile, UploadRawFile } from 'element-plus'
 import { requestPrefix } from '@/utils/commonUtils'
+import { imageUploadRequest } from '@/utils/axiosUtils'
+import type { ResultInter } from '@/types/ResultType'
+import { da } from 'element-plus/es/locales.mjs'
+import type { RefSymbol } from '@vue/reactivity'
 
 
 const fileList: Ref<UploadUserFile[]> = ref([])
@@ -44,9 +49,28 @@ const handleRemove: UploadProps['onRemove'] = (uploadFile, uploadFiles) => {
 const handlePreview: UploadProps['onPreview'] = (file) => {
     console.log(file)
 }
-let handleUploadAll = () => {
+let handleUploadAll = async () => {
     // 通过ref获取el-upload组件实例，并手动提交上传操作
-    uploadRef.value.submit();
+    // console.log(uploadRef.value)
+    // uploadRef.value.submit();
+    let fd = new FormData();
+    console.log(fileList.value)
+    // ts for( .. in ..)遍历的是下标 ，for(.. of ..) 遍历的是数组
+    // 或者使用 list.foreach((var,index,array)=>{})
+    for (let el of fileList.value) {
+        console.log(el)
+        fd.append("file", el.raw as UploadRawFile);
+        // let imageRequestUrl=requestPrefix+'/api/file/uploadByBatch'
+    }
+    let res = await imageUploadRequest<ResultInter>(fd);
+    if (res.data) {
+        console.log(res.data.data)
+        if (res.data.code == '200') {
+            alert("上传成功");
+            // uploadRef.value.clearFiles();
+        }
+    }
+
 };
 // const handleRemove = (file: UploadFile) => {
 //     console.log(file)

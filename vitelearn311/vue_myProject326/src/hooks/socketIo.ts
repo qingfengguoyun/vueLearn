@@ -2,7 +2,7 @@ import {  Socket } from 'socket.io-client';
 import io from 'socket.io-client';
 import axios,{ type AxiosResponse} from 'axios';
 import { type UserInter } from '@/types/UserType'
-import { requestPrefix } from './commonUtils';
+import { requestPrefix } from '../utils/commonUtils';
 
 
 const baseIP = import.meta.env.BASE_IP;

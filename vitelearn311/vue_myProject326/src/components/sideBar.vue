@@ -1,6 +1,6 @@
 <template>
     <div class="sideBar" style="background-color: #2F4050">
-        <nav class="navbar-default navbar-static-side" role="navigation" >
+        <nav class="sidebar navbar-default " role="navigation" :style="{display:sideBar.isDisplay?'block':'none'}">
             <div class="sidebar-collapse" >
                 <ul class="nav metismenu" id="side-menu" style="background-color: #2F4050;">
                     <li class="nav-header">
@@ -76,13 +76,18 @@ import { type UserInter } from '@/types/UserType'
 import { getImage } from '@/utils/commonUtils';
 import { useCommonStore } from '@/store/commonStore';
 import { useOnlineUser } from '@/store/onlineUser';
+import { useSideBar } from '@/store/sidebar';
+
 
 
 let commonStore=useCommonStore();
 let onlineUser=useOnlineUser();
+let sideBar=useSideBar();
 
 let user = JSON.parse(sessionStorage.getItem("userInfo") as string) as UserInter || {}
 let router = useRouter();
+
+
 
 
 </script>

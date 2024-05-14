@@ -1,8 +1,8 @@
 <template>
     <nav class="navbar navbar-static-top  " role="navigation" style="margin-bottom: 0">
         <div class="navbar-header">
-            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i
-                    class="fa fa-bars"></i> </a>
+            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#" @click="sideBar.showSideBar"><i class="fa fa-bars"
+                    ></i> </a>
             <form role="search" class="navbar-form-custom" action="search_results.html">
                 <div class="form-group">
                     <input type="text" placeholder="Search for something..." class="form-control" name="top-search"
@@ -28,7 +28,7 @@
 
             <li>
                 <a href="#" @click="logOut">
-                    <i class="fa fa-sign-out" ></i> 退出登录
+                    <i class="fa fa-sign-out"></i> 退出登录
                 </a>
             </li>
         </ul>
@@ -44,9 +44,11 @@ export default
 <script lang='ts' setup>
 import { useRouter, RouterLink } from 'vue-router';
 import { type UserInter } from '@/types/UserType'
+import { useSideBar } from '@/store/sidebar';
 
 let user = JSON.parse(sessionStorage.getItem("userInfo") as string) as UserInter || {}
 let router = useRouter();
+let sideBar=useSideBar();
 
 
 function logOut() {
@@ -58,8 +60,8 @@ function logOut() {
 
 </script>
 <style scoped>
-.header-menu {
-    position: relative;
-    display: inline-flex;
-}
+    .header-menu {
+        position: relative;
+        display: inline-flex;
+    }
 </style>

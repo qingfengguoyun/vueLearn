@@ -59,7 +59,7 @@ import { type UserInter, UserClass } from "@/types/UserType";
 import { type ResultInter } from "@/types/ResultType";
 import axios, { type AxiosResponse, type AxiosResponseHeaders } from "axios";
 import { useRouter, RouterLink, RouterView } from "vue-router";
-import useSocketIo from '@/utils/socketIo';
+import useSocketIo from '@/hooks/socketIo';
 import { postRequest } from "@/utils/axiosUtils";
 
 

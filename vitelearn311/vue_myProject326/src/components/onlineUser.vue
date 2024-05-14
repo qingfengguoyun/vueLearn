@@ -78,7 +78,7 @@ import { ref, type Ref, onMounted, inject, reactive } from 'vue';
 
 import { useOnlineUser } from '@/store/onlineUser';
 import { getImage } from '@/utils/commonUtils';
-import  useSocketIo  from '@/utils/socketIo';
+import  useSocketIo  from '@/hooks/socketIo';
 import type { UserVo, MessageVo, UnReadMessageCount } from '@/types';
 import { usePrivateChatRoom } from '@/store/privteChatRoom';
 import { getUserId } from '@/utils/commonUtils';

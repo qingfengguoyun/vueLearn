@@ -47,3 +47,23 @@ export async function getRequest<T>(url: string, params?: any): Promise<AxiosRes
     // const response = await getRequest('https://example.com/api/data', { page: 1, limit: 10 });
 }
 
+//封装axios的post方法，主要自动用来添加token
+export async function imageUploadRequest<T>(params:any):Promise<AxiosResponse<T>> {
+
+    let token=sessionStorage.getItem('Authorization') as String || ""
+    try {
+        let headers={
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `${token}`
+            // 'token': `${token}`
+            // 'token': token
+        }
+        const response = await axios.post(requestPrefix+"/api/file/uploadByBatch", params,{headers});
+        return response;
+    } catch (error) {
+        // 处理错误
+        console.error('Error in imageUploadRequest:', error);
+        throw error;
+    }
+}
+
