@@ -20,7 +20,7 @@
 <script lang='ts'>
 export default
     {
-        name: "messageRight"
+        name: "MessageRight"
     }
 </script>
 <script lang='ts' setup>

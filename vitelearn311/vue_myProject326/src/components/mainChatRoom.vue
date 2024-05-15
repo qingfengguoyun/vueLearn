@@ -26,14 +26,14 @@
 <script lang='ts'>
 export default
     {
-        name: "mainChatRoom"
+        name: "MainChatRoom"
     }
     
 </script>
 <script lang='ts' setup>
 import { watch, ref, reactive, type Ref, onMounted } from "vue";
 import useSocketIo from "@/hooks/socketIo";
-import message from "@/components/message.vue";
+import message from "@/components/Message.vue";
 // import messageRight from "@/components/messageRight.vue";
 import { type MessageVo } from "@/types";
 import { arrayDuplicate, getUserId,getUserInfo, isArrayHasDuplicates } from "@/utils/commonUtils";

@@ -68,19 +68,19 @@ export default
 </script>
 <script lang='ts' setup>
 import { useRouter, RouterView } from 'vue-router'
-import headerMenu from '@/components/headerMenu.vue'
-import onlineUser from '@/components/onlineUser.vue'
-import mainChatRoom from "@/components/mainChatRoom.vue";
-import privateChatRoom from "@/components/privateChatRoom.vue";
-import fileDownload from '@/components/fileDownload.vue';
-import fileUpload from '@/components/fileUpload.vue';
-import rightBottomWindow from '@/components/rightBottomWindow.vue';
-import sideBar from '@/components/sideBar.vue';
+import HeaderMenu from '@/components/HeaderMenu.vue'
+import OnlineUser from '@/components/OnlineUser.vue'
+import MainChatRoom from "@/components/MainChatRoom.vue";
+import PrivateChatRoom from "@/components/PrivateChatRoom.vue";
+import FileDownload from '@/components/FileDownload.vue';
+import FileUpload from '@/components/FileUpload.vue';
+import RightBottomWindow from '@/components/RightBottomWindow.vue';
+import SideBar from '@/components/SideBar.vue';
 import { ref, onMounted, type ComponentOptions, type Ref, provide } from 'vue';
 import { type ComponentsMap } from '@/types'
 import { useCommonStore } from '@/store/commonStore';
 import { storeToRefs } from 'pinia';
-import gallary from '@/components/gallary.vue';
+import Gallary from '@/components/Gallary.vue';
 import { useSideBar } from '@/store/sidebar';
 
 let sideBarStore=useSideBar();
@@ -97,11 +97,11 @@ function testAnimate() {
 let { mainCom } = storeToRefs(commonStore);
 // 用于记录动态组件为哪个组件的map
 let mainConList: ComponentsMap = {
-    "mainChatRoom": mainChatRoom,
-    "privateChatRoom": privateChatRoom,
-    "gallary": gallary,
-    "fileDownload": fileDownload,
-    "fileUpload": fileUpload
+    "mainChatRoom": MainChatRoom,
+    "privateChatRoom": PrivateChatRoom,
+    "gallary": Gallary,
+    "fileDownload": FileDownload,
+    "fileUpload": FileUpload
 }
 
 //setup阶段，chatComponentRef=ref()还没有被赋值，在onMounted生命周期中才可获取值

@@ -44,10 +44,10 @@ export const useOnlineUser=defineStore("onlineUser",{
                 this.unReadMessageCount.delete(connectUserId)
             }
         },
-        getUserImageUrl():String{
+        getUserImageUrl():string{
             if(!this.user.userImageId){
                 if(this.user.userDefaultImage){
-                    return ('img/'+this.user.userDefaultImage) as String;
+                    return ('img/'+this.user.userDefaultImage) as string;
                 }else{
                     return 'img/a1.jpg'
                 }

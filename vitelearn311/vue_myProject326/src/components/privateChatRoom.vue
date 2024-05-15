@@ -29,13 +29,13 @@
 <script lang='ts'>
 export default
     {
-        name: "privateChatRoom"
+        name: "PrivateChatRoom"
     }
 </script>
 <script lang='ts' setup>
 import { watch, ref, type Ref, onMounted, onBeforeMount } from "vue";
 import  useSocketIo from "@/hooks/socketIo";
-import message from "@/components/message.vue";
+import message from "@/components/Message.vue";
 // import messageRight from "@/components/messageRight.vue";
 import type { MessageVo, MessagePojo, UserVo } from "@/types";
 import { arrayDuplicate, getUserId, isArrayHasDuplicates } from "@/utils/commonUtils";

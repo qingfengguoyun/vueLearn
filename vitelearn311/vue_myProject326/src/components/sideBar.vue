@@ -67,7 +67,7 @@
 <script lang='ts'>
 export default
 {
-    name: "sideBar"
+    name: "SideBar"
 }
 </script>
 <script lang='ts' setup>

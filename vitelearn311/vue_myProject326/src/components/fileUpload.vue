@@ -23,7 +23,7 @@
 <script lang='ts'>
 export default
     {
-        name: "fileUpload"
+        name: "FileUpload"
     }
 </script>
 <script lang='ts' setup>

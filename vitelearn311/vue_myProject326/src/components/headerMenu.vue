@@ -38,7 +38,7 @@
 <script lang='ts'>
 export default
     {
-        name: "headerMenu"
+        name: "HeaderMenu"
     }
 </script>
 <script lang='ts' setup>

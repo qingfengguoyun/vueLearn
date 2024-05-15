@@ -69,7 +69,7 @@
 <script lang='ts'>
 export default
     {
-        name: "onlineUser"
+        name: "OnlineUser"
     }
 </script>
 <script lang='ts' setup>

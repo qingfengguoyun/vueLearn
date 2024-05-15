@@ -6,7 +6,7 @@
 <script lang='ts'>
 export default
 {
-    name: "fileDownload"
+    name: "FileDownload"
 }
 </script>
 <script lang='ts' setup>

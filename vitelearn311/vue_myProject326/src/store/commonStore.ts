@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import type { ComponentsMap } from "@/types";
-import mainChatRoom from "@/components/mainChatRoom.vue";
-import privateChatRoom from "@/components/privateChatRoom.vue";
-import gallary from "@/components/fileDownload.vue";
+import MainChatRoom from "@/components/MainChatRoom.vue";
+import PrivateChatRoom from "@/components/PrivateChatRoom.vue";
+import Gallary from "@/components/FileDownload.vue";
 
 
 export let useCommonStore=defineStore('commonStore',{
