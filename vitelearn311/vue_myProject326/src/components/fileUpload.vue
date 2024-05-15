@@ -35,7 +35,6 @@ import type { UploadFile, UploadProps, UploadUserFile, UploadRawFile } from 'ele
 import { requestPrefix } from '@/utils/commonUtils'
 import { imageUploadRequest } from '@/utils/axiosUtils'
 import type { ResultInter } from '@/types/ResultType'
-import { da } from 'element-plus/es/locales.mjs'
 import type { RefSymbol } from '@vue/reactivity'
 
 
@@ -67,7 +66,7 @@ let handleUploadAll = async () => {
         console.log(res.data.data)
         if (res.data.code == '200') {
             alert("上传成功");
-            // uploadRef.value.clearFiles();
+            uploadRef.value.clearFiles();
         }
     }
 

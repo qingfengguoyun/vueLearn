@@ -51,3 +51,13 @@ export interface UnReadMessageCount{
     unReadMessageCount?:number,
     userName?:string
 }
+
+export interface FileVo{
+    fileId:string,
+    fileName?:string,
+    userVo?:UserVo,
+    fileSuffix?:string,
+    fileUrl?:string,
+    fileType?:string,
+    date:Date
+}
