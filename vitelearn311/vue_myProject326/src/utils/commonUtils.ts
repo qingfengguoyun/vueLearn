@@ -51,3 +51,11 @@ export function isArrayHasDuplicates<T>(array:T[]):Boolean{
     return set.size!=array.length;
 }
 
+export function getImageById(imageId:string):string{
+    return requestPrefix+"/api/file/getImage/"+imageId;
+}
+
+export function getImagePreviewById(imageId:string):string{
+    return requestPrefix+"/api/file/getPreviewImage/"+imageId;
+}
+

@@ -44,13 +44,16 @@
                 <div class="col-lg-12 animated fadeInRight">
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="file-box">
+                            <div class="file-box" v-for="vo in fileDownLoad.fileVos.value"  >
                                 <div class="file">
-                                    <a href="file_manager.html#">
+                                    <a href="#">
                                         <span class="corner"></span>
-
-                                        <div class="icon">
+                                        {{ vo }}
+                                        <!-- <div class="icon">
                                             <i class="fa fa-file"></i>
+                                        </div> -->
+                                        <div class="image">
+                                            <img alt="image" class="img-fluid" :src="getImagePreviewById(vo.fileId)">
                                         </div>
                                         <div class="file-name">
                                             Document_2014.doc
@@ -61,7 +64,7 @@
                                 </div>
 
                             </div>
-                            <div class="file-box">
+                            <!-- <div class="file-box">
                                 <div class="file">
                                     <a href="file_manager.html#">
                                         <span class="corner"></span>
@@ -157,7 +160,7 @@
                                         </div>
                                     </a>
                                 </div>
-                            </div>
+                            </div> -->
                             
 
                         </div>
@@ -175,6 +178,14 @@ export default
 }
 </script>
 <script lang='ts' setup>
+import useFileDownload from '@/hooks/useFileDownload';
+import { useFileDownLoadStore } from '@/store/fileDownload';
+import { getImageById,getImagePreviewById } from '@/utils/commonUtils';
+let fileDownLoad=useFileDownload();
+let {fileVos}=useFileDownload();
+let fileDownLoadStore=useFileDownLoadStore();
+
+fileDownLoad.getFilesByPage({page:1,pageSize:5});
 
 </script>
 <style scoped>

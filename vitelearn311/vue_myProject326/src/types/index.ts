@@ -58,6 +58,19 @@ export interface FileVo{
     userVo?:UserVo,
     fileSuffix?:string,
     fileUrl?:string,
+    filePreviewUrl?:string
     fileType?:string,
     date:Date
+}
+
+export interface NativePage{
+    pageSize?:number,
+    totalPages?:number,
+    currentPage?:number,
+    data?:any,
+    totolCount?:number,
+}
+export interface PagePojo{
+    page?:number
+    pageSize?:number
 }

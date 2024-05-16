@@ -49,7 +49,7 @@ export const useOnlineUser=defineStore("onlineUser",{
                 if(this.user.userDefaultImage){
                     return ('img/'+this.user.userDefaultImage) as string;
                 }else{
-                    return 'img/a1.jpg'
+                    return 'img/default_head_photo.jpg'
                 }
                 
             }else{
