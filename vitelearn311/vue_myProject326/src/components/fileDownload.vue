@@ -44,16 +44,16 @@
                 <div class="col-lg-12 animated fadeInRight">
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="file-box" v-for="vo in fileDownLoad.fileVos.value"  >
+                            <div class="file-box" v-for="vo in fileDownLoad.fileVos"  >
                                 <div class="file">
                                     <a href="#">
                                         <span class="corner"></span>
-                                        {{ vo }}
                                         <!-- <div class="icon">
                                             <i class="fa fa-file"></i>
                                         </div> -->
-                                        <div class="image">
-                                            <img alt="image" class="img-fluid" :src="getImagePreviewById(vo.fileId)">
+                                        <div class="preview-image" style="display: flex; justify-content: center; ">
+                                            <el-image :src="getImagePreviewById(vo.fileId)" fit="cover" :preview-src-list="fileDownLoad.previewUrlList"></el-image>
+                                            <!-- <img alt="image" class="img-fluid" :src="getImagePreviewById(vo.fileId)"> -->
                                         </div>
                                         <div class="file-name">
                                             Document_2014.doc
@@ -165,6 +165,12 @@
 
                         </div>
                     </div>
+                    <el-pagination background layout="prev, pager, next, jumper , total" 
+                    :total="fileDownLoad.totalCount"
+                    :page-count="fileDownLoad.totalpages"
+                    :current-page="fileDownLoad.currentPage"
+                    @current-change="handleCurrentPageChange"
+                    ref="pagination"/>
                     </div>
             </div>
         </div>
@@ -181,11 +187,24 @@ export default
 import useFileDownload from '@/hooks/useFileDownload';
 import { useFileDownLoadStore } from '@/store/fileDownload';
 import { getImageById,getImagePreviewById } from '@/utils/commonUtils';
-let fileDownLoad=useFileDownload();
+import { CURRENT_CHANGE } from 'element-plus/es/components/tree-v2/src/virtual-tree.mjs';
+import { ref } from 'vue';
+let fileDownLoad=ref(useFileDownload());
 let {fileVos}=useFileDownload();
 let fileDownLoadStore=useFileDownLoadStore();
 
-fileDownLoad.getFilesByPage({page:1,pageSize:5});
+fileDownLoad.value.getFilesByPage({page:1,pageSize:5});
+
+let pagination=ref();
+console.log(pagination.value)
+
+let handleCurrentPageChange=function (val:number){
+    let pagePojo={
+        page:val,
+        pageSize:fileDownLoad.value.currentPageSize
+    }
+    fileDownLoad.value.getFilesByPage(pagePojo);
+}
 
 </script>
 <style scoped>

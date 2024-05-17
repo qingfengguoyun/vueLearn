@@ -26,6 +26,10 @@
 .front-page-main-with-sidebar{
     width: calc(100%-220px)
 }
+.preview-image{
+    height: 150px;
+    overflow: hidden;
+}
 
 @media screen and (max-width: 768px) {
     .chatRoomStyle{
@@ -38,3 +42,5 @@
         width: calc(100%)
     }
 }
+
+

@@ -51,10 +51,12 @@ export function isArrayHasDuplicates<T>(array:T[]):Boolean{
     return set.size!=array.length;
 }
 
+// 返回原图的请求路径
 export function getImageById(imageId:string):string{
     return requestPrefix+"/api/file/getImage/"+imageId;
 }
 
+// 返回预览图的请求路径
 export function getImagePreviewById(imageId:string):string{
     return requestPrefix+"/api/file/getPreviewImage/"+imageId;
 }

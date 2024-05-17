@@ -11,6 +11,8 @@ declare module 'vue' {
     ElButton: typeof import('element-plus/es')['ElButton']
     ElDialog: typeof import('element-plus/es')['ElDialog']
     ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElImage: typeof import('element-plus/es')['ElImage']
+    ElPagination: typeof import('element-plus/es')['ElPagination']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     FileDownload: typeof import('./src/components/FileDownload.vue')['default']
     Files: typeof import('./src/components/files.vue')['default']
