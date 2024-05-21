@@ -1,9 +1,13 @@
 <template>
     <div style="display: flex;">
-        <sideBar></sideBar>
+        <!-- 侧边栏 -->
+        <!-- <component :is="sideBarStore.isDisplay? SideBar: SideBarMini"></component> -->
+        <SideBar v-if="sideBarStore.isDisplay"></SideBar>
+        <SideBarMini v-if="!sideBarStore.isDisplay"></SideBarMini>
 
-        <div id="page-wrapper"  class="gray-bg"  :style="sideBarStore.isDisplay?{}:{width:'100% '}">
-
+        <!-- 此处page-warpper使用了id选择器，style优先于class选择器的style生效，因此:class="frontPageMainClass() 修改无效 -->
+        <!-- <div id="page-wrapper"  class="gray-bg" :class="frontPageMainClass()" > -->
+        <div id="front-page-main"  class="gray-bg" :class="frontPageMainClass()" >
 
             <!-- header -->
             <div class="row border-bottom">
@@ -82,6 +86,7 @@ import { useCommonStore } from '@/store/commonStore';
 import { storeToRefs } from 'pinia';
 import Gallary from '@/components/Gallary.vue';
 import { useSideBar } from '@/store/sidebar';
+import SideBarMini from '@/components/SideBarMini.vue';
 
 let sideBarStore=useSideBar();
 let commonStore = useCommonStore();
@@ -104,6 +109,7 @@ let mainConList: ComponentsMap = {
     "fileUpload": FileUpload
 }
 
+
 //setup阶段，chatComponentRef=ref()还没有被赋值，在onMounted生命周期中才可获取值
 let chatComponentRef = ref();
 onMounted(() => {
@@ -114,8 +120,25 @@ onMounted(() => {
 let toPrivateChatRoom = commonStore.toPrivateChatRoom;
 let toMainChatRoom = commonStore.toMainChatRoom;
 
+//设置动态类别，使用匿名函数，然会对象，key为动态添加的类，value为布尔值，表示该类是否生效
+let frontPageMainClass=()=>{
+    return{
+        'front-page-main':sideBarStore.isDisplay,
+        'front-page-main-with-mini-sidebar':!sideBarStore.isDisplay
+    }
+}
+
 
 
 
 </script>
-<style scoped></style>
+<style scoped>
+#front-page-main{
+    padding: 0 15px;
+    position: relative !important;
+    flex-shrink: 1;
+    /* 最小高度为100vh，其中vh表示视口（viewport）高度，100vh表示视口高度的100% */
+    min-height: 100vh
+}
+
+</style>

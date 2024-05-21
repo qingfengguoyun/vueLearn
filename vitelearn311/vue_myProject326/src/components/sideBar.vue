@@ -1,6 +1,6 @@
 <template>
-    <div class="sideBar" style="background-color: #2F4050">
-        <nav class="sidebar navbar-default " role="navigation" :style="{display:sideBar.isDisplay?'block':'none'}">
+    <div class="sideBar mini-navbar" style="background-color: #2F4050">
+        <nav class="sidebar navbar-default " role="navigation" >
             <div class="sidebar-collapse" >
                 <ul class="nav metismenu" id="side-menu" style="background-color: #2F4050;">
                     <li class="nav-header">
@@ -78,7 +78,7 @@ import { useCommonStore } from '@/store/commonStore';
 import { useOnlineUser } from '@/store/onlineUser';
 import { useSideBar } from '@/store/sidebar';
 
-
+console.log("Sidebar Setup")
 
 let commonStore=useCommonStore();
 let onlineUser=useOnlineUser();

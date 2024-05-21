@@ -16,15 +16,20 @@
 .sidebar{
     width: 220px;
 }
+
+.sidebar-mini{
+    width: 100px;
+}
+
 .front-page-main{
-    width: calc(100%-220px)
+    width: calc(100%)
 }
 
 .sidebar-display{
     width: 220px;
 }
-.front-page-main-with-sidebar{
-    width: calc(100%-220px)
+.front-page-main-with-mini-sidebar{
+    width: calc(100%)
 }
 .preview-image{
     height: 150px;
