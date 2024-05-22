@@ -20,6 +20,7 @@ export default function(){
 
     let defaultPageSzie=ref(5);
 
+
     let previewUrlList=computed(()=>{
         return fileVos.value.map(vo=>getImagePreviewById(vo.fileId))
     })

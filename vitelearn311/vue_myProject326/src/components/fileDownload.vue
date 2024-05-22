@@ -44,7 +44,7 @@
                 <div class="col-lg-12 animated fadeInRight">
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="file-box" v-for="vo in fileDownLoad.fileVos"  >
+                            <div class="file-box" v-for="(vo,index) in fileDownLoad.fileVos"  >
                                 <div class="file">
                                     <a href="#">
                                         <span class="corner"></span>
@@ -52,13 +52,15 @@
                                             <i class="fa fa-file"></i>
                                         </div> -->
                                         <div class="preview-image" style="display: flex; justify-content: center; ">
-                                            <el-image :src="getImagePreviewById(vo.fileId)" fit="cover" :preview-src-list="fileDownLoad.previewUrlList"></el-image>
+                                            <!-- :preview-src-list="fileDownLoad.previewUrlList" 设置预览图片队列 :initial-index="index" 点击预览图从index下标的图片开始 -->
+                                            <el-image :src="getImagePreviewById(vo.fileId)" fit="cover" :preview-src-list="fileDownLoad.previewUrlList" :initial-index="index"></el-image>
                                             <!-- <img alt="image" class="img-fluid" :src="getImagePreviewById(vo.fileId)"> -->
+                                            
                                         </div>
                                         <div class="file-name">
-                                            Document_2014.doc
+                                            {{ vo.fileName }}
                                             <br/>
-                                            <small>Added: Jan 11, 2014</small>
+                                            <small>Added: {{ vo.userVo?.userName }} {{ vo.date}}</small>
                                         </div>
                                     </a>
                                 </div>
