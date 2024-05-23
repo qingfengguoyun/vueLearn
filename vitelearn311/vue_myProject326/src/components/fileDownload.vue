@@ -61,7 +61,11 @@
                                             {{ vo.fileName }}
                                             <br/>
                                             <small>Added: {{ vo.userVo?.userName }} {{ vo.date}}</small>
+                                            <div class="download m-t-xs right">
+                                                <el-button type="primary" @click="">下载</el-button>
+                                            </div>                                           
                                         </div>
+                        
                                     </a>
                                 </div>
 
@@ -210,5 +214,8 @@ let handleCurrentPageChange=function (val:number){
 
 </script>
 <style scoped>
+.download{
+    display: block;
+}
 
 </style>
