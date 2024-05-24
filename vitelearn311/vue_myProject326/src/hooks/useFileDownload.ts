@@ -42,6 +42,39 @@ export default function(){
         console.log(fileVos.value)
     }
 
+    async function downloadFile(fileIdParam:string){
+        console.log("downloadFile fileId:",fileIdParam);
+        let param={
+            fileId:fileIdParam
+        }
+        let url="/api/file/downloadFile"
+        console.log(url)
+        let response=await getRequest(url,param);
+        console.log(response);
+        let fileName= response.headers['content-disposition']
+        console.log(fileName)
+        if (fileName) {
+            fileName = decodeURI(fileName.split("filename=")[1])
+        }
+        //response.data转化为bolb文件
+        let blob=new Blob([response.data as any])
+        //前端的文件下载本质上是创造一个隐藏a标签，然后模拟点击，最后再移除a标签
+        const a = document.createElement("a");
+        // 创建下载的链接
+        a.href = window.URL.createObjectURL(blob);
+        a.download = fileName;
+        a.style.display = "none";
+        //a标签追加元素到body内
+        document.body.appendChild(a);
+        //模拟点击下载
+        a.click();
+        // 下载完成移除元素
+        document.body.removeChild(a);
+        // 释放掉blob对象
+        window.URL.revokeObjectURL(a.href);
+        
+    }
+
 
     return{
         fileVos,
@@ -52,7 +85,8 @@ export default function(){
         defaultPage,
         defaultPageSzie,
         getFilesByPage,
-        previewUrlList
+        previewUrlList,
+        downloadFile
     }
 
 }

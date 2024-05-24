@@ -62,7 +62,7 @@
                                             <br/>
                                             <small>Added: {{ vo.userVo?.userName }} {{ vo.date}}</small>
                                             <div class="download m-t-xs right">
-                                                <el-button type="primary" @click="">下载</el-button>
+                                                <el-button type="primary" @click="fileDownLoad.downloadFile(vo.fileId)">下载</el-button>
                                             </div>                                           
                                         </div>
                         
