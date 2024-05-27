@@ -1,7 +1,7 @@
 
 import type { FileVo, NativePage,PagePojo } from "@/types"
 import type { ResultInter } from "@/types/ResultType";
-import { getRequest,postRequest } from "@/utils/axiosUtils";
+import { getRequest,postRequest,fileDownLoadRequest } from "@/utils/axiosUtils";
 import {getImagePreviewById, requestPrefix} from "@/utils/commonUtils"
 import { type Ref ,ref,computed } from "vue";
 export default function(){
@@ -49,7 +49,7 @@ export default function(){
         }
         let url="/api/file/downloadFile"
         console.log(url)
-        let response=await getRequest(url,param);
+        let response=await fileDownLoadRequest(url,param);
         console.log(response);
         let fileName= response.headers['content-disposition']
         console.log(fileName)
@@ -57,7 +57,7 @@ export default function(){
             fileName = decodeURI(fileName.split("filename=")[1])
         }
         //response.data转化为bolb文件
-        let blob=new Blob([response.data as any])
+        let blob=new Blob([response.data as any],{type:response.headers['content-type']})
         //前端的文件下载本质上是创造一个隐藏a标签，然后模拟点击，最后再移除a标签
         const a = document.createElement("a");
         // 创建下载的链接

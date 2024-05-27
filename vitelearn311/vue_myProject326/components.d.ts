@@ -7,16 +7,11 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    copy: typeof import('./src/components/fileDownload copy.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
-    ElDialog: typeof import('element-plus/es')['ElDialog']
-    ElIcon: typeof import('element-plus/es')['ElIcon']
     ElImage: typeof import('element-plus/es')['ElImage']
     ElPagination: typeof import('element-plus/es')['ElPagination']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     FileDownload: typeof import('./src/components/FileDownload.vue')['default']
-    Files: typeof import('./src/components/files.vue')['default']
-    FilesRoom: typeof import('./src/components/filesRoom.vue')['default']
     FileUpload: typeof import('./src/components/FileUpload.vue')['default']
     Gallary: typeof import('./src/components/Gallary.vue')['default']
     HeaderMenu: typeof import('./src/components/HeaderMenu.vue')['default']

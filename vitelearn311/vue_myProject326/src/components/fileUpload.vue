@@ -33,7 +33,7 @@ import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue'
 import { UploadFilled } from '@element-plus/icons-vue'
 import type { UploadFile, UploadProps, UploadUserFile, UploadRawFile } from 'element-plus'
 import { requestPrefix } from '@/utils/commonUtils'
-import { imageUploadRequest } from '@/utils/axiosUtils'
+import { fileUploadRequest } from '@/utils/axiosUtils'
 import type { ResultInter } from '@/types/ResultType'
 import type { RefSymbol } from '@vue/reactivity'
 
@@ -61,7 +61,7 @@ let handleUploadAll = async () => {
         fd.append("file", el.raw as UploadRawFile);
         // let imageRequestUrl=requestPrefix+'/api/file/uploadByBatch'
     }
-    let res = await imageUploadRequest<ResultInter>(fd); 
+    let res = await fileUploadRequest<ResultInter>(fd); 
     if (res.data) {
         console.log(res.data.data)
         if (res.data.code == '200') {
