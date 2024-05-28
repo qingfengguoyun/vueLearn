@@ -8,6 +8,15 @@ import vue from '@vitejs/plugin-vue'
 import VueSetupExtend from "vite-plugin-vue-setup-extend";
 import os from 'os';
 
+// VITE_APP_ENV= 'development' / 'publish'
+const MODE="development"
+
+const IS_DEVELOP=true
+
+// 远程（部署时）后端服务器ip
+const REMOTE_BASE_IP='http://123.57.129.237'
+const REMOTE_SERVER_IP='123.57.129.237'
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -39,10 +48,11 @@ export default defineConfig({
   // 设置环境变量(重点)
   // 注意：define 中的键名应该是 'import.meta.env.BASE_IP'，这是 Vite 中用于定义环境变量的方式。
   define: {
-    'import.meta.env.BASE_IP': JSON.stringify(`http://${getNetworkIp()}`),
-    'import.meta.env.SERVER_IP': JSON.stringify(`${getNetworkIp()}`),
+    'import.meta.env.BASE_IP': IS_DEVELOP?JSON.stringify(`http://${getNetworkIp()}`):JSON.stringify(`${REMOTE_BASE_IP}`),
+    'import.meta.env.SERVER_IP': IS_DEVELOP?JSON.stringify(`${getNetworkIp()}`):JSON.stringify(`${REMOTE_SERVER_IP}`),
     'import.meta.env.SERVER_PORT': 8200,
-    'import.meta.env.SOCKETIO_PORT': 8271
+    'import.meta.env.SOCKETIO_PORT': 8271,
+    'import.meta.env.MODE': JSON.stringify(`${MODE}`),
   },
 })
 

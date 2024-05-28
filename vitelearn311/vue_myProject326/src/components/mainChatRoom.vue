@@ -15,7 +15,7 @@
         </div>
         <div class="chat-discussion chat-list">
             <div class="chat-activity-list" v-for="message in messages" :key="message.messageId" >
-                <message  :receivedMessage="message"></message>                     
+                <Message  :receivedMessage="message"></Message>                     
             </div>
             <div class="slimScrollBar" style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px;  height: 166px;"></div>         
         </div>
@@ -33,7 +33,7 @@ export default
 <script lang='ts' setup>
 import { watch, ref, reactive, type Ref, onMounted } from "vue";
 import useSocketIo from "@/hooks/socketIo";
-import message from "@/components/Message.vue";
+import Message from "@/components/Message.vue";
 // import messageRight from "@/components/messageRight.vue";
 import { type MessageVo } from "@/types";
 import { arrayDuplicate, getUserId,getUserInfo, isArrayHasDuplicates } from "@/utils/commonUtils";

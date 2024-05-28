@@ -19,7 +19,7 @@
         </div>
         <div class="chat-discussion chat-list">
             <div class="chat-activity-list" v-for="message in messageVoList" :key="message.messageId">
-                <message :receivedMessage="message"></message>
+                <Message :receivedMessage="message"></Message>
             </div>
         </div>
 
@@ -35,7 +35,7 @@ export default
 <script lang='ts' setup>
 import { watch, ref, type Ref, onMounted, onBeforeMount } from "vue";
 import  useSocketIo from "@/hooks/socketIo";
-import message from "@/components/Message.vue";
+import Message from "@/components/Message.vue";
 // import messageRight from "@/components/messageRight.vue";
 import type { MessageVo, MessagePojo, UserVo } from "@/types";
 import { arrayDuplicate, getUserId, isArrayHasDuplicates } from "@/utils/commonUtils";
