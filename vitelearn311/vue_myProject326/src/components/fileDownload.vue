@@ -41,7 +41,7 @@
                         </div>
                     </div>
                 </div> -->
-                <div class="col-lg-12 animated fadeInRight">
+                <div class="col-lg-12 animate__animated ">
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="file-box" v-for="(vo,index) in fileDownLoad.fileVos"  >
@@ -62,7 +62,8 @@
                                             <br/>
                                             <small>Added: {{ vo.userVo?.userName }} {{ vo.date}}</small>
                                             <div class="download m-t-xs right">
-                                                <el-button type="primary" @click="fileDownLoad.downloadFile(vo.fileId)">下载</el-button>
+                                                <!-- <el-button type="primary" @click="fileDownLoad.downloadFile(vo.fileId)">下载</el-button> -->
+                                                <el-button type="primary" :loading="vo.isDownloading" @click="handleDownload($event,vo)">下载</el-button>
                                             </div>                                           
                                         </div>
                         
@@ -192,9 +193,10 @@ export default
 <script lang='ts' setup>
 import useFileDownload from '@/hooks/useFileDownload';
 import { useFileDownLoadStore } from '@/store/fileDownload';
+import type { FileVo } from '@/types';
 import { getImageById,getImagePreviewById } from '@/utils/commonUtils';
-import { CURRENT_CHANGE } from 'element-plus/es/components/tree-v2/src/virtual-tree.mjs';
 import { ref } from 'vue';
+import { ElMessage } from 'element-plus';
 let fileDownLoad=ref(useFileDownload());
 let {fileVos}=useFileDownload();
 let fileDownLoadStore=useFileDownLoadStore();
@@ -210,6 +212,13 @@ let handleCurrentPageChange=function (val:number){
         pageSize:fileDownLoad.value.currentPageSize
     }
     fileDownLoad.value.getFilesByPage(pagePojo);
+}
+let handleDownload=function(event:PointerEvent,vo:FileVo){
+    // console.log('this',element)
+    vo.isDownloading=true;
+    fileDownLoad.value.downloadFile(vo.fileId).then(()=>{
+        vo.isDownloading=false
+    })
 }
 
 </script>

@@ -11,11 +11,11 @@ import os from 'os';
 // VITE_APP_ENV= 'development' / 'publish'
 const MODE="development"
 
-const IS_DEVELOP=true
+const IS_DEVELOP=false;
 
 // 远程（部署时）后端服务器ip
-const REMOTE_BASE_IP='http://123.57.129.237'
-const REMOTE_SERVER_IP='123.57.129.237'
+const REMOTE_BASE_IP='http://123.56.221.66'
+const REMOTE_SERVER_IP='123.56.221.66'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -52,7 +52,6 @@ export default defineConfig({
     'import.meta.env.SERVER_IP': IS_DEVELOP?JSON.stringify(`${getNetworkIp()}`):JSON.stringify(`${REMOTE_SERVER_IP}`),
     'import.meta.env.SERVER_PORT': 8200,
     'import.meta.env.SOCKETIO_PORT': 8271,
-    'import.meta.env.MODE': JSON.stringify(`${MODE}`),
   },
 })
 

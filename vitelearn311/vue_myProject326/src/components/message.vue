@@ -17,7 +17,7 @@
 
 
 
-    <div class="chat-message " :class="{left: !isOnlineUser,right :isOnlineUser}">
+    <div class="chat-message " :class="{left: !isOnlineUser,right :isOnlineUser ,'animate__animated':true,'animate__fadeInDown':true} ">
         <img class="message-avatar" :src="getImage('img/a1.jpg')" alt="">
         <div class="message" style="font-size: 1.25em;" ref="mes">
             <a class="message-author" href="#" :style="{'color':isOnlineUser?'black':'','font-weight': isOnlineUser ? 'bold' : ''}"> 

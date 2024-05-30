@@ -61,6 +61,9 @@ export interface FileVo{
     filePreviewUrl?:string
     fileType?:string,
     date:Date
+
+    //用于组件状态控制的属性
+    isDownloading?:boolean
 }
 
 export interface NativePage{

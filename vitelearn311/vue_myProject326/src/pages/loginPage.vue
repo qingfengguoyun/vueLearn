@@ -11,7 +11,7 @@
                     <h2 class="font-bold">欢迎访问个人聊天室</h2>
                     <h2 class="font-bold">登录界面</h2>
                     <p>
-                        //描述
+                        2024-5-30
                     </p>
 
                 </div>
