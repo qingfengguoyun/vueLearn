@@ -45,10 +45,12 @@ export default
 import { useRouter, RouterLink } from 'vue-router';
 import { type UserInter } from '@/types/UserType'
 import { useSideBar } from '@/store/sidebar';
+import { useCommonStore } from '@/store/commonStore';
 
 let user = JSON.parse(sessionStorage.getItem("userInfo") as string) as UserInter || {}
 let router = useRouter();
 let sideBar=useSideBar();
+
 
 
 function logOut() {

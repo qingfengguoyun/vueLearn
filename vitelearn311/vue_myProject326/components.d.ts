@@ -10,6 +10,8 @@ declare module 'vue' {
     ElButton: typeof import('element-plus/es')['ElButton']
     ElImage: typeof import('element-plus/es')['ElImage']
     ElPagination: typeof import('element-plus/es')['ElPagination']
+    ElRow: typeof import('element-plus/es')['ElRow']
+    ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     FileDownload: typeof import('./src/components/FileDownload.vue')['default']
     FileUpload: typeof import('./src/components/FileUpload.vue')['default']
@@ -30,5 +32,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SideBar: typeof import('./src/components/SideBar.vue')['default']
     SideBarMini: typeof import('./src/components/SideBarMini.vue')['default']
+    SubHeader: typeof import('./src/components/SubHeader.vue')['default']
   }
 }

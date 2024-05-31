@@ -13,7 +13,8 @@
             <div class="row border-bottom">
                 <headerMenu></headerMenu>
             </div>
-            <div class="row wrapper border-bottom white-bg page-heading">
+            <!-- sub header -->
+            <!-- <div class="row wrapper border-bottom white-bg page-heading">
                 <div class="col-sm-4">
                     <h2>This is main title</h2>
                     <ol class="breadcrumb">
@@ -38,11 +39,12 @@
                         {{ mainCom }}
                     </div>
                 </div>
-            </div>
+            </div> -->
+            <SubHeader></SubHeader>
             <!-- mainContent -->
             <div class="wrapper wrapper-content row">
                 <!-- vue动态组件，通过特殊的:is属性指定组件 -->
-                <component :is="mainConList[mainCom] || mainConList[0]" ref="chatComponentRef"></component>
+                <component :is="mainConList[mainCom as string] || mainConList[0]" ref="chatComponentRef"></component>
                 <onlineUser v-if="commonStore.showOnlineUser"></onlineUser>
 
             </div>
@@ -87,6 +89,7 @@ import { storeToRefs } from 'pinia';
 import Gallary from '@/components/Gallary.vue';
 import { useSideBar } from '@/store/sidebar';
 import SideBarMini from '@/components/SideBarMini.vue';
+import SubHeader from  '@/components/SubHeader.vue';
 
 let sideBarStore=useSideBar();
 let commonStore = useCommonStore();

@@ -1,6 +1,6 @@
 <template>
     
-    <h2> This is FilesRoom Component</h2>
+    <h2> 下载文件</h2>
     <div class="FileDownLoad">
         <div class="wrapper wrapper-content">
             <div class="row">

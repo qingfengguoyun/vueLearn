@@ -1,5 +1,5 @@
 <template>
-    <div class="ibox-content chatRoomStyle" >
+    <div class="ibox-content chatRoomStyle">
         <div>
             <h2> 单独聊天室</h2>
         </div>
@@ -18,9 +18,14 @@
 
         </div>
         <div class="chat-discussion chat-list">
-            <div class="chat-activity-list" v-for="message in messageVoList" :key="message.messageId">
-                <Message :receivedMessage="message"></Message>
-            </div>
+            <el-scrollbar>
+                <div class="chat-activity-list" v-for="message in messageVoList" :key="message.messageId">
+                    <Message :receivedMessage="message"></Message>
+                </div>
+                <el-row justify="center">
+                    <el-button @click="privateChat.getHistoryMessageVoList()">更多消息</el-button>
+                </el-row>
+            </el-scrollbar>
         </div>
 
     </div>
@@ -34,7 +39,7 @@ export default
 </script>
 <script lang='ts' setup>
 import { watch, ref, type Ref, onMounted, onBeforeMount } from "vue";
-import  useSocketIo from "@/hooks/socketIo";
+import useSocketIo from "@/hooks/socketIo";
 import Message from "@/components/Message.vue";
 // import messageRight from "@/components/messageRight.vue";
 import type { MessageVo, MessagePojo, UserVo } from "@/types";
@@ -61,18 +66,18 @@ watch(messageVoList, (newIns, oldIns) => {
     if (isArrayHasDuplicates(newIns)) {
         messageVoList.value = arrayDuplicate(newIns);
     }
-    if (messageVoList.value.length > 10) {
+    if (messageVoList.value.length > privateChat.showMessageNumLimit) {
         messageVoList.value.pop();
     }
 }, { deep: true })
 
 //可以添加针对connectUser的watch方法
-watch(connectUser,async (newIns,oldIns)=>{
-    console.log("WATCH",newIns,oldIns)
+watch(connectUser, async (newIns, oldIns) => {
+    console.log("WATCH", newIns, oldIns)
     console.log("update MessageVoList")
     await privateChat.getMessageVoList({ connectUserId: newIns.id })
     messageVoList.value = privateChat.messageVoList
-},{ deep: true })
+}, { deep: true })
 
 socket.on("receive_private_message", (data: string) => {
     console.log("private_message收到消息" + data)

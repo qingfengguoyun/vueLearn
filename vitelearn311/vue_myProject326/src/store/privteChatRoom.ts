@@ -40,12 +40,29 @@ export let usePrivateChatRoom=defineStore("usePrivateChatRoom",{
         },
         initPrivateChatRoom(){
 
+        },
+        async getHistoryMessageVoList(msgId?:string,sendUserId?:string,receiveUserId?:string){
+            let userIds=[]
+            userIds.push(sendUserId?sendUserId:this.messageVoList[this.messageVoList.length-1].sendUser.id)
+            userIds.push(receiveUserId?receiveUserId:this.messageVoList[this.messageVoList.length-1].receiveUser!.id )
+            let param={
+                msgId:msgId? msgId : this.messageVoList[this.messageVoList.length-1].messageId,
+                userIds:userIds
+            }
+            let res=await postRequest<ResultInter>("/api/message/queryHistoryPrivateMessagesByMsgIdAndUserIds",param);
+            if(res.data.code==200){
+                console.log("历史消息：",res.data.data)
+                this.showMessageNumLimit+=(res.data.data as []).length
+                this.messageVoList.push(...res.data.data)                    
+            }
         }
+
         
     },
     state() {
         return{
            connectUser:JSON.parse(sessionStorage.getItem('connectUser') as string) as UserInter || {} as UserInter,
+           showMessageNumLimit: 10,
            messageVoList:[] as MessageVo[]
         }
     },
