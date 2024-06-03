@@ -10,7 +10,7 @@ const socketIoPort=import.meta.env.SOCKETIO_PORT
 // axios请求的前缀，包括服务器地址和端口号
 export let requestPrefix=baseIP+":"+serverPort || "http://localhost:8200"
 
-export let imageRequestPrefix=serverIp+":"+serverPort || "localhost:8200"
+// export let imageRequestPrefix=serverIp+":"+serverPort || "localhost:8200"
 
 export function getUserId(){
     let userInfo=JSON.parse(sessionStorage.getItem('userInfo') as string) as UserInter

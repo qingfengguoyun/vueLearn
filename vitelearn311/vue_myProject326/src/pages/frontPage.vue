@@ -90,6 +90,8 @@ import Gallary from '@/components/Gallary.vue';
 import { useSideBar } from '@/store/sidebar';
 import SideBarMini from '@/components/SideBarMini.vue';
 import SubHeader from  '@/components/SubHeader.vue';
+import UserInfo from '@/components/UserInfo.vue';
+
 
 let sideBarStore=useSideBar();
 let commonStore = useCommonStore();
@@ -109,7 +111,8 @@ let mainConList: ComponentsMap = {
     "privateChatRoom": PrivateChatRoom,
     "gallary": Gallary,
     "fileDownload": FileDownload,
-    "fileUpload": FileUpload
+    "fileUpload": FileUpload,
+    "userInfo" : UserInfo
 }
 
 

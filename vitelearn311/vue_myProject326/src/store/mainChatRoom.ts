@@ -26,6 +26,7 @@ export let useMainChatRoom=defineStore("mainChatRoom",{
             console.log("查询消息历史记录",r)
             if(r.code===200){
                 this.showMessageNumLimit+=8;
+                // 扩展运算符(spread)是三个点(...)， 将一个数组转为用逗号分隔的参数序列 
                 this.messageVoList.push(...r.data)
             }
         }

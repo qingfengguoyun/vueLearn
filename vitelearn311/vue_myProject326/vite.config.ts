@@ -11,7 +11,7 @@ import os from 'os';
 // VITE_APP_ENV= 'development' / 'publish'
 const MODE="development"
 
-const IS_DEVELOP=false;
+const IS_DEVELOP=true;
 
 // 远程（部署时）后端服务器ip
 const REMOTE_BASE_IP='http://123.56.221.66'
@@ -34,7 +34,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  
+  base:"./",
   server:{
     host: '0.0.0.0',
     port: 3000,

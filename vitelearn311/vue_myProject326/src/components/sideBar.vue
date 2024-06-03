@@ -42,18 +42,11 @@
                         <a href="#" @click="commonStore.toGallary()"><i class="fa fa-th-large"></i> <span class="nav-label">画廊</span></a>
                     </li>
                     <li>
+                        <a href="#" @click="commonStore.toUserInfo()"><i class="fa fa-th-large"></i> <span class="nav-label">个人信息</span></a>
+                    </li>
+                    <li>
                         <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">其他功能</span><span
                                 class="fa arrow"></span></a>
-                        <!-- <ul class="nav nav-second-level collapse" aria-expanded="false">
-                            <li><a href="#">Flot Charts</a></li>
-                            <li><a href="#">Morris.js Charts</a></li>
-                            <li><a href="#">Rickshaw Charts</a></li>
-                            <li><a href="#">Chart.js</a></li>
-                            <li><a href="#">Chartist</a></li>
-                            <li><a href="#">c3 charts</a></li>
-                            <li><a href="#">Peity Charts</a></li>
-                            <li><a href="#">Sparkline Charts</a></li>
-                        </ul> -->
                     </li>
 
 

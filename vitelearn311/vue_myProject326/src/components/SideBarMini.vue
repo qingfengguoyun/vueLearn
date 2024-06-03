@@ -36,6 +36,10 @@
                                 class="nav-label">画廊</span></a>
                     </li>
                     <li>
+                        <a href="#" @click="commonStore.toUserInfo"><i class="fa fa-th-large"></i> <span
+                                class="nav-label">信息</span></a>
+                    </li>
+                    <li>
                         <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">其他</span></a>
                     </li>
 

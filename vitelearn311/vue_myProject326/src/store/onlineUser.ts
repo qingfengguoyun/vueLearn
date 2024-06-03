@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import { type UserInter} from "@/types/UserType"
 import type {  UserVo, UnReadMessageCount,  User }from "@/types"
-import { requestPrefix,imageRequestPrefix } from "@/utils/commonUtils";
+import { requestPrefix } from "@/utils/commonUtils";
 import useSocketIo from "@/hooks/socketIo";
 import { postRequest } from "@/utils/axiosUtils";
 import type { ResultInter } from "@/types/ResultType";

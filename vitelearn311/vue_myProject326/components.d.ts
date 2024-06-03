@@ -8,7 +8,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElCol: typeof import('element-plus/es')['ElCol']
+    ElDivider: typeof import('element-plus/es')['ElDivider']
     ElImage: typeof import('element-plus/es')['ElImage']
+    ElInput: typeof import('element-plus/es')['ElInput']
     ElPagination: typeof import('element-plus/es')['ElPagination']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
@@ -33,5 +36,6 @@ declare module 'vue' {
     SideBar: typeof import('./src/components/SideBar.vue')['default']
     SideBarMini: typeof import('./src/components/SideBarMini.vue')['default']
     SubHeader: typeof import('./src/components/SubHeader.vue')['default']
+    UserInfo: typeof import('./src/components/UserInfo.vue')['default']
   }
 }
