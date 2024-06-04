@@ -37,5 +37,6 @@ declare module 'vue' {
     SideBarMini: typeof import('./src/components/SideBarMini.vue')['default']
     SubHeader: typeof import('./src/components/SubHeader.vue')['default']
     UserInfo: typeof import('./src/components/UserInfo.vue')['default']
+    UserInfoChange: typeof import('./src/components/UserInfoChange.vue')['default']
   }
 }

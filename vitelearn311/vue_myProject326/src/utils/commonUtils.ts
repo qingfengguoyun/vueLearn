@@ -61,3 +61,8 @@ export function getImagePreviewById(imageId:string):string{
     return requestPrefix+"/api/file/getPreviewImage/"+imageId;
 }
 
+// 返回用户头像的请求路径
+export function getProfilePhotoById(imageId:string):string{
+    return requestPrefix+"/api/file/getProfilePhoto/"+imageId;
+}
+

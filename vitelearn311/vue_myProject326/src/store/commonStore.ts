@@ -4,6 +4,7 @@ import MainChatRoom from "@/components/MainChatRoom.vue";
 import PrivateChatRoom from "@/components/PrivateChatRoom.vue";
 import Gallary from "@/components/FileDownload.vue";
 import UserInfo from "@/components/UserInfo.vue";
+import type {User} from "@/types"
 
 
 export let useCommonStore=defineStore('commonStore',{
@@ -35,9 +36,14 @@ export let useCommonStore=defineStore('commonStore',{
             this.mainCom="fileUpload";
         },
         toUserInfo(){
-            console.log("toFileUpload")
+            console.log("toUserInfo")
             sessionStorage.setItem("mainCom","userInfo");
             this.mainCom="userInfo";
+        },
+        toUserInfoChange(){
+            console.log("toUserInfoChang")
+            sessionStorage.setItem("mainCom","userInfoChange");
+            this.mainCom="userInfoChange";
         },
 
     },

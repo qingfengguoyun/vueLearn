@@ -1,14 +1,13 @@
 <template>
     <div class="userInfo p-h-md">
         <!-- 展示个人信息 -->
-        <div v-if="!isOnChange">
+        <div>
             <el-row class="p-sm ">
                 <div class="m-r-md" style="min-width: 100px;">
-                    <h3>用户名:</h3>
+                    <h3>用户名</h3>
                 </div>
                 <el-col :span=8 class="w-200">
-                    <el-input :placeholder="form.userName" v-model="onlineUser.user.userName"
-                        disabled="false"></el-input>
+                    <h3>{{ userInfo.vo.userName}}</h3>
                 </el-col>
             </el-row>
             <el-row class="p-sm ">
@@ -17,92 +16,18 @@
                 </div>
                 <div>
                     <div>
-                        <el-image :src="'img/' + onlineUser.user.userDefaultImage || defaultImages[0]"
-                            :style="{ height: '60px' }"></el-image>
-                    </div>
-                </div>
-            </el-row>
-        </div>
-        <!-- 修改个人信息 -->
-        <div v-if="isOnChange">
-            <el-row class="p-sm ">
-                <div class="m-r-md" style="min-width: 100px;">
-                    <h3>用户名:</h3>
-                </div>
-                <el-col :span=8 class="w-200">
-                    <el-input :placeholder="form.userName" v-model="form.userName"></el-input>
-                </el-col>
-            </el-row>
-            <el-row class="p-sm ">
-                <div class="m-r-md " style="min-width: 100px;">
-                    <h3>密码</h3>
-                </div>
-                <el-col :span="8" class="w-200">
-                    <el-input :placeholder="form.password" show-password v-model="form.password"></el-input>
-                </el-col>
-            </el-row>
-            <el-row class="p-sm ">
-                <div class="m-r-md " style="min-width: 100px;">
-                    <h3>确认密码</h3>
-                </div>
-                <el-col :span="8" class="w-200">
-                    <el-input :placeholder="form.password" show-password v-model="form.repeatPasword"></el-input>
-                </el-col>
-            </el-row>
-            <el-row class="p-sm ">
-                <div class="m-r-md" style="min-width: 100px;">
-                    <h3>头像</h3>
-                </div>
-                <div>
-                    <div>
-                        <el-image :src="newHeadPhotoUrl"
-                            :style="{ height: '60px' }"></el-image>
+                        <el-image :src="userInfo.profilePhoto" :style="{ height: '60px' }"></el-image>
                     </div>
                 </div>
             </el-row>
             <el-row class="p-sm ">
-                <div class="m-r-md" style="min-width: 100px;">
-                    <h3>默认头像</h3>
-                </div>
-                <div class="m-r-md" v-for="(imageUrl, index) in defaultImages">
-                    <div>
-                        <el-image :src="'img/' + imageUrl" :style="{ height: '60px' }"
-                            :class="{ img_border: index != selectedDefaultImage, img_border_selected: index == selectedDefaultImage }"
-                            @click="changeDefalutImage(index)"></el-image>
-                    </div>
-                </div>
-            </el-row>
-            <el-row class="p-sm ">
-                <div>
-                    <h3>上传自定义头像</h3>
-                </div>
-            </el-row>
-            <el-row class="p-sm ">
-                <el-upload v-model:file-list="fileList" class="upload-demo" action="#" :multiple="false"
-                    list-type="picture" :auto-upload="false" drag ref="uploadRef">
-                    <div class="el-upload__text">
-                        Drop file here or <em>click to upload</em>
-                    </div>
-                    <template #tip>
-                        <div class="el-upload__tip">
-                            jpg/png files with a size less than 500kb
-                        </div>
-                    </template>
-                </el-upload>
-            </el-row>
-        </div>
-
-        <el-row class="p-sm ">
             <div>
-                <el-button type="primary" round class="m-r-md" v-if="!isOnChange" v-on:click="begainChangeUserInfo">
+                <el-button type="primary" round class="m-r-md" v-if="userInfo.vo.userId==onlineUser.user.id" v-on:click="commonStore.toUserInfoChange">
                     修改</el-button>
-                <el-button type="primary" round class="m-r-md" v-if="isOnChange" v-on:click="begainChangeUserInfo">
-                    取消</el-button>
-            </div>
-            <div>
-                <el-button type="primary" round :disabled="!isOnChange" @click="updateUserInfo()"> 保存 </el-button>
             </div>
         </el-row>
+        </div>
+
     </div>
 
 
@@ -114,58 +39,69 @@ export default
     }
 </script>
 <script lang='ts' setup>
-import { type Ref, ref, toRaw } from 'vue';
+import { type Ref, ref, toRaw, onMounted, onBeforeMount } from 'vue';
 import { useOnlineUser } from '@/store/onlineUser';
-import UserInfo from '@/components/UserInfo.vue';
-import { getImage, getImageById } from '@/utils/commonUtils';
-import type { User } from '@/types';
-import useUserInfo from '@/hooks/useUserInfo';
+import { getImage, getImageById, getProfilePhotoById } from '@/utils/commonUtils';
+import type { UserVo, User } from '@/types';
+import useUserInfo from '@/hooks/useUserInfo'
+import { postRequest } from '@/utils/axiosUtils';
+import type { ResultInter } from '@/types/ResultType';
+import { useCommonStore } from '@/store/commonStore';
 
-let userInfo=useUserInfo();
+
+
+let commonStore=useCommonStore();
 let onlineUser = useOnlineUser();
-let changeForm = ref({
-    id:onlineUser.user.id,
-    userName:onlineUser.user.userName,
-    password:onlineUser.user.password,
-    userImageId:onlineUser.user.userImageId,
-    userDefaultImage:onlineUser.user.userDefaultImage,
-})
-let form = ref({
-    userName: onlineUser.user.userName,
-    password: onlineUser.user.password,
-    repeatPasword:onlineUser.user.password,
-    userDefaultHeadPhoto: onlineUser.user.userDefaultImage,
-    userImageId: onlineUser.user.userImageId
-})
-let defaultImages = [
-    'default_head_photo.jpg',
-    '1_1.png',
-    '2_1.png',
+let userId = onlineUser.showInfoUserId
+// let vo:Ref<UserVo> =ref({});
+// let profilePhoto = ref("")
+// console.log("userId", userId)
 
-]
-let selectedDefaultImage = ref(0);
-let newHeadPhotoUrl=ref(onlineUser.user.userImageId!=null?getImageById(onlineUser.user.userImageId):"img/"+(onlineUser.user.userDefaultImage || defaultImages[0]))
-let changeDefalutImage = function (i: number) {
-    selectedDefaultImage.value = i;
-    newHeadPhotoUrl.value="img/"+defaultImages[i]
-    changeForm.value.userDefaultImage="img/"+defaultImages[i]
-}
-let fileList = ref([])
-let isOnChange = ref(false);
-let begainChangeUserInfo = function () {
-    isOnChange.value = !isOnChange.value
-}
-let updateUserInfo=function(){
-    let u:User={
-        id:onlineUser.user.id,
-        userName:changeForm.value.userName,
-        password:changeForm.value.password,
-        userDefaultImage:defaultImages[selectedDefaultImage.value]
-    }
-    userInfo.updateUserInfo(u);
+let userInfo=ref(useUserInfo());
+userInfo.value.getUserInfoById(userId!)
 
-    isOnChange.value=!isOnChange.value
-}
+onMounted(async () => {
+   
+    // let res = await postRequest<ResultInter>("/api/user/getUserInfoById", userId);
+    // if (res.data.code == 200) {
+    //     console.log("res.data.data", res.data.data)
+    //     vo.value = res.data.data;
+    //     console.log("vo:", vo.value)
+    //     if (vo.value.userImageId != null) {
+    //         profilePhoto.value = getProfilePhotoById(vo.value.userImageId)
+    //     } else if (vo.value.userDefaultImage != null) {
+    //         profilePhoto.value = "img/" + vo.value.userDefaultImage;
+    //     } else {
+    //         profilePhoto.value = "img/default_head_photo.jpg";
+    //     }
+    // }
+})
+
+
+
+
+// let changeForm = ref({
+//     id:onlineUser.user.id,
+//     userName:onlineUser.user.userName,
+//     password:onlineUser.user.password,
+//     userImageId:onlineUser.user.userImageId,
+//     userDefaultImage:onlineUser.user.userDefaultImage,
+// })
+// let form = ref({
+//     userName: onlineUser.user.userName,
+//     password: onlineUser.user.password,
+//     repeatPasword:onlineUser.user.password,
+//     userDefaultHeadPhoto: onlineUser.user.userDefaultImage,
+//     userImageId: onlineUser.user.userImageId
+// })
+// let defaultImages = [
+//     'default_head_photo.jpg',
+//     '1_1.png',
+//     '2_1.png',
+// ]
+
+
+
 
 
 

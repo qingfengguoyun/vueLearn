@@ -91,7 +91,7 @@ import { useSideBar } from '@/store/sidebar';
 import SideBarMini from '@/components/SideBarMini.vue';
 import SubHeader from  '@/components/SubHeader.vue';
 import UserInfo from '@/components/UserInfo.vue';
-
+import UserInfoChange from '@/components/UserInfoChange.vue'
 
 let sideBarStore=useSideBar();
 let commonStore = useCommonStore();
@@ -112,7 +112,8 @@ let mainConList: ComponentsMap = {
     "gallary": Gallary,
     "fileDownload": FileDownload,
     "fileUpload": FileUpload,
-    "userInfo" : UserInfo
+    "userInfo" : UserInfo,
+    "userInfoChange": UserInfoChange,
 }
 
 

@@ -1,23 +1,41 @@
-import type { User, UserVo } from "@/types";
-import type { ResultInter } from "@/types/ResultType";
-import { postRequest } from "@/utils/axiosUtils";
-import { useOnlineUser } from "@/store/onlineUser";
 
-export default function(){
-    let updateUserInfo=async function(user:User){
-        let res=await postRequest<ResultInter>("/api/user/updateUser",user);
-        //更新用户信息成功
-        if(res.data.code==200){
-            let updatedUser=res.data.data as User
-            //存入sessionStorage
-            sessionStorage.setItem("userInfo", JSON.stringify(updatedUser))
-            //更新pinia onlineUser.ts 中的user
-            let onlineUser=useOnlineUser();
-            onlineUser.user=updatedUser
-            console.log("用户信息更新成功")
+import { useOnlineUser } from "@/store/onlineUser";
+import type {UserVo} from "@/types"
+import { type Ref,ref } from "vue";
+import { postRequest } from "@/utils/axiosUtils";
+import type { ResultInter } from "@/types/ResultType";
+import { getProfilePhotoById } from "@/utils/commonUtils";
+export default function () {
+
+    let onlineUser = useOnlineUser();
+    let userId = onlineUser.showInfoUserId
+    let vo: Ref<UserVo> = ref({});
+    let profilePhoto = ref("")
+    // console.log("userId", userId)
+
+    async function getUserInfoById(userId?:string){
+        if(!userId){
+            userId=onlineUser.user.id;
+        }
+        let res = await postRequest<ResultInter>("/api/user/getUserInfoById", userId);
+        if (res.data.code == 200) {
+            console.log("res.data.data", res.data.data)
+            vo.value = res.data.data;
+            console.log("vo:", vo.value)
+            if (vo.value.userImageId != null) {
+                profilePhoto.value = getProfilePhotoById(vo.value.userImageId)
+            } else if (vo.value.userDefaultImage != null) {
+                profilePhoto.value = "img/" + vo.value.userDefaultImage;
+            } else {
+                profilePhoto.value = "img/default_head_photo.jpg";
+            }
         }
     }
-    return {
-        updateUserInfo,
+
+    return{
+        vo,
+        profilePhoto,
+        getUserInfoById,
     }
+
 }

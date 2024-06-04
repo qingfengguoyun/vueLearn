@@ -35,7 +35,9 @@ let mainConList:com = {
     "privateChatRoom": "个人聊天室",
     "gallary": "画廊",
     "fileDownload": "下载文件",
-    "fileUpload": "上传文件"
+    "fileUpload": "上传文件",
+    "userInfo" : "用户信息",
+    "userInfoChange": "修改个人信息",
 }
 // let comName=ref(mainConList[commonStore.mainCom as string])
 
