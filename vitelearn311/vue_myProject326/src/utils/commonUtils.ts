@@ -1,6 +1,7 @@
 import axios from "axios";
 import { type UserInter } from "@/types/UserType";
 import type { MessageVo } from '../types/index';
+import type { UserVo,User } from "../types/index";
 
 const baseIP = import.meta.env.BASE_IP;
 const serverPort=import.meta.env.SERVER_PORT
@@ -64,5 +65,20 @@ export function getImagePreviewById(imageId:string):string{
 // 返回用户头像的请求路径
 export function getProfilePhotoById(imageId:string):string{
     return requestPrefix+"/api/file/getProfilePhoto/"+imageId;
+}
+
+// 根据用户获取头像
+export function getUserProfilePhoto(user:any){
+    if (!user.userImageId) {
+        if (user.userDefaultImage) {
+            return ('img/' + user.userDefaultImage) as string;
+        } else {
+            return 'img/default_head_photo.jpg'
+        }
+
+    } else {
+        return getProfilePhotoById(user.userImageId)
+        // return requestPrefix + "/api/file/getProFile/" + this.user.userImageId
+    }
 }
 

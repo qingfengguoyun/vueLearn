@@ -61,7 +61,7 @@ let handleUploadAll = async () => {
         fd.append("file", el.raw as UploadRawFile);
         // let imageRequestUrl=requestPrefix+'/api/file/uploadByBatch'
     }
-    let res = await fileUploadRequest<ResultInter>(fd); 
+    let res = await fileUploadRequest<ResultInter>("/api/file/uploadByBatch",fd); 
     if (res.data) {
         console.log(res.data.data)
         if (res.data.code == '200') {

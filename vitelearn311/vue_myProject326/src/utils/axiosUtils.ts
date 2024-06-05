@@ -73,8 +73,10 @@ export async function fileDownLoadRequest<T>(url: string, params?: any): Promise
     // const response = await getRequest('https://example.com/api/data', { page: 1, limit: 10 });
 }
 
-//封装axios的post方法，主要自动用来添加token
-export async function fileUploadRequest<T>(params:any):Promise<AxiosResponse<T>> {
+
+
+//文件上传方法
+export async function fileUploadRequest<T>(url:string,params:any):Promise<AxiosResponse<T>> {
 
     let token=sessionStorage.getItem('Authorization') as String || ""
     try {
@@ -84,11 +86,11 @@ export async function fileUploadRequest<T>(params:any):Promise<AxiosResponse<T>>
             // 'token': `${token}`
             // 'token': token
         }
-        const response = await axios.post(requestPrefix+"/api/file/uploadByBatch", params,{headers});
+        const response = await axios.post(requestPrefix+url, params,{headers});
         return response;
     } catch (error) {
         // 处理错误
-        console.error('Error in imageUploadRequest:', error);
+        console.error('Error in fileUploadRequest:', error);
         throw error;
     }
 }

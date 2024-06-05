@@ -18,7 +18,7 @@
 
 
     <div class="chat-message " :class="{left: !isOnlineUser,right :isOnlineUser ,'animate__animated':true,'animate__fadeInDown':true} ">
-        <img class="message-avatar" :src="getImage('img/a1.jpg')" alt="">
+        <img class="message-avatar" :src="getUserProfilePhoto(message.sendUser)" alt="">
         <div class="message" style="font-size: 1.25em;" ref="mes">
             <a class="message-author" href="#" :style="{'color':isOnlineUser?'black':'','font-weight': isOnlineUser ? 'bold' : ''}"> 
                 {{ message.sendUser.userName }} 
@@ -42,7 +42,7 @@ export default
 import { ref, defineProps, type Ref, reactive, onMounted } from "vue";
 import { type MessageVo } from "@/types";
 import { type UserInter } from "@/types/UserType";
-import { getImage, getUserId } from "@/utils/commonUtils"
+import { getImage, getUserId,getUserProfilePhoto } from "@/utils/commonUtils"
 let props = defineProps({
     receivedMessage: {} 
 })
