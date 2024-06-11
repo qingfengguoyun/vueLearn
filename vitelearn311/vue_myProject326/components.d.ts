@@ -14,6 +14,7 @@ declare module 'vue' {
     ElPagination: typeof import('element-plus/es')['ElPagination']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
+    ElTag: typeof import('element-plus/es')['ElTag']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     FileDownload: typeof import('./src/components/FileDownload.vue')['default']
     FileUpload: typeof import('./src/components/FileUpload.vue')['default']

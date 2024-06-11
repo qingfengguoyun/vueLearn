@@ -61,6 +61,7 @@ export interface FileVo{
     filePreviewUrl?:string
     fileType?:string,
     date:Date
+    tags?:Tag[]
 
     //用于组件状态控制的属性
     isDownloading?:boolean
@@ -76,4 +77,10 @@ export interface NativePage{
 export interface PagePojo{
     page?:number
     pageSize?:number
+}
+
+export interface Tag{
+    id:string
+    tagName?:string
+    isBasic?:boolean
 }

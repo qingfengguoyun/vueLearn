@@ -24,9 +24,12 @@
                 {{ message.sendUser.userName }} 
             </a>
             <span class="message-date">  {{ message.date }} </span>
-            <span class="message-content m-t-sm">
+            <el-row>
+                <span class="message-content m-t-sm auto_wrap" style="text-align: left;">
                 {{ message.messageContent }}
             </span>
+            </el-row>
+          
         </div>
     </div>
 
@@ -70,5 +73,10 @@ if (message.sendUser.id == getUserId()) {
 li {
     border: 2px solid black;
     margin-top: 5px;
+}
+/* 自动换行样式 当单词过长时截断单词换行 */
+.auto_wrap{
+    word-wrap: break-word;
+    word-break: break-all;
 }
 </style>

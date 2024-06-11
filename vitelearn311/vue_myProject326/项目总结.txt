@@ -7,3 +7,17 @@ vscode 代码提示快捷键：Ctrl+i
 
 2，在hooks中定义的async方法，可以在setup中使用，且无需添加await。将template中
 的对象定义在hook中，并通过hook中的方法进行获取与修改是好的实现方式
+
+2024-6-6：
+1，pinia的**store.ts文件中，从sessionStorage.getItem()取出来的对象不要取下层数据，
+因为可能并不存在，进而导致报错。(sessionStorage.getItem()取出的内容一定需要
+JSON.parse()，不要在JSON.parse()后尝试获取下层数据）
+
+2，设置文字自动换行：
+/* 自动换行样式 当单词过长时截断单词换行 */
+.auto_wrap{
+    word-wrap: break-word;
+    word-break: break-all;
+}
+中文通常不会有问题，当英文单词过长时（例如网址链接），将在单词中间进行强制换行
+

@@ -15,8 +15,9 @@ export default function () {
 
     async function getUserInfoById(userId?:string){
         if(!userId){
-            userId=onlineUser.user.id;
+            userId=onlineUser.user.id;          
         }
+        console.log('getUserInfoById user',onlineUser.user.userName)
         let res = await postRequest<ResultInter>("/api/user/getUserInfoById", userId);
         if (res.data.code == 200) {
             console.log("res.data.data", res.data.data)

@@ -1,5 +1,5 @@
 <template>
-    
+
     <h2> 下载文件</h2>
     <div class="FileDownLoad">
         <div class="wrapper wrapper-content">
@@ -44,7 +44,7 @@
                 <div class="col-lg-12 animate__animated ">
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="file-box" v-for="(vo,index) in fileDownLoad.fileVos"  >
+                            <div class="file-box" v-for="(vo, index) in fileDownLoad.fileVos">
                                 <div class="file">
                                     <a href="#">
                                         <span class="corner"></span>
@@ -53,20 +53,31 @@
                                         </div> -->
                                         <div class="preview-image" style="display: flex; justify-content: center; ">
                                             <!-- :preview-src-list="fileDownLoad.previewUrlList" 设置预览图片队列 :initial-index="index" 点击预览图从index下标的图片开始 -->
-                                            <el-image :src="getImagePreviewById(vo.fileId)" fit="cover" :preview-src-list="fileDownLoad.previewUrlList" :initial-index="index"></el-image>
+                                            <el-image :src="getImagePreviewById(vo.fileId)" fit="cover"
+                                                :preview-src-list="fileDownLoad.previewUrlList"
+                                                :initial-index="index"></el-image>
                                             <!-- <img alt="image" class="img-fluid" :src="getImagePreviewById(vo.fileId)"> -->
-                                            
+
                                         </div>
+
+                                        <div style="background-color: #f8f8f8;" class="p-xs gap-2">
+                                            <el-tag v-for="tag in vo.tags" :key="tag.id" :type="`primary`"
+                                                effect="plain" class="p-xs">
+                                                {{ tag.tagName }}
+                                            </el-tag>
+                                        </div>
+
                                         <div class="file-name">
                                             {{ vo.fileName }}
-                                            <br/>
-                                            <small>Added: {{ vo.userVo?.userName }} {{ vo.date}}</small>
+                                            <br />
+                                            <small>Added: {{ vo.userVo?.userName }} {{ vo.date }}</small>
                                             <div class="download m-t-xs right">
                                                 <!-- <el-button type="primary" @click="fileDownLoad.downloadFile(vo.fileId)">下载</el-button> -->
-                                                <el-button type="primary" :loading="vo.isDownloading" @click="handleDownload($event,vo)">下载</el-button>
-                                            </div>                                           
+                                                <el-button type="primary" :loading="vo.isDownloading"
+                                                    @click="handleDownload($event, vo)">下载</el-button>
+                                            </div>
                                         </div>
-                        
+
                                     </a>
                                 </div>
 
@@ -168,17 +179,15 @@
                                     </a>
                                 </div>
                             </div> -->
-                            
+
 
                         </div>
                     </div>
-                    <el-pagination background layout="prev, pager, next, jumper , total" 
-                    :total="fileDownLoad.totalCount"
-                    :page-count="fileDownLoad.totalpages"
-                    :current-page="fileDownLoad.currentPage"
-                    @current-change="handleCurrentPageChange"
-                    ref="pagination"/>
-                    </div>
+                    <el-pagination background layout="prev, pager, next, jumper , total"
+                        :total="fileDownLoad.totalCount" :page-count="fileDownLoad.totalpages"
+                        :current-page="fileDownLoad.currentPage" @current-change="handleCurrentPageChange"
+                        ref="pagination" />
+                </div>
             </div>
         </div>
     </div>
@@ -186,45 +195,45 @@
 </template>
 <script lang='ts'>
 export default
-{
-    name: "FileDownload"
-}
+    {
+        name: "FileDownload"
+    }
 </script>
 <script lang='ts' setup>
 import useFileDownload from '@/hooks/useFileDownload';
 import { useFileDownLoadStore } from '@/store/fileDownload';
 import type { FileVo } from '@/types';
-import { getImageById,getImagePreviewById } from '@/utils/commonUtils';
+import { getImageById, getImagePreviewById } from '@/utils/commonUtils';
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
-let fileDownLoad=ref(useFileDownload());
-let {fileVos}=useFileDownload();
-let fileDownLoadStore=useFileDownLoadStore();
+let fileDownLoad = ref(useFileDownload());
+let { fileVos } = useFileDownload();
+let fileDownLoadStore = useFileDownLoadStore();
 
-fileDownLoad.value.getFilesByPage({page:1,pageSize:5});
+fileDownLoad.value.getFilesByPage({ page: 1, pageSize: 5 });
 
-let pagination=ref();
+let pagination = ref();
 console.log(pagination.value)
 
-let handleCurrentPageChange=function (val:number){
-    let pagePojo={
-        page:val,
-        pageSize:fileDownLoad.value.currentPageSize
+let handleCurrentPageChange = function (val: number) {
+    let pagePojo = {
+        page: val,
+        pageSize: fileDownLoad.value.currentPageSize
     }
     fileDownLoad.value.getFilesByPage(pagePojo);
 }
-let handleDownload=function(event:PointerEvent,vo:FileVo){
+let handleDownload = function (event: PointerEvent, vo: FileVo) {
     // console.log('this',element)
-    vo.isDownloading=true;
-    fileDownLoad.value.downloadFile(vo.fileId).then(()=>{
-        vo.isDownloading=false
+    vo.isDownloading = true;
+    fileDownLoad.value.downloadFile(vo.fileId).then(() => {
+        vo.isDownloading = false
     })
 }
 
 </script>
 <style scoped>
-.download{
-    display: block;
-}
+    .download {
+        display: block;
+    }
 
 </style>

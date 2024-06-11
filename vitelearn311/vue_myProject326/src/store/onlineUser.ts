@@ -70,7 +70,9 @@ export const useOnlineUser = defineStore("onlineUser", {
             userToken: JSON.parse(sessionStorage.getItem("userToken") as string) as String || "",
             unReadMessageCount: new Map<String, UnReadMessageCount>(),
             // 标识查询用户信息组件（userInfo.vue)显示哪个用户的信息,默认为自身
-            showInfoUserId: (JSON.parse(sessionStorage.getItem("userInfo") as string) as User).id || null,
+            // JSON.parse(sessionStorage.getItem("userInfo") as string) as User 在没有session缓存时会失败，导致.id报错
+            // showInfoUserId: (JSON.parse(sessionStorage.getItem("userInfo") as string) as User).id || "",
+            showInfoUserId: "",
         }
     }
 

@@ -40,7 +40,7 @@ export default defineConfig({
     port: 3000,
     proxy:{
       '/ws': {
-        target: `http://${getNetworkIp()}:8271`,
+        target: IS_DEVELOP?`http://${getNetworkIp()}:8271`:`${REMOTE_BASE_IP}:8271`,
         ws: true,
       },
     },

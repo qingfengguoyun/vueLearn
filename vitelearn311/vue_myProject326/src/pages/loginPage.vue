@@ -62,13 +62,16 @@ import { useRouter, RouterLink, RouterView } from "vue-router";
 import useSocketIo from '@/hooks/socketIo';
 import { postRequest } from "@/utils/axiosUtils";
 import { ElMessage } from "element-plus";
+import { useOnlineUser } from "@/store/onlineUser";
+import type { User } from "@/types";
+
 
 
 let router = useRouter();
 let socketIo=useSocketIo();
 
-let user: UserInter = {}
-
+let user: User = {}
+let onlineUser=useOnlineUser();
 
 const baseIP = import.meta.env.BASE_IP;
 
@@ -95,6 +98,10 @@ async function login() {
         socket = socketIo.socketInstance(user.id as string, user.userName as string, user.password as string)
         //初始化chatCon
         // sessionStorage.setItem('chatCom','mainChatRoom')
+        // 更新pinia仓库 onlineUser中的user信息
+        // 以及重置showInfoUserId为当前登录对象
+        onlineUser.user=user
+        onlineUser.showInfoUserId=user.id!
         ElMessage({
             message:"欢迎用户："+user.userName,
             type:"success"
