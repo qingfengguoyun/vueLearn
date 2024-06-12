@@ -32,7 +32,7 @@ export default function(){
         currentPageSize.value=params.pageSize || 5
         let url=("/api/file/getFilesByPage/"+params.page || defaultPage+"/"+params.pageSize ||defaultPageSzie) as string
         console.log(url)
-        let response=await getRequest<ResultInter>(url);
+        let response=await postRequest<ResultInter>(url);
         if(response.data.code=='200'){
             let res=response.data.data as NativePage;
             totalpages.value=Number(res.totalPages) || 1

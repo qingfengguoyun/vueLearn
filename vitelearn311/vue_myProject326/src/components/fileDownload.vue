@@ -44,143 +44,46 @@
                 <div class="col-lg-12 animate__animated ">
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="file-box" v-for="(vo, index) in fileDownLoad.fileVos">
-                                <div class="file">
-                                    <a href="#">
-                                        <span class="corner"></span>
-                                        <!-- <div class="icon">
+                            <div class="file-box-container">
+                                <div class="file-box" v-for="(vo, index) in fileDownLoad.fileVos">
+                                    <div class="file">
+                                        <a href="#">
+                                            <span class="corner"></span>
+                                            <!-- <div class="icon">
                                             <i class="fa fa-file"></i>
                                         </div> -->
-                                        <div class="preview-image" style="display: flex; justify-content: center; ">
-                                            <!-- :preview-src-list="fileDownLoad.previewUrlList" 设置预览图片队列 :initial-index="index" 点击预览图从index下标的图片开始 -->
-                                            <el-image :src="getImagePreviewById(vo.fileId)" fit="cover"
-                                                :preview-src-list="fileDownLoad.previewUrlList"
-                                                :initial-index="index"></el-image>
-                                            <!-- <img alt="image" class="img-fluid" :src="getImagePreviewById(vo.fileId)"> -->
+                                            <div class="preview-image" style="display: flex; justify-content: center; ">
+                                                <!-- :preview-src-list="fileDownLoad.previewUrlList" 设置预览图片队列 :initial-index="index" 点击预览图从index下标的图片开始 -->
+                                                <el-image :src="getImagePreviewById(vo.fileId)" fit="cover"
+                                                    :preview-src-list="fileDownLoad.previewUrlList"
+                                                    :initial-index="index"></el-image>
+                                                <!-- <img alt="image" class="img-fluid" :src="getImagePreviewById(vo.fileId)"> -->
 
-                                        </div>
-
-                                        <div style="background-color: #f8f8f8;" class="p-xs gap-2">
-                                            <el-tag v-for="tag in vo.tags" :key="tag.id" :type="`primary`"
-                                                effect="plain" class="p-xs">
-                                                {{ tag.tagName }}
-                                            </el-tag>
-                                        </div>
-
-                                        <div class="file-name">
-                                            {{ vo.fileName }}
-                                            <br />
-                                            <small>Added: {{ vo.userVo?.userName }} {{ vo.date }}</small>
-                                            <div class="download m-t-xs right">
-                                                <!-- <el-button type="primary" @click="fileDownLoad.downloadFile(vo.fileId)">下载</el-button> -->
-                                                <el-button type="primary" :loading="vo.isDownloading"
-                                                    @click="handleDownload($event, vo)">下载</el-button>
                                             </div>
-                                        </div>
 
-                                    </a>
-                                </div>
+                                            <div style="background-color: #f8f8f8;" class="p-xs gap-2">
+                                                <el-tag v-for="tag in vo.tags" :key="tag.id" :type="`primary`"
+                                                    effect="plain" class="p-xs m-r-xs">
+                                                    {{ tag.tagName }}
+                                                </el-tag>
+                                            </div>
 
-                            </div>
-                            <!-- <div class="file-box">
-                                <div class="file">
-                                    <a href="file_manager.html#">
-                                        <span class="corner"></span>
+                                            <div class="file-name">
+                                                {{ vo.fileName }}
+                                                <br />
+                                                <small>Added: {{ vo.userVo?.userName }} {{ vo.date }}</small>
+                                                <div class="download m-t-xs right">
+                                                    <!-- <el-button type="primary" @click="fileDownLoad.downloadFile(vo.fileId)">下载</el-button> -->
+                                                    <el-button type="primary" :loading="vo.isDownloading"
+                                                        @click="handleDownload($event, vo)">下载</el-button>
+                                                </div>
+                                            </div>
 
-                                        <div class="image">
-                                            <img alt="image" class="img-fluid" src="#">
-                                        </div>
-                                        <div class="file-name">
-                                            Italy street.jpg
-                                            <br/>
-                                            <small>Added: Jan 6, 2014</small>
-                                        </div>
-                                    </a>
+                                        </a>
+                                    </div>
 
-                                </div>
-                            </div>
-                            <div class="file-box">
-                                <div class="file">
-                                    <a href="file_manager.html#">
-                                        <span class="corner"></span>
-
-                                        <div class="image">
-                                            <img alt="image" class="img-fluid" src="#">
-                                        </div>
-                                        <div class="file-name">
-                                            My feel.png
-                                            <br/>
-                                            <small>Added: Jan 7, 2014</small>
-                                        </div>
-                                    </a>
                                 </div>
                             </div>
-                            <div class="file-box">
-                                <div class="file">
-                                    <a href="#">
-                                        <span class="corner"></span>
-
-                                        <div class="icon">
-                                            <i class="fa fa-music"></i>
-                                        </div>
-                                        <div class="file-name">
-                                            Michal Jackson.mp3
-                                            <br/>
-                                            <small>Added: Jan 22, 2014</small>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="file-box">
-                                <div class="file">
-                                    <a href="file_manager.html#">
-                                        <span class="corner"></span>
-
-                                        <div class="image">
-                                            <img alt="image" class="img-fluid" src="#">
-                                        </div>
-                                        <div class="file-name">
-                                            Document_2014.doc
-                                            <br/>
-                                            <small>Added: Fab 11, 2014</small>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="file-box">
-                                <div class="file">
-                                    <a href="file_manager.html#">
-                                        <span class="corner"></span>
-
-                                        <div class="icon">
-                                            <i class="img-fluid fa fa-film"></i>
-                                        </div>
-                                        <div class="file-name">
-                                            Monica's birthday.mpg4
-                                            <br/>
-                                            <small>Added: Fab 18, 2014</small>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="file-box">
-                                <div class="file">
-                                    <a href="file_manager.html#">
-                                        <span class="corner"></span>
-
-                                        <div class="icon">
-                                            <i class="img-fluid fa fa-film"></i>
-                                        </div>
-                                        <div class="file-name">
-                                            Monica's birthday.mpg4
-                                            <br/>
-                                            <small>Added: Fab 18, 2014</small>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div> -->
-
-
                         </div>
                     </div>
                     <el-pagination background layout="prev, pager, next, jumper , total"
@@ -235,5 +138,10 @@ let handleDownload = function (event: PointerEvent, vo: FileVo) {
     .download {
         display: block;
     }
+
+    .file-box-container {
+  display: flex;
+  flex-wrap: wrap;
+}
 
 </style>

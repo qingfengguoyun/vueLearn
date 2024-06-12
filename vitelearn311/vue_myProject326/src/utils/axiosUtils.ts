@@ -4,7 +4,7 @@ import { requestPrefix } from './commonUtils';
 
 
 //封装axios的post方法，主要自动用来添加token
-export async function postRequest<T>(url:string,params:any):Promise<AxiosResponse<T>> {
+export async function postRequest<T>(url:string,params?:any):Promise<AxiosResponse<T>> {
 
     let token=sessionStorage.getItem('Authorization') as String || ""
     try {
