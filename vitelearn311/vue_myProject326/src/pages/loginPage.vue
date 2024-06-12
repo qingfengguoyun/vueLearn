@@ -11,7 +11,7 @@
                     <h2 class="font-bold">欢迎访问个人聊天室</h2>
                     <h2 class="font-bold">登录界面</h2>
                     <p>
-                        //描述
+                        2024-5-30
                     </p>
 
                 </div>
@@ -56,25 +56,29 @@ export default
 
 import { ref, reactive } from "vue";
 import { type UserInter, UserClass } from "@/types/UserType";
-import { type ResultInter } from "@/types/ResultType";
+import type { ResultInter } from "@/types/ResultType";
 import axios, { type AxiosResponse, type AxiosResponseHeaders } from "axios";
 import { useRouter, RouterLink, RouterView } from "vue-router";
 import useSocketIo from '@/hooks/socketIo';
 import { postRequest } from "@/utils/axiosUtils";
+import { ElMessage } from "element-plus";
+import { useOnlineUser } from "@/store/onlineUser";
+import type { User } from "@/types";
+
 
 
 let router = useRouter();
 let socketIo=useSocketIo();
 
-let user: UserInter = {}
-
+let user: User = {}
+let onlineUser=useOnlineUser();
 
 const baseIP = import.meta.env.BASE_IP;
 
 async function login() {
     console.log("用户", user.userName, "尝试登录")
     // let res:AxiosResponse= await axios.post( baseIP+":8200/api/user/login"||"http://localhost:8200/api/user/login",user);
-    let res: AxiosResponse = await postRequest("/api/user/login", user);
+    let res: AxiosResponse<ResultInter> = await postRequest("/api/user/login", user);
     console.log(res)
     let socket
     // console.log(res.data.code)
@@ -94,13 +98,25 @@ async function login() {
         socket = socketIo.socketInstance(user.id as string, user.userName as string, user.password as string)
         //初始化chatCon
         // sessionStorage.setItem('chatCom','mainChatRoom')
+        // 更新pinia仓库 onlineUser中的user信息
+        // 以及重置showInfoUserId为当前登录对象
+        onlineUser.user=user
+        onlineUser.showInfoUserId=user.id!
+        ElMessage({
+            message:"欢迎用户："+user.userName,
+            type:"success"
+        })
         router.push({
             name: "FrontPage",
         })
     }
     else {
         console.log("用户", user.userName, "登录失败", res.data.data)
-        alert("用户" + user.userName + "登录失败" + res.data.data)
+        // alert("用户" + user.userName + "登录失败" + res.data.data)
+        ElMessage({
+            message:"用户登录失败："+res.data.data,
+            type:"error"
+        })
     }
 
 

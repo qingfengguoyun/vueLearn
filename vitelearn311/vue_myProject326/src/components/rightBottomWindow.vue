@@ -35,7 +35,7 @@
 <script lang='ts'>
 export default
     {
-        name: "rightBottomWindow"
+        name: "RightBottomWindow"
     }
 </script>
 <script lang='ts' setup>

@@ -51,3 +51,36 @@ export interface UnReadMessageCount{
     unReadMessageCount?:number,
     userName?:string
 }
+
+export interface FileVo{
+    fileId:string,
+    fileName?:string,
+    userVo?:UserVo,
+    fileSuffix?:string,
+    fileUrl?:string,
+    filePreviewUrl?:string
+    fileType?:string,
+    date:Date
+    tags?:Tag[]
+
+    //用于组件状态控制的属性
+    isDownloading?:boolean
+}
+
+export interface NativePage{
+    pageSize?:number,
+    totalPages?:number,
+    currentPage?:number,
+    data?:any,
+    totolCount?:number,
+}
+export interface PagePojo{
+    page?:number
+    pageSize?:number
+}
+
+export interface Tag{
+    id:string
+    tagName?:string
+    isBasic?:boolean
+}

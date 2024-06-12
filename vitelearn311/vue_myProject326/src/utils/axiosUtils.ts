@@ -4,7 +4,7 @@ import { requestPrefix } from './commonUtils';
 
 
 //封装axios的post方法，主要自动用来添加token
-export async function postRequest<T>(url:string,params:any):Promise<AxiosResponse<T>> {
+export async function postRequest<T>(url:string,params?:any):Promise<AxiosResponse<T>> {
 
     let token=sessionStorage.getItem('Authorization') as String || ""
     try {
@@ -47,8 +47,36 @@ export async function getRequest<T>(url: string, params?: any): Promise<AxiosRes
     // const response = await getRequest('https://example.com/api/data', { page: 1, limit: 10 });
 }
 
-//封装axios的post方法，主要自动用来添加token
-export async function imageUploadRequest<T>(params:any):Promise<AxiosResponse<T>> {
+
+//文件下载方法
+export async function fileDownLoadRequest<T>(url: string, params?: any): Promise<AxiosResponse<T, any>> {
+    try {
+        // 从sessionStorage中获取token
+        const token = sessionStorage.getItem('Authorization');
+
+        // 设置请求头部信息，包括token
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `${token}`, 
+        };
+        // 指定文件返回类型为blob
+        const responseType="blob";
+
+        const response = await axios.get(requestPrefix+url, { params, headers,responseType });
+        return response;
+    } catch (error) {
+        // 处理错误
+        console.error('Error in getRequest:', error);
+        throw error;
+    }
+
+    // const response = await getRequest('https://example.com/api/data', { page: 1, limit: 10 });
+}
+
+
+
+//文件上传方法
+export async function fileUploadRequest<T>(url:string,params:any):Promise<AxiosResponse<T>> {
 
     let token=sessionStorage.getItem('Authorization') as String || ""
     try {
@@ -58,11 +86,11 @@ export async function imageUploadRequest<T>(params:any):Promise<AxiosResponse<T>
             // 'token': `${token}`
             // 'token': token
         }
-        const response = await axios.post(requestPrefix+"/api/file/uploadByBatch", params,{headers});
+        const response = await axios.post(requestPrefix+url, params,{headers});
         return response;
     } catch (error) {
         // 处理错误
-        console.error('Error in imageUploadRequest:', error);
+        console.error('Error in fileUploadRequest:', error);
         throw error;
     }
 }

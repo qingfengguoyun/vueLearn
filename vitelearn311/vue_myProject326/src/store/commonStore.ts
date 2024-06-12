@@ -1,8 +1,10 @@
 import { defineStore } from "pinia";
 import type { ComponentsMap } from "@/types";
-import mainChatRoom from "@/components/mainChatRoom.vue";
-import privateChatRoom from "@/components/privateChatRoom.vue";
-import gallary from "@/components/fileDownload.vue";
+import MainChatRoom from "@/components/MainChatRoom.vue";
+import PrivateChatRoom from "@/components/PrivateChatRoom.vue";
+import Gallary from "@/components/FileDownload.vue";
+import UserInfo from "@/components/UserInfo.vue";
+import type {User} from "@/types"
 
 
 export let useCommonStore=defineStore('commonStore',{
@@ -32,6 +34,16 @@ export let useCommonStore=defineStore('commonStore',{
             console.log("toFileUpload")
             sessionStorage.setItem("mainCom","fileUpload");
             this.mainCom="fileUpload";
+        },
+        toUserInfo(){
+            console.log("toUserInfo")
+            sessionStorage.setItem("mainCom","userInfo");
+            this.mainCom="userInfo";
+        },
+        toUserInfoChange(){
+            console.log("toUserInfoChang")
+            sessionStorage.setItem("mainCom","userInfoChange");
+            this.mainCom="userInfoChange";
         },
 
     },

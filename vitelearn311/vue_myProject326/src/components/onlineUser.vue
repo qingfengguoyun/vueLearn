@@ -21,7 +21,7 @@
                                 <table class="table table-striped table-hover">
                                     <tbody>
                                         <tr v-for="userVo in onlineUser.userList" :key="userVo.userId">
-                                            <td class="client-avatar"><img alt="image" :src="getImage('img/a1.jpg')">
+                                            <td class="client-avatar"><img alt="image" :src="getUserProfilePhoto(userVo)">
                                             </td>
                                             <td>{{ userVo.userName }}
                                             </td>
@@ -69,7 +69,7 @@
 <script lang='ts'>
 export default
     {
-        name: "onlineUser"
+        name: "OnlineUser"
     }
 </script>
 <script lang='ts' setup>
@@ -81,7 +81,7 @@ import { getImage } from '@/utils/commonUtils';
 import  useSocketIo  from '@/hooks/socketIo';
 import type { UserVo, MessageVo, UnReadMessageCount } from '@/types';
 import { usePrivateChatRoom } from '@/store/privteChatRoom';
-import { getUserId } from '@/utils/commonUtils';
+import { getUserId,getUserProfilePhoto } from '@/utils/commonUtils';
 import { storeToRefs } from 'pinia'
 import { useCommonStore } from '@/store/commonStore';
 

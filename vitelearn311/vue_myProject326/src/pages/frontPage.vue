@@ -1,15 +1,20 @@
 <template>
     <div style="display: flex;">
-        <sideBar></sideBar>
+        <!-- 侧边栏 -->
+        <!-- <component :is="sideBarStore.isDisplay? SideBar: SideBarMini"></component> -->
+        <SideBar v-if="sideBarStore.isDisplay"></SideBar>
+        <SideBarMini v-if="!sideBarStore.isDisplay"></SideBarMini>
 
-        <div id="page-wrapper"  class="gray-bg"  :style="sideBarStore.isDisplay?{}:{width:'100% '}">
-
+        <!-- 此处page-warpper使用了id选择器，style优先于class选择器的style生效，因此:class="frontPageMainClass() 修改无效 -->
+        <!-- <div id="page-wrapper"  class="gray-bg" :class="frontPageMainClass()" > -->
+        <div id="front-page-main"  class="gray-bg" :class="frontPageMainClass()" >
 
             <!-- header -->
             <div class="row border-bottom">
                 <headerMenu></headerMenu>
             </div>
-            <div class="row wrapper border-bottom white-bg page-heading">
+            <!-- sub header -->
+            <!-- <div class="row wrapper border-bottom white-bg page-heading">
                 <div class="col-sm-4">
                     <h2>This is main title</h2>
                     <ol class="breadcrumb">
@@ -34,11 +39,12 @@
                         {{ mainCom }}
                     </div>
                 </div>
-            </div>
+            </div> -->
+            <SubHeader></SubHeader>
             <!-- mainContent -->
             <div class="wrapper wrapper-content row">
                 <!-- vue动态组件，通过特殊的:is属性指定组件 -->
-                <component :is="mainConList[mainCom] || mainConList[0]" ref="chatComponentRef"></component>
+                <component :is="mainConList[mainCom as string] || mainConList[0]" ref="chatComponentRef"></component>
                 <onlineUser v-if="commonStore.showOnlineUser"></onlineUser>
 
             </div>
@@ -68,20 +74,24 @@ export default
 </script>
 <script lang='ts' setup>
 import { useRouter, RouterView } from 'vue-router'
-import headerMenu from '@/components/headerMenu.vue'
-import onlineUser from '@/components/onlineUser.vue'
-import mainChatRoom from "@/components/mainChatRoom.vue";
-import privateChatRoom from "@/components/privateChatRoom.vue";
-import fileDownload from '@/components/fileDownload.vue';
-import fileUpload from '@/components/fileUpload.vue';
-import rightBottomWindow from '@/components/rightBottomWindow.vue';
-import sideBar from '@/components/sideBar.vue';
+import HeaderMenu from '@/components/HeaderMenu.vue'
+import OnlineUser from '@/components/OnlineUser.vue'
+import MainChatRoom from "@/components/MainChatRoom.vue";
+import PrivateChatRoom from "@/components/PrivateChatRoom.vue";
+import FileDownload from '@/components/FileDownload.vue';
+import FileUpload from '@/components/FileUpload.vue';
+import RightBottomWindow from '@/components/RightBottomWindow.vue';
+import SideBar from '@/components/SideBar.vue';
 import { ref, onMounted, type ComponentOptions, type Ref, provide } from 'vue';
 import { type ComponentsMap } from '@/types'
 import { useCommonStore } from '@/store/commonStore';
 import { storeToRefs } from 'pinia';
-import gallary from '@/components/gallary.vue';
+import Gallary from '@/components/Gallary.vue';
 import { useSideBar } from '@/store/sidebar';
+import SideBarMini from '@/components/SideBarMini.vue';
+import SubHeader from  '@/components/SubHeader.vue';
+import UserInfo from '@/components/UserInfo.vue';
+import UserInfoChange from '@/components/UserInfoChange.vue'
 
 let sideBarStore=useSideBar();
 let commonStore = useCommonStore();
@@ -97,12 +107,15 @@ function testAnimate() {
 let { mainCom } = storeToRefs(commonStore);
 // 用于记录动态组件为哪个组件的map
 let mainConList: ComponentsMap = {
-    "mainChatRoom": mainChatRoom,
-    "privateChatRoom": privateChatRoom,
-    "gallary": gallary,
-    "fileDownload": fileDownload,
-    "fileUpload": fileUpload
+    "mainChatRoom": MainChatRoom,
+    "privateChatRoom": PrivateChatRoom,
+    "gallary": Gallary,
+    "fileDownload": FileDownload,
+    "fileUpload": FileUpload,
+    "userInfo" : UserInfo,
+    "userInfoChange": UserInfoChange,
 }
+
 
 //setup阶段，chatComponentRef=ref()还没有被赋值，在onMounted生命周期中才可获取值
 let chatComponentRef = ref();
@@ -114,8 +127,25 @@ onMounted(() => {
 let toPrivateChatRoom = commonStore.toPrivateChatRoom;
 let toMainChatRoom = commonStore.toMainChatRoom;
 
+//设置动态类别，使用匿名函数，然会对象，key为动态添加的类，value为布尔值，表示该类是否生效
+let frontPageMainClass=()=>{
+    return{
+        'front-page-main':sideBarStore.isDisplay,
+        'front-page-main-with-mini-sidebar':!sideBarStore.isDisplay
+    }
+}
+
 
 
 
 </script>
-<style scoped></style>
+<style scoped>
+#front-page-main{
+    padding: 0 15px;
+    position: relative !important;
+    flex-shrink: 1;
+    /* 最小高度为100vh，其中vh表示视口（viewport）高度，100vh表示视口高度的100% */
+    min-height: 100vh
+}
+
+</style>

@@ -17,16 +17,19 @@
 
 
 
-    <div class="chat-message " :class="{left: !isOnlineUser,right :isOnlineUser}">
-        <img class="message-avatar" :src="getImage('img/a1.jpg')" alt="">
+    <div class="chat-message " :class="{left: !isOnlineUser,right :isOnlineUser ,'animate__animated':true,'animate__fadeInDown':true} ">
+        <img class="message-avatar" :src="getUserProfilePhoto(message.sendUser)" alt="">
         <div class="message" style="font-size: 1.25em;" ref="mes">
             <a class="message-author" href="#" :style="{'color':isOnlineUser?'black':'','font-weight': isOnlineUser ? 'bold' : ''}"> 
                 {{ message.sendUser.userName }} 
             </a>
             <span class="message-date">  {{ message.date }} </span>
-            <span class="message-content m-t-sm">
+            <el-row>
+                <span class="message-content m-t-sm auto_wrap" style="text-align: left;">
                 {{ message.messageContent }}
             </span>
+            </el-row>
+          
         </div>
     </div>
 
@@ -35,14 +38,14 @@
 <script lang='ts'>
 export default
     {
-        name: "message"
+        name: "Message"
     }
 </script>
 <script lang='ts' setup>
 import { ref, defineProps, type Ref, reactive, onMounted } from "vue";
 import { type MessageVo } from "@/types";
 import { type UserInter } from "@/types/UserType";
-import { getImage, getUserId } from "@/utils/commonUtils"
+import { getImage, getUserId,getUserProfilePhoto } from "@/utils/commonUtils"
 let props = defineProps({
     receivedMessage: {} 
 })
@@ -70,5 +73,10 @@ if (message.sendUser.id == getUserId()) {
 li {
     border: 2px solid black;
     margin-top: 5px;
+}
+/* 自动换行样式 当单词过长时截断单词换行 */
+.auto_wrap{
+    word-wrap: break-word;
+    word-break: break-all;
 }
 </style>

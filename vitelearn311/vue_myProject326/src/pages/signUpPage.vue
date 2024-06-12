@@ -37,8 +37,8 @@
                                         </div><i></i> Agree the terms and policy
                                     </label></div>
                             </div> -->
-                            <button class="btn btn-primary block full-width m-b" @click="signUpUser">注册</button>
-
+                            <!-- <button class="btn btn-primary block full-width m-b" @click="signUpUser">注册</button> -->
+                            <el-button type="primary" :loading="isSigning" @click="handleSignUp()" class=" full-width m-b">注册</el-button>
                             <p class="text-muted text-center"><small>已有账号？</small></p>
                             <a class="btn btn-sm btn-white btn-block" @click="backToLogin">登录</a>
 
@@ -64,6 +64,8 @@ import { type UserInter } from "@/types/UserType";
 import { type ResultInter } from "@/types/ResultType";
 import { useRouter, type Router } from "vue-router"
 import axios, { type AxiosResponse } from "axios";
+import { requestPrefix } from "@/utils/commonUtils";
+import { ElMessage } from "element-plus";
 
 let router: Router = useRouter()
 
@@ -77,18 +79,36 @@ function backToLogin() {
 
 const baseIP = import.meta.env.BASE_IP;
 
+let isSigning=false;
+let handleSignUp=function(){
+    isSigning=true;
+    signUpUser().then((res)=>{
+        isSigning=false;
+    })
+}
+
 async function signUpUser() {
-    let res: AxiosResponse<ResultInter> = await axios.post(baseIP + ":8200/api/user/sign" || "http://localhost:8200/api/user/sign", user);
+    let res: AxiosResponse<ResultInter> = await axios.post(requestPrefix+"/api/user/sign" || "http://localhost:8200/api/user/sign", user);
     if (res.data.code == 200) {
         console.log(res.data.data)
         let newUser = res.data.data as UserInter
-        alert("欢迎新用户：" + newUser.userName + " 三秒后返回登录页面")
+        ElMessage({
+            message:"欢迎新用户：" + newUser.userName + " 三秒后返回登录页面",
+            type:'success',
+            plain:true,
+        })
+        // alert("欢迎新用户：" + newUser.userName + " 三秒后返回登录页面")
         setTimeout(() => {
             router.replace({
                 name: "LoginPage"
             });
         }, 3000)
     } else {
+        ElMessage({
+            message:"注册失败： "+res.data.data ,
+            type:'error',
+            plain:true,
+        })
         console.log(res.data.data)
     }
 }

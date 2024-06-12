@@ -6,7 +6,7 @@
 <script lang='ts'>
 export default
 {
-    name: "gallary"
+    name: "Gallary"
 }
 </script>
 <script lang='ts' setup>

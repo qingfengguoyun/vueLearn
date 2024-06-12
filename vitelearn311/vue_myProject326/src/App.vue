@@ -13,6 +13,7 @@
 <script setup lang="ts">
   import { useRouter,RouterView,RouterLink } from 'vue-router';
   let router=useRouter();
+  console.log("import.meta.env====",import.meta.env)
   
 </script>
 
