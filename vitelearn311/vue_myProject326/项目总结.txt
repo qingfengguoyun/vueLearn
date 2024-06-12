@@ -21,3 +21,13 @@ JSON.parse()，不要在JSON.parse()后尝试获取下层数据）
 }
 中文通常不会有问题，当英文单词过长时（例如网址链接），将在单词中间进行强制换行
 
+2024-6-12：
+
+git 文件默认不区分大小写
+通过：git config core.ignorecase进行判断
+返回true说明不区分大小写
+如果修改文件大小写后需要提交，需进行以下设置
+git config core.ignorecase false
+
+
+
