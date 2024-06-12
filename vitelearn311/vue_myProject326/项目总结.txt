@@ -23,11 +23,19 @@ JSON.parse()，不要在JSON.parse()后尝试获取下层数据）
 
 2024-6-12：
 
-git 文件默认不区分大小写
-通过：git config core.ignorecase进行判断
-返回true说明不区分大小写
-如果修改文件大小写后需要提交，需进行以下设置
+1，git 文件默认不区分大小写
+通过：git config core.ignorecase进行判断，返回true说明不区分大小写
+如果修改文件大小写后需要提交，需进行以下设置：
 git config core.ignorecase false
+
+2，git修改小写文件为大写文件的方法：
+流程依旧为：“先删除，再添加”
+（1）将小写文件的文件名修改为大写并复制到另一位置备份
+（2）删除小写文件并git -add -commit -push 提交至远程仓库
+（3）把备份的大写文件复制回原位，并git -add -commit -push 提交至远程仓库
+相当于提交了一个新文件
+
+**如果直接改名并提交的话，远程仓库将出现两个的文件（仅文件名大小写不同）！！
 
 
 
