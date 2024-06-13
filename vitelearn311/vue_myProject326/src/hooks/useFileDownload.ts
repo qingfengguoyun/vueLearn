@@ -1,5 +1,5 @@
 
-import type { FileVo, NativePage,PagePojo } from "@/types"
+import type { FileVo, NativePage,PagePojo,FileQueryPojo } from "@/types"
 import type { ResultInter } from "@/types/ResultType";
 import { getRequest,postRequest,fileDownLoadRequest } from "@/utils/axiosUtils";
 import {getImagePreviewById, requestPrefix} from "@/utils/commonUtils"
@@ -21,6 +21,9 @@ export default function(){
 
     let defaultPageSzie=ref(5);
 
+    // 条件查询：文件名
+    let queryFileName:Ref<string>=ref("")
+
 
     let previewUrlList=computed(()=>{
         return fileVos.value.map(vo=>getImagePreviewById(vo.fileId))
@@ -33,6 +36,25 @@ export default function(){
         let url=("/api/file/getFilesByPage/"+params.page || defaultPage+"/"+params.pageSize ||defaultPageSzie) as string
         console.log(url)
         let response=await postRequest<ResultInter>(url);
+        if(response.data.code=='200'){
+            let res=response.data.data as NativePage;
+            totalpages.value=Number(res.totalPages) || 1
+            currentPage.value=Number(res.currentPage) || 1
+            fileVos.value=res.data || []
+            totalCount.value=Number(res.totolCount) || 0
+        }
+        console.log(fileVos.value)
+    }
+
+
+
+    async function getFilesByPageAndConditions(pageParams:PagePojo,params:FileQueryPojo) {
+        console.log("getFilesByPage:","page:"+pageParams.page,"pageSize:"+pageParams.pageSize)
+        currentPage.value=pageParams.page || 1
+        currentPageSize.value=pageParams.pageSize || 5
+        let url=("/api/file/getFilesByPage/"+pageParams.page || defaultPage+"/"+pageParams.pageSize ||defaultPageSzie) as string
+        console.log(url)
+        let response=await postRequest<ResultInter>(url,params);
         if(response.data.code=='200'){
             let res=response.data.data as NativePage;
             totalpages.value=Number(res.totalPages) || 1
@@ -102,7 +124,9 @@ export default function(){
         defaultPageSzie,
         getFilesByPage,
         previewUrlList,
-        downloadFile
+        downloadFile,
+        queryFileName,
+        getFilesByPageAndConditions,
     }
 
 }

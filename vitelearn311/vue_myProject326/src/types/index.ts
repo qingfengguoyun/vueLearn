@@ -79,8 +79,16 @@ export interface PagePojo{
     pageSize?:number
 }
 
+export interface FileQueryPojo{
+    tagIds?:string[]
+    fileName:string
+}
+
 export interface Tag{
     id:string
     tagName?:string
     isBasic?:boolean
+
+    // 标记是否被选中
+    isSelected:boolean
 }
