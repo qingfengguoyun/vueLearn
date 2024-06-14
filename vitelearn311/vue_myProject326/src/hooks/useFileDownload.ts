@@ -49,7 +49,8 @@ export default function(){
 
 
     async function getFilesByPageAndConditions(pageParams:PagePojo,params:FileQueryPojo) {
-        console.log("getFilesByPage:","page:"+pageParams.page,"pageSize:"+pageParams.pageSize)
+        console.log("getFilesByPageAndConditions:","page:"+pageParams.page,"pageSize:"+pageParams.pageSize)
+        console.log("getFilesByPageAndConditions:","params:"+JSON.stringify(params))
         currentPage.value=pageParams.page || 1
         currentPageSize.value=pageParams.pageSize || 5
         let url=("/api/file/getFilesByPage/"+pageParams.page || defaultPage+"/"+pageParams.pageSize ||defaultPageSzie) as string

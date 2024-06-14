@@ -52,6 +52,11 @@ export interface UnReadMessageCount{
     userName?:string
 }
 
+export interface BaseComponent{
+    id?:string,
+    date:Date,
+}
+
 export interface FileVo{
     fileId:string,
     fileName?:string,
@@ -91,4 +96,10 @@ export interface Tag{
 
     // 标记是否被选中
     isSelected:boolean
+}
+
+
+export interface TagQueryPojo{
+    isBasic?:boolean,
+    tagName?:string
 }

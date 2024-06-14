@@ -37,5 +37,16 @@ git config core.ignorecase false
 
 **如果直接改名并提交的话，远程仓库将出现两个的文件（仅文件名大小写不同）！！
 
+2024-6-14：
+
+1，watch方法，如果watch的对象被重新赋值导致引用对象变化，watch将失去监视作用
+例如监视数组对象array时，若对array采用array=[]的方式清空，则watch的监视将失效
+**因此数组清空方法最好使用splice方法：
+//  使用splice清空数组的同时，可以保留对原数组的引用
+//  api : array.splice(start: number, deleteCount: number, ...items: T[]): T[]
+//  start: 表示从哪个索引位置开始操作。
+//  deleteCount: 表示要删除多少个元素。如果未设置则默认删除到数组末尾。
+//  ...items: 可选，表示要添加到数组中的新元素。
+
 
 

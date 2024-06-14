@@ -1,5 +1,5 @@
 import { type Ref,ref, computed, onMounted } from "vue";
-import type { Tag } from "@/types";
+import type { Tag,TagQueryPojo } from "@/types";
 import { postRequest } from "@/utils/axiosUtils";
 import type { ResultInter } from "@/types/ResultType";
 export default function(){
@@ -16,10 +16,7 @@ export default function(){
         return selectedTags.value.map(t=>t.id)
     })
 
-    interface TagQueryPojo{
-        isBasic?:boolean,
-        tagName?:string
-    }
+
 
     async function queryTagsByCondition(){
         let pojo:TagQueryPojo={
@@ -35,6 +32,7 @@ export default function(){
         }
     }
 
+    // 修改tag选中状态，通过下标
     function selectTag(index:number){
         tags.value[index].isSelected=!tags.value[index].isSelected;
         if(tags.value[index].isSelected==true){
@@ -43,6 +41,28 @@ export default function(){
             selectedTags.value=selectedTags.value.filter(t=>t.id!=tags.value[index].id);
         }
     }
+
+    // 修改tag选中状态，通过下标
+    function selectTagById(tagId:string){
+        tags.value.forEach(t=>{
+            if(t.id==tagId){
+                t.isSelected=!t.isSelected;
+            }
+        })
+        // selectedTags.value=tags.value.filter(t=>t.isSelected)
+    }
+
+    function clearSelectTag(){
+        console.log("clearSelectTag")
+        tags.value.forEach((t)=>t.isSelected=false);
+        // 使用splice清空数组，同时保留对原数组的引用
+        // array.splice(start: number, deleteCount: number, ...items: T[]): T[]
+        // start: 表示从哪个索引位置开始操作。
+        // deleteCount: 表示要删除多少个元素。如果未设置则默认删除到数组末尾。
+        // ...items: 可选，表示要添加到数组中的新元素。
+        selectedTags.value.splice(0,selectedTags.value.length);
+    }
+
 
     onMounted(()=>{
         queryTagsByCondition();
@@ -56,5 +76,7 @@ export default function(){
         selectedTagIds,
         queryTagsByCondition,
         selectTag,
+        clearSelectTag,
+        selectTagById,
     }
 }

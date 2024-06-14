@@ -10,30 +10,38 @@
                             <div class="file-manager">
                                 <h2> 查询文件 </h2>
                                 <div class="hr-line-dashed"></div>
-                                <el-button type="primary" auto-insert-space  :style="{'width':'100%'}" @click="handleFileQueryByCondition()">
+                                <el-button type="primary" auto-insert-space :style="{ 'width': '100%' }"
+                                    @click="handleFileQueryByCondition()">
                                     查询
                                 </el-button>
                                 <div class="hr-line-dashed"></div>
                                 <el-row gutter="20" align="middle">
-                                    <el-col span="6"><h5>文件名:</h5></el-col>
+                                    <el-col span="6">
+                                        <h5>文件名:</h5>
+                                    </el-col>
                                     <el-col span="18">
-                                        <el-input placeholder="" v-model="fileDownLoad.queryFileName" :style="{'width':'100%'}"></el-input>
+                                        <el-input placeholder="" v-model="fileDownLoad.queryFileName"
+                                            :style="{ 'width': '100%' }"></el-input>
                                     </el-col>
                                 </el-row>
                                 <div class="hr-line-dashed"></div>
+                                <div v-if="tagService.selectedTags.length>0">
+                                    <h5 class="tag-title">已选标签</h5>
+                                    <ul class="tag-list" style="padding: 0">
+                                        <el-tag :type="`primary`" :effect="tag.isSelected ? 'dark' : 'plain'"
+                                            class="p-xs m-r-xs m-t-xs" v-for="(tag, index) in tagService.selectedTags"
+                                            :key="tag.id">
+                                            {{ tag.tagName }}
+                                        </el-tag>
+                                    </ul>
+                                </div>
                                 <h5 class="tag-title">全部标签</h5>
                                 <ul class="tag-list" style="padding: 0">
-                                    <el-tag :type="`primary`" :effect="tag.isSelected?'dark':'plain'" class="p-xs m-r-xs m-t-xs" v-for="(tag,index) in tagService.tags" :key="tag.id" @click="tagService.selectTag(index)">
+                                    <el-tag :type="`primary`" :effect="tag.isSelected ? 'dark' : 'plain'"
+                                        class="p-xs m-r-xs m-t-xs" v-for="(tag, index) in tagService.tags" :key="tag.id"
+                                        @click="tagService.selectTag(index)">
                                         {{ tag.tagName }}
                                     </el-tag>
-                                    <!-- <li><a href="file_manager.html">Family</a></li>
-                                    <li><a href="file_manager.html">Work</a></li>
-                                    <li><a href="file_manager.html">Home</a></li>
-                                    <li><a href="file_manager.html">Children</a></li>
-                                    <li><a href="file_manager.html">Holidays</a></li>
-                                    <li><a href="file_manager.html">Music</a></li>
-                                    <li><a href="file_manager.html">Photography</a></li>
-                                    <li><a href="file_manager.html">Film</a></li> -->
                                 </ul>
                                 <div class="hr-line-dashed"></div>
                                 <h5>Folders</h5>
@@ -45,7 +53,7 @@
                                     <li><a href="file_manager.html"><i class="fa fa-folder"></i> Films</a></li>
                                     <li><a href="file_manager.html"><i class="fa fa-folder"></i> Books</a></li>
                                 </ul>
-                               
+
                                 <div class="clearfix"></div>
                             </div>
                         </div>
@@ -124,7 +132,7 @@ import useTagService from '@/hooks/useTagService';
 let fileDownLoad = ref(useFileDownload());
 let { fileVos } = useFileDownload();
 let fileDownLoadStore = useFileDownLoadStore();
-let tagService=ref(useTagService());
+let tagService = ref(useTagService());
 
 fileDownLoad.value.getFilesByPage({ page: 1, pageSize: 5 });
 
@@ -132,11 +140,15 @@ let pagination = ref();
 console.log(pagination.value)
 
 let handleCurrentPageChange = function (val: number) {
-    let pagePojo:PagePojo = {
+    let params: FileQueryPojo = {
+        tagIds: selectedTagIdsStage,
+        fileName: queryFileNameStage,
+    }
+    let pagePojo: PagePojo = {
         page: val,
         pageSize: fileDownLoad.value.currentPageSize
     }
-    fileDownLoad.value.getFilesByPage(pagePojo);
+    fileDownLoad.value.getFilesByPageAndConditions(pagePojo, params);
 }
 let handleDownload = function (event: PointerEvent, vo: FileVo) {
     // console.log('this',element)
@@ -145,16 +157,22 @@ let handleDownload = function (event: PointerEvent, vo: FileVo) {
         vo.isDownloading = false
     })
 }
-let handleFileQueryByCondition=function(){
-    let params:FileQueryPojo={
-        tagIds:tagService.value.selectedTagIds,
-        fileName:fileDownLoad.value.queryFileName,
+// 条件查询标签缓存
+let selectedTagIdsStage: string[] = []
+// 条件查询文件名缓存
+let queryFileNameStage: string = ""
+let handleFileQueryByCondition = function () {
+    selectedTagIdsStage = tagService.value.selectedTagIds;
+    queryFileNameStage = fileDownLoad.value.queryFileName;
+    let params: FileQueryPojo = {
+        tagIds: selectedTagIdsStage,
+        fileName: queryFileNameStage,
     }
     let pagePojo = {
         page: 0,
         pageSize: fileDownLoad.value.currentPageSize
     }
-    fileDownLoad.value.getFilesByPageAndConditions(pagePojo,params);
+    fileDownLoad.value.getFilesByPageAndConditions(pagePojo, params);
 }
 
 </script>
@@ -164,8 +182,8 @@ let handleFileQueryByCondition=function(){
     }
 
     .file-box-container {
-  display: flex;
-  flex-wrap: wrap;
-}
+        display: flex;
+        flex-wrap: wrap;
+    }
 
 </style>
