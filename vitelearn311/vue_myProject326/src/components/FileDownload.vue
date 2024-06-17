@@ -87,7 +87,7 @@
                                             </div>
 
                                             <div class="file-name">
-                                                {{ vo.fileName }}
+                                                <span>{{ vo.fileName }}</span><span v-if="vo.fileSuffix!=null && vo.fileSuffix!=''">{{ `.`+vo.fileSuffix }}</span>
                                                 <br />
                                                 <small>Added: {{ vo.userVo?.userName }} {{ vo.date }}</small>
                                                 <div class="download m-t-xs right">
