@@ -52,6 +52,7 @@ export default defineConfig({
     'import.meta.env.SERVER_IP': IS_DEVELOP?JSON.stringify(`${getNetworkIp()}`):JSON.stringify(`${REMOTE_SERVER_IP}`),
     'import.meta.env.SERVER_PORT': 8200,
     'import.meta.env.SOCKETIO_PORT': 8271,
+    __VUE_PROD_DEVTOOLS__:true,
   },
 })
 
