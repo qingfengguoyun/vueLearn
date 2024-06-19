@@ -124,6 +124,7 @@ let handleUploadAll = async () => {
             console.log("文件添加标签",JSON.stringify(param))
             await postRequest("/api/file/updateFileTagsByBatch", param);
             uploadRef.value.clearFiles();
+            tagService.value.clearSelectTag();
         }
     }
 
