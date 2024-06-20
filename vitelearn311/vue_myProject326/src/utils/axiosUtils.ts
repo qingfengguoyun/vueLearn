@@ -2,7 +2,6 @@ import axios ,{type AxiosResponse} from 'axios';
 import { requestPrefix } from './commonUtils';
 
 
-
 //封装axios的post方法，主要用来自动添加token
 export async function postRequest<T>(url:string,params?:any):Promise<AxiosResponse<T>> {
 
@@ -14,7 +13,10 @@ export async function postRequest<T>(url:string,params?:any):Promise<AxiosRespon
             // 'token': `${token}`
             // 'token': token
         }
-        const response = await axios.post(requestPrefix+url, params,{headers});
+        // axios请求路径不携带ip+端口号时，会默认使用浏览器界面的网址（或ip+端口号）
+        // 现已在vite.config.ts中配置proxy，因此无需在路径中手动添加服务器ip+port，以下axios方法同理
+        // const response = await axios.post(requestPrefix+url, params,{headers});
+        const response = await axios.post(url, params,{headers});
         return response;
     } catch (error) {
         // 处理错误
@@ -36,7 +38,7 @@ export async function getRequest<T>(url: string, params?: any): Promise<AxiosRes
             'Authorization': `${token}`, 
         };
 
-        const response = await axios.get(requestPrefix+url, { params, headers });
+        const response = await axios.get(url, { params, headers });
         return response;
     } catch (error) {
         // 处理错误
@@ -62,7 +64,7 @@ export async function fileDownLoadRequest<T>(url: string, params?: any): Promise
         // 指定文件返回类型为blob
         const responseType="blob";
 
-        const response = await axios.get(requestPrefix+url, { params, headers,responseType });
+        const response = await axios.get(url, { params, headers,responseType });
         return response;
     } catch (error) {
         // 处理错误
@@ -86,7 +88,7 @@ export async function fileUploadRequest<T>(url:string,params:any):Promise<AxiosR
             // 'token': `${token}`
             // 'token': token
         }
-        const response = await axios.post(requestPrefix+url, params,{headers});
+        const response = await axios.post(url, params,{headers});
         return response;
     } catch (error) {
         // 处理错误

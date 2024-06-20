@@ -42,7 +42,7 @@ export default function(){
         }
     }
 
-    // 修改tag选中状态，通过下标
+    // 修改tag选中状态，通过id
     function selectTagById(tagId:string){
         tags.value.forEach(t=>{
             if(t.id==tagId){

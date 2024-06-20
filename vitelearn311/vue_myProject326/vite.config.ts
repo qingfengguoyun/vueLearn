@@ -7,11 +7,18 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import vue from '@vitejs/plugin-vue'
 import VueSetupExtend from "vite-plugin-vue-setup-extend";
 import os from 'os';
+import { Socket } from 'socket.io-client';
 
 // VITE_APP_ENV= 'development' / 'publish'
 const MODE="development"
 
 const IS_DEVELOP=true;
+
+// socket端口
+const SOCKET_PORT=8271
+
+// 服务端口
+const SERVER_PORT=8200
 
 // 远程（部署时）后端服务器ip
 const REMOTE_BASE_IP='http://123.56.221.66'
@@ -38,11 +45,22 @@ export default defineConfig({
   server:{
     host: '0.0.0.0',
     port: 3000,
+    // proxy:设置代理转发
+    // key：匹配请求的路径,正则表达式匹配
+    // target: 目标服务器地址和端口号
+    // changeOrigin: 代理服务器会更改请求的来源，使其看起来像是直接发送给目标服务器的请求
+    // rewrite:(path)=>path.replacce(): 重写路径
+    // 实际执行：从上至下依次匹配请求路径，匹配成功后以target替换请求中服务器+端口号的部分
+    // 并根据rewrite修改请求路径
     proxy:{
       '/ws': {
-        target: IS_DEVELOP?`http://${getNetworkIp()}:8271`:`${REMOTE_BASE_IP}:8271`,
+        target: IS_DEVELOP?`http://${getNetworkIp()}:${SOCKET_PORT}`:`${REMOTE_BASE_IP}:${SOCKET_PORT}`,
         ws: true,
       },
+      '/api':{
+        target: IS_DEVELOP?`http://${getNetworkIp()}:${SERVER_PORT}`:`${REMOTE_BASE_IP}:${SERVER_PORT}`,
+        changeOrigin:true,
+      }
     },
   },
   // 设置环境变量(重点)
@@ -50,8 +68,8 @@ export default defineConfig({
   define: {
     'import.meta.env.BASE_IP': IS_DEVELOP?JSON.stringify(`http://${getNetworkIp()}`):JSON.stringify(`${REMOTE_BASE_IP}`),
     'import.meta.env.SERVER_IP': IS_DEVELOP?JSON.stringify(`${getNetworkIp()}`):JSON.stringify(`${REMOTE_SERVER_IP}`),
-    'import.meta.env.SERVER_PORT': 8200,
-    'import.meta.env.SOCKETIO_PORT': 8271,
+    'import.meta.env.SERVER_PORT': SERVER_PORT,
+    'import.meta.env.SOCKETIO_PORT': SOCKET_PORT,
     __VUE_PROD_DEVTOOLS__:true,
   },
 })
