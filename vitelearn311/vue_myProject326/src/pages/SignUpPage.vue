@@ -66,6 +66,7 @@ import { useRouter, type Router } from "vue-router"
 import axios, { type AxiosResponse } from "axios";
 import { requestPrefix } from "@/utils/commonUtils";
 import { ElMessage } from "element-plus";
+import { postRequest } from "@/utils/axiosUtils";
 
 let router: Router = useRouter()
 
@@ -88,7 +89,8 @@ let handleSignUp=function(){
 }
 
 async function signUpUser() {
-    let res: AxiosResponse<ResultInter> = await axios.post(requestPrefix+"/api/user/sign" || "http://localhost:8200/api/user/sign", user);
+    
+    let res: AxiosResponse<ResultInter> = await postRequest<ResultInter>("/api/user/sign" || "http://localhost:8200/api/user/sign", user);
     if (res.data.code == 200) {
         console.log(res.data.data)
         let newUser = res.data.data as UserInter

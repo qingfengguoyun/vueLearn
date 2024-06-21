@@ -12,7 +12,7 @@ import { Socket } from 'socket.io-client';
 // VITE_APP_ENV= 'development' / 'publish'
 const MODE="development"
 
-const IS_DEVELOP=true;
+const IS_DEVELOP=false;
 
 // socket端口
 const SOCKET_PORT=8271
@@ -53,7 +53,8 @@ export default defineConfig({
     // 实际执行：从上至下依次匹配请求路径，匹配成功后以target替换请求中服务器+端口号的部分
     // 并根据rewrite修改请求路径
     proxy:{
-      '/ws': {
+      // socket.io-client请求的反向代理设置
+      '/socket.io': {
         target: IS_DEVELOP?`http://${getNetworkIp()}:${SOCKET_PORT}`:`${REMOTE_BASE_IP}:${SOCKET_PORT}`,
         ws: true,
       },

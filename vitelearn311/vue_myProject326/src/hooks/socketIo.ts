@@ -11,19 +11,14 @@ const serverIP=import.meta.env.SERVER_IP;
 const socketIoPort=import.meta.env.SOCKETIO_PORT
 let socket:Socket;
 export default function (){
-    async function getSocketIoPort(){
-        let res:AxiosResponse=await axios.get(baseIP+":8200/api/socket/getSocketIoPort")
-        let socketIoPort=<String>res.data.data;
-        console.log("getSocketIoPort:",socketIoPort)
-        return socketIoPort;
-    }
+
     
      function socketInstance(id:string,userName:string, password:string):Socket {
         const baseIP = import.meta.env.BASE_IP;
         console.log("@@ServrrIp:",serverIP)
         // socketIoPort=await getSocketIoPort();
         // console.log("@@@socketIOPort:",socketIoPort)
-        socket = io("ws://"+serverIP+":"+socketIoPort, {
+        socket = io("", {
             // path:"/",
             auth:{
                 Authorization : sessionStorage.getItem("Authorization") as string || ""
@@ -44,7 +39,12 @@ export default function (){
             // console.log("rebuild")
             // let socketIoPort=getSocketIoPort();
             let user=JSON.parse(sessionStorage.getItem("userInfo") as string) as UserInter
-            socket = io("ws://"+serverIP+":"+socketIoPort, {
+            // socket = io("ws://"+serverIP+":"+socketIoPort, {
+            
+            // socket.io-client的初始化，第一个参数为"ws://"+serverIP+":"+socketIoPort，
+            // 当不传，或传入""时，默认为"ws:当前网页路径"，此时才可被脚手架或nginx的反向代理响应
+            // socket.io-client的请求默认以/socket.io开头，因此可使用/socket.io作为反向代理标志
+            socket = io("", {
                 // path:"/",
                 auth:{
                     Authorization :  sessionStorage.getItem("Authorization") as string || ""
