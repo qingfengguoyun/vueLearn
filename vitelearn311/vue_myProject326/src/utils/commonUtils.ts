@@ -54,17 +54,17 @@ export function isArrayHasDuplicates<T>(array:T[]):Boolean{
 
 // 返回原图的请求路径
 export function getImageById(imageId:string):string{
-    return requestPrefix+"/api/file/getImage/"+imageId;
+    return "/api/file/getImage/"+imageId;
 }
 
 // 返回预览图的请求路径
 export function getImagePreviewById(imageId:string):string{
-    return requestPrefix+"/api/file/getPreviewImage/"+imageId;
+    return "/api/file/getPreviewImage/"+imageId;
 }
 
 // 返回用户头像的请求路径
 export function getProfilePhotoById(imageId:string):string{
-    return requestPrefix+"/api/file/getProfilePhoto/"+imageId;
+    return "/api/file/getProfilePhoto/"+imageId;
 }
 
 // 根据用户获取头像
