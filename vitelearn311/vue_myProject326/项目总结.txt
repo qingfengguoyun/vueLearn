@@ -76,7 +76,7 @@ vite.config.ts中
  // 并根据rewrite修改请求路径
 eg：
     proxy:{
-      '/ws': {
+      '/socket.io': {
         target: IS_DEVELOP?`http://${getNetworkIp()}:${SOCKET_PORT}`:`${REMOTE_BASE_IP}:${SOCKET_PORT}`,
         ws: true,
       },
@@ -98,9 +98,20 @@ location / {
 location /api {
   proxy_pass http://{后端服务ip}:{后端服务端口号};
 }
-//前者表示匹配不到任何界面时重定向至index.html，再通过js进行路由
+//前者表示匹配不到任何界面时重定向至index.html，再通过js进行路由（解决刷新404）
 //后者设置反向代理，将路径中包含”/api“的请求转发至指定服务器
 
-**宝塔客户端中，以上配置写在”伪静态“配置中
+**宝塔客户端中，以上配置可以写在”伪静态“配置中，也可以写在配置文件中
+
+4，代理路径拼接规则 
+
+若proxy_pass地址以"/"结尾，即：proxy_pass http://{后端服务ip}:{后端服务端口号}/ ，
+表示移除location 匹配到的内容再拼接至地址后
+
+eg：
+location  /api{
+proxy_pass http://123.56.221.66:8200/
+}
+则请求 ”/api/get “通过代理转发后变为 http://123.56.221.66/get，/api被移除
 
 
