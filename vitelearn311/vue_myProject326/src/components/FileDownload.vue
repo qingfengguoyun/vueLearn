@@ -44,15 +44,15 @@
                                     </el-tag>
                                 </ul>
                                 <div class="hr-line-dashed"></div>
-                                <h5>Folders</h5>
-                                <ul class="folder-list" style="padding: 0">
+                                <!-- <h5>Folders</h5> -->
+                                <!-- <ul class="folder-list" style="padding: 0">
                                     <li><a href="file_manager.html"><i class="fa fa-folder"></i> Files</a></li>
                                     <li><a href="file_manager.html"><i class="fa fa-folder"></i> Pictures</a></li>
                                     <li><a href="file_manager.html"><i class="fa fa-folder"></i> Web pages</a></li>
                                     <li><a href="file_manager.html"><i class="fa fa-folder"></i> Illustrations</a></li>
                                     <li><a href="file_manager.html"><i class="fa fa-folder"></i> Films</a></li>
                                     <li><a href="file_manager.html"><i class="fa fa-folder"></i> Books</a></li>
-                                </ul>
+                                </ul> -->
 
                                 <div class="clearfix"></div>
                             </div>

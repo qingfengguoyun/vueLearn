@@ -1,32 +1,60 @@
 <template>
 
     <div class="p-sm">
-        <el-row gutter="20" class="m-b-sm">
-            <el-col span="4" class="m-r-sm">
+        <el-row :gutter=20 class="m-b-sm">
+            <el-col :span=4 class="m-r-sm">
                 <el-button type="primary" @click="handleUploadAll">上传全部文件</el-button>
             </el-col>
         </el-row>
-        <el-row v-if="uploadProcessConfig.isOnProcess" gutter="20">
-            <el-col span="4" class="m-r-sm">
+        <el-row v-if="uploadProcessConfig.isOnProcess" :gutter=20>
+            <!-- <el-col :span=4 class="m-r-sm">
                 <h4 class="tag-title">上传进度：</h4>
             </el-col>
 
-            <el-col span="12" offset="4">
+            <el-col :span=12>
                 <el-progress :text-inside="true" :stroke-width="24"
                     :percentage="parseFloat(uploadProcessConfig.processPercentage)"
                     :status="uploadProcessConfig.processStatus" :indeterminate="uploadProcessConfig.indeterminate"
-                    :color="uploadProcessConfig.finishedNum!=uploadProcessConfig.fileListNum?'#33acff':' #00cc00'"
+                    :color="uploadProcessConfig.finishedNum != uploadProcessConfig.fileListNum ? '#33acff' : ' #00cc00'"
                     style="width: 320px;">
+                    <template v-slot:default>
+                        <h4 class="tag-title">{{ uploadProcessConfig.finishedNum }} / {{ uploadProcessConfig.fileListNum
+                            }}
+                        </h4>
+                    </template>
+
                 </el-progress>
             </el-col>
-            <el-col span="4">
-                <h4 class="tag-title"> 已上传： {{ uploadProcessConfig.finishedNum }} / {{ uploadProcessConfig.fileListNum }}
+            <el-col :span=4>
+                <h4 class="tag-title"> 已上传： {{ uploadProcessConfig.finishedNum }} / {{ uploadProcessConfig.fileListNum
+                    }}
                 </h4>
-            </el-col>
+            </el-col> -->
+
+                <h4 class="tag-title m-r-sm m-l-sm" >上传进度：</h4>
+
+                <el-progress :text-inside="true" :stroke-width="24"
+                    :percentage="parseFloat(uploadProcessConfig.processPercentage)"
+                    :status="uploadProcessConfig.processStatus" :indeterminate="uploadProcessConfig.indeterminate"
+                    :color="uploadProcessConfig.finishedNum != uploadProcessConfig.fileListNum ? '#33acff' : ' #00cc00'"
+                    style="width: 320px;"
+                    class="m-r-sm">
+                    <template v-slot:default>
+                        <h4 class="tag-title">{{ uploadProcessConfig.finishedNum }} / {{ uploadProcessConfig.fileListNum
+                            }}
+                        </h4>
+                    </template>
+
+                </el-progress>
+
+                <h4 class="tag-title"> 已上传： {{ uploadProcessConfig.finishedNum }} / {{ uploadProcessConfig.fileListNum
+                    }}
+                </h4>
+           
         </el-row>
-        
+
     </div>
-    
+
     <el-upload v-model:file-list="fileList" class="upload-demo" action="#" :on-preview="handlePreview" :multiple="true"
         :on-remove="handleRemove" list-type="picture" :auto-upload="false" drag ref="uploadRef">
 
@@ -54,7 +82,7 @@
                                 {{ tag.tagName }}
                             </el-tag>
                         </ul>
-                        <el-button type="primary" text="primary" size="small" bg
+                        <el-button type='primary' :text="true" size="small" bg
                             @click="tagService.clearSelectTag()">清空所有标签</el-button>
                     </div>
                     <div class="hr-line-dashed"></div>
@@ -107,7 +135,7 @@ let uploadProcessConfig = ref({
     //进度条状态（蓝色/绿色)
     processStatus: "",
     //进度条百分比
-    processPercentage: "0",
+    processPercentage: "50",
     //是否启动动画
     indeterminate: true,
     //文件总数
@@ -118,7 +146,7 @@ let uploadProcessConfig = ref({
 //重置进度条状态
 let resetUploadProcessConfig = function () {
     uploadProcessConfig.value.isOnProcess = false;
-    uploadProcessConfig.value.processPercentage = "0";
+    uploadProcessConfig.value.processPercentage = "50";
     uploadProcessConfig.value.processStatus = "";
     uploadProcessConfig.value.indeterminate = true;
     uploadProcessConfig.value.fileListNum = 0;
@@ -153,58 +181,67 @@ let handleUploadAll = async () => {
     // 通过ref获取el-upload组件实例，并手动提交上传操作
     // console.log(uploadRef.value)
     // uploadRef.value.submit();
-    let fd = new FormData();
+
     console.log(fileList.value)
     // ts for( .. in ..)遍历的是下标 ，for(.. of ..) 遍历的是数组
     // 或者使用 list.foreach((var,index,array)=>{})
+    let uploadSuccess = true;
     for (let el of fileList.value) {
+        let fd = new FormData();
         console.log(el)
         fd.append("file", el.raw as UploadRawFile);
         // let imageRequestUrl=requestPrefix+'/api/file/uploadByBatch'
-    }
-    let res = await fileUploadRequest<ResultInter>("/api/file/uploadByBatch", fd);
-    if (res.data) {
-        console.log(res.data.data)
-        if (res.data.code == '200') {
+        let res = await fileUploadRequest<ResultInter>("/api/file/uploadByBatch", fd);
+        if (res.data) {
+            console.log(res.data.data)
+            if (res.data.code == '200') {
 
-            // 对上传成功的文件添加标签
-            console.log("文件添加标签")
-            let fileList = res.data.data as BaseComponent[]
-            let fileIdList = fileList.map(t => t.id)
-            let param = {
-                fileIds: fileIdList,
-                tagIds: tagService.value.selectedTagIds
+                // 对上传成功的文件添加标签
+                let fileList = res.data.data as BaseComponent[]
+                let fileIdList = fileList.map(t => t.id)
+                let param = {
+                    fileIds: fileIdList,
+                    tagIds: tagService.value.selectedTagIds
+                }
+                console.log("文件添加标签", JSON.stringify(param))
+                await postRequest("/api/file/updateFileTagsByBatch", param);
             }
-            console.log("文件添加标签", JSON.stringify(param))
-            await postRequest("/api/file/updateFileTagsByBatch", param);
-            uploadRef.value.clearFiles();
-            tagService.value.clearSelectTag();
-            ElMessage({
-                message: "上传成功",
-                type: "success",
-            })
+        } else {
+            uploadSuccess = false;
+            break;
         }
+    }
+    if (uploadSuccess) {
+        uploadRef.value.clearFiles();
+        tagService.value.clearSelectTag();
+        ElMessage({
+            message: "上传成功",
+            type: "success",
+        })
     } else {
+        uploadRef.value.clearFiles();
+        tagService.value.clearSelectTag();
         ElMessage({
             message: "上传失败",
             type: "error",
         })
     }
-    setTimeout(()=>{
+
+    setTimeout(() => {
         resetUploadProcessConfig();
-    },1500)
-    
+    }, 1500)
+
 };
 
 socket.on("file_finish_upload", (data: number) => {
     console.log("fileFinishUpload", data);
-    let totalFileNum = fileList.value.length;
-    uploadProcessConfig.value.finishedNum = data;
-    uploadProcessConfig.value.processPercentage = (data * 100 / totalFileNum).toFixed(2);
-    if (data == totalFileNum) {
+    // let totalFileNum = fileList.value.length;
+    uploadProcessConfig.value.finishedNum += 1;
+    // uploadProcessConfig.value.processPercentage = (uploadProcessConfig.value.finishedNum * 100 / uploadProcessConfig.value.fileListNum).toFixed(2);
+    if (uploadProcessConfig.value.finishedNum == uploadProcessConfig.value.fileListNum) {
         uploadProcessConfig.value.indeterminate = false;
         uploadProcessConfig.value.processStatus = "success"
-        // uploadProcessConfig.value.processPercentage="100"
+        uploadProcessConfig.value.processPercentage = "100"
     }
 })
 
