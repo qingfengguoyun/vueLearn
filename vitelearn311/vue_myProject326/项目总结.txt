@@ -115,3 +115,36 @@ proxy_pass http://123.56.221.66:8200/
 则请求 ”/api/get “通过代理转发后变为 http://123.56.221.66/get，/api被移除
 
 
+2024-06-27
+
+1， <template>标签的特性和作用：
+（1）在通常 html 标签中使用：
+<template> 标签并不会在最终渲染的 HTML 结构中留下任何痕迹，仅用作模板的占位符。
+因为<template> 标签在渲染时并不会生成额外的 DOM 元素，所以适合在v-if，v-for等指令时使用
+eg：
+<ul>
+	<template v-for="(com,index) in comList" :key="index">
+	<li>...></li>
+	</template>
+</ul>
+
+在自定义组件标签中使用：
+<template></template>作为插槽使用
+
+
+2，以string为key值的数组（伪map）
+
+eg： 
+interface ComMap{
+[key:string]:any
+}
+
+通常数组获取值使用下标，eg：array[0]，array[1]
+该结构对象获取值使用key值，eg：comMap['key1']，comMap['key2']，获取失败时返回undifined
+
+获取comMap的全部key值组成的数组：Object.keys(comMap)
+获取comMap的全部value值组成的数组：Object.values(comMap)
+
+**undifined在作为布尔值时视为false
+
+

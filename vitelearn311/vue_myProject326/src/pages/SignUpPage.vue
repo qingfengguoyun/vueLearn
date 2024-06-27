@@ -21,12 +21,16 @@
                     <div class="ibox-content">
 
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Name" required="true"
-                                    v-model="user.userName">
+                                <!-- <input type="text" class="form-control" placeholder="Name" required="true"
+                                    v-model="user.userName"> -->
+                                    <el-input type="text"  placeholder="Name" clearable
+                                    v-model="user.userName"></el-input>
                             </div>
                             <div class="form-group">
-                                <input type="password" class="form-control" placeholder="Password" required="true"
-                                    v-model="user.password">
+                                <!-- <input type="password" class="form-control" placeholder="Password" required="true"
+                                    v-model="user.password"> -->
+                                    <el-input type="password"  placeholder="Password" clearable
+                                    v-model="user.password"></el-input>
                             </div>
                             <!-- <div class="form-group">
                                 <div class="checkbox i-checks"><label class="">

@@ -52,6 +52,7 @@ let mainChatRoom = useMainChatRoom();
 let messages: Ref<MessageVo[]> = ref(mainChatRoom.messageVoList)
 let inputMessage = ref("")
 
+
 watch(messages, (newIns, oldIns) => {
     //判断newIns中是否有重复,如果有则去重
     if (isArrayHasDuplicates(newIns)) {

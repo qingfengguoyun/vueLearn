@@ -22,15 +22,8 @@
                             IN+
                         </div>
                     </li>
-                    <li>
+                    <!-- <li>
                         <a href="#" @click="commonStore.toMainChatRoom()"><i class="fa fa-th-large"></i> <span class="nav-label">公共聊天室</span></a>
-                        <!-- <ul class="nav nav-second-level collapse" aria-expanded="false">
-                            <li><a href="#">Dashboard v.1</a></li>
-                            <li><a href="#">Dashboard v.2</a></li>
-                            <li><a href="#">Dashboard v.3</a></li>
-                            <li><a href="#">Dashboard v.4</a></li>
-                            <li><a href="#">Dashboard v.5 </a></li>
-                        </ul> -->
                     </li>
                     <li>
                         <a href="#" @click="commonStore.toFileUpload()"><i class="fa fa-th-large"></i> <span class="nav-label">文件上传</span></a>
@@ -43,6 +36,14 @@
                     </li>
                     <li>
                         <a href="#" @click="commonStore.toUserInfo()"><i class="fa fa-th-large"></i> <span class="nav-label">个人信息</span></a>
+                    </li> -->
+                    <li v-for="(comConf,key) in sideBar.componentConfig" :key="key">
+                        <template v-if="!comConf.isAdmin && onlineUser.user.userName!='admin'">
+                            <a href="#" @click="commonStore.toSelectComponent(key as string)"><i class="fa fa-th-large"></i> <span class="nav-label">{{ comConf.fullName }}</span></a>
+                        </template>
+                        <template v-if="comConf.isAdmin && onlineUser.user.userName=='admin'">
+                            <a href="#" @click="commonStore.toSelectComponent(key as string)"><i class="fa fa-th-large"></i> <span class="nav-label">{{ comConf.fullName }}</span></a>
+                        </template>                       
                     </li>
                     <li>
                         <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">其他功能</span><span

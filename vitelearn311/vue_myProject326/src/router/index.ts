@@ -4,6 +4,7 @@ import FrontPage from "@/pages/FrontPage.vue";
 import SignUpPage from "@/pages/SignUpPage.vue";
 import TestPage from "@/pages/Test.vue"
 import TestPage2 from "@/pages/Test2.vue"
+import AdminPage from "@/pages/AdminPage.vue"
 const router = createRouter(  
     {
         history:createWebHistory(), //指定路由器工作模式
@@ -39,6 +40,11 @@ const router = createRouter(
                 name:"TestPage2",
                 path:"/test2",
                 component: TestPage2
+            },
+            {
+                name:"AdminPage",
+                path:"/admin",
+                component: AdminPage
             }
         ]
     }
