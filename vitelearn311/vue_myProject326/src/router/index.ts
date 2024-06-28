@@ -29,7 +29,7 @@ const router = createRouter(
             {
                 path:"/",
                 // component:LoginPage,
-                redirect:LoginPage
+                redirect:'/login'
             },
             {
                 name:"TestPage",
