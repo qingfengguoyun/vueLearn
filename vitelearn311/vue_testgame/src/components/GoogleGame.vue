@@ -1,12 +1,14 @@
 <template>
     <div class="googleGame" :style="toSizeStyle(displayBoard)">
-        <div class="border_background" :class="boardAnimateClass" :style="toSizeStyle(displayBoard)" @click="playerJump">
+        <div class="border_background" :class="boardAnimateClass" :style="toSizeStyle(displayBoard)" @click="dino.playerJump">
             <!-- 游戏界面将显示在这里 -->
-            <BaseComponent class="player" :class="playerClass" ref="player" :config="playerData" @click="playerJump">
-                <!-- <el-image :src="playerImg" type="fill" :style="toSizeStyle(playerData)"></el-image> -->
+            <!-- <BaseComponent class="player" :class="playerClass" ref="player" :config="playerData" @click="playerJump">
+                
                 <div :style="toStyle(playerData)"></div>
 
-            </BaseComponent>
+            </BaseComponent> -->
+            <Dino :comData="playerData" :comDataDefault="playerDataDefault" :gameConfig="gameConfig" ref="dino"></Dino>
+            
             <BaseComponent ref="enemy" :config="enemyData" v-if="!(enemyData.left >= displayBoard.width)">
                 <!-- <el-image :src="enemyImg" ></el-image> -->
                 <div class="fire_loop" :style="toStyle(enemyData)"></div>
@@ -15,8 +17,8 @@
     </div>
 
     <el-button type="primary" @click="gameStart">开始</el-button>
-    <h2 v-if="isGameover"> GameOver</h2>
-    <h2>score:{{ score }}</h2>
+    <h2 v-if="gameConfig.isGameover"> GameOver</h2>
+    <h2>score:{{ gameConfig.score }}</h2>
 </template>
 <script lang='ts'>
     export default
@@ -29,12 +31,16 @@
     import BaseComponent from '@/components/BaseComponent.vue';
     import { ElMessage } from 'element-plus';
     import { useComponentRef } from '@/hooks/useComponentRef';
-    import type { BaseCom, Enemy, HitBox, Player } from '@/types';
+    import type { BaseCom, Enemy, GameConfig, HitBox, Player } from '@/types';
     import { initBaseCom, initEnemy, initPlayer, toSizeStyle, toStyle } from '@/hooks/useBaseCom';
     import { cloneDeep } from 'lodash';
+    import Dino from '@/components/Dino.vue';
 
-    let isGameover: Ref<boolean> = ref(false);
-    let score: Ref<number> = ref(0);
+    let gameConfig:Ref<GameConfig>=ref({
+        isGameover:false,
+        isPaused:false,
+        score:0
+    })
     let displayBoard: Ref<BaseCom> = ref(initBaseCom(600, 300, 0, 0))
     let boardAnimateClass=ref({
         // border_background: true,
@@ -42,36 +48,40 @@
     })
     let ground = 270
     let player = useComponentRef(BaseComponent);
+    let dino=ref();
+    
     let playerData: Ref<Player> = ref(initPlayer(40, 40, 50, ground - 40, 25, 25, 800, 'img/charactors/dino/walk.gif'))
-    console.log(toStyle(playerData.value));
+    // console.log(toStyle(playerData.value));
     let hurt_animation = [
         'img/charactors/dino/hurt_1.png',
         // 'img/charactors/dino/hurt_2.png',
         'img/charactors/dino/hurt_3.png'
     ]
-    let playerImg = ref('img/charactors/dino/walk.gif')
-    let playerClass = ref({
-        player_gameover: isGameover.value,
-    })
 
     let playerDataDefault: Player = initPlayer(40, 40, 50, ground - 40, 25, 25, 800, 'img/charactors/dino/walk.gif')
     let enemy = useComponentRef(BaseComponent);
     let enemyData: Ref<Enemy> = ref(initEnemy(48, 64, 400, ground - 64, 30, 40, 200, 10, 'img/charactors/fire/burning_loop_1.png'))
-    let enemyDataDefault: Enemy = initEnemy(48, 64, 800, ground - 64, 30, 40, 200, 10, 'img/charactors/fire/burning_loop_1.png')
+    let enemyDataDefault: Enemy = initEnemy(48, 64, 400, ground - 64, 30, 40, 200, 10, 'img/charactors/fire/burning_loop_1.png')
 
 
     //游戏初始化/重置方法
     function gameInit() {
-        isGameover.value = false;
-        score.value = 0;
-        Object.assign(playerData.value, playerDataDefault);
-        Object.assign(enemyData.value, enemyDataDefault);
-        playerImg.value = 'img/charactors/dino/walk.gif';
-        Object.assign(playerClass.value, {
-            player_gameover: isGameover.value,
+        // isGameover.value = false;
+        // score.value = 0;
+        // 游戏总配置重置
+        Object.assign(gameConfig.value,{
+            isGameover:false,
+            isPaused:false,
+            score:0
         })
+        //玩家角色重置
+        Object.assign(playerData.value, playerDataDefault);
+        // 玩家组件（dino）重置
+        dino.value.reset();
+        //障碍物重置
+        Object.assign(enemyData.value, enemyDataDefault);
         Object.assign(boardAnimateClass.value, {
-            border_background_move: isGameover.value,
+            border_background_move:  gameConfig.value.isGameover,
         })
     }
     function gameStart() {
@@ -85,44 +95,44 @@
         boardAnimateClass.value.border_background_move = true;
     }
     //玩家角色跳跃方法
-    function playerJump() {
-        const intervalTime = 20; // 每0.05秒修改一次位置
-        const totalTime = 800; // 跳跃总耗时
-        let currentTime = 0;
-        //加速度
-        let gravity = (playerData.value.speed) as number / (totalTime / 1000 / 2);
-        console.log('gravity', gravity)
-        //当前速度
-        let s: number = playerData.value.speed as number;
-        if (!playerData.value.isActive && !isGameover.value) {
-            //isPause=true：禁止操作
-            playerData.value.isActive = true
-            let id = setInterval(() => {
-                //如果gameover则保持玩家当前位置，并结束定时任务
-                if (isGameover.value) {
-                    clearInterval(id);
-                    return;
-                }
-                let s1 = s - intervalTime * gravity / 1000;
-                let avgSpeed = (s1 + s) / 2
-                // 显示和受击框位置变化
-                playerData.value.top -= avgSpeed * intervalTime / 1000;
-                playerData.value.hitbox_top -= avgSpeed * intervalTime / 1000;
-                currentTime += intervalTime;
-                // console.log("top", playerData.value.top)
-                s = s1;
-                if (currentTime >= (totalTime - intervalTime) || playerData.value.hitbox_top > playerDataDefault.hitbox_top) {
-                    //还原玩家角色位置
-                    Object.assign(playerData.value, playerDataDefault);
-                    // playerData.value=playerDataDefault;
-                    //解除禁止操作
-                    playerData.value.isActive = false;
-                    clearInterval(id);
-                    return;
-                }
-            }, intervalTime)
-        }
-    }
+    // function playerJump() {
+    //     const intervalTime = 20; // 每0.05秒修改一次位置
+    //     const totalTime = 800; // 跳跃总耗时
+    //     let currentTime = 0;
+    //     //加速度
+    //     let gravity = (playerData.value.speed) as number / (totalTime / 1000 / 2);
+    //     console.log('gravity', gravity)
+    //     //当前速度
+    //     let s: number = playerData.value.speed as number;
+    //     if (!playerData.value.isActive && !isGameover.value) {
+    //         //isPause=true：禁止操作
+    //         playerData.value.isActive = true
+    //         let id = setInterval(() => {
+    //             //如果gameover则保持玩家当前位置，并结束定时任务
+    //             if (isGameover.value) {
+    //                 clearInterval(id);
+    //                 return;
+    //             }
+    //             let s1 = s - intervalTime * gravity / 1000;
+    //             let avgSpeed = (s1 + s) / 2
+    //             // 显示和受击框位置变化
+    //             playerData.value.top -= avgSpeed * intervalTime / 1000;
+    //             playerData.value.hitbox_top -= avgSpeed * intervalTime / 1000;
+    //             currentTime += intervalTime;
+    //             // console.log("top", playerData.value.top)
+    //             s = s1;
+    //             if (currentTime >= (totalTime - intervalTime) || playerData.value.hitbox_top > playerDataDefault.hitbox_top) {
+    //                 //还原玩家角色位置
+    //                 Object.assign(playerData.value, playerDataDefault);
+    //                 // playerData.value=playerDataDefault;
+    //                 //解除禁止操作
+    //                 playerData.value.isActive = false;
+    //                 clearInterval(id);
+    //                 return;
+    //             }
+    //         }, intervalTime)
+    //     }
+    // }
     //障碍角色移动方法
     function enemyMove() {
         console.log("enemyMove")
@@ -131,10 +141,10 @@
         let s: number = enemyData.value.speed as number;
 
         enemyData.value.isActive = true;
-        if (enemyData.value.isActive && !isGameover.value) {
+        if (enemyData.value.isActive && !gameConfig.value.isGameover) {
 
             let id = setInterval(() => {
-                if (isGameover.value) {
+                if (gameConfig.value.isGameover) {
                     clearInterval(id);
                     return;
                 }
@@ -146,7 +156,7 @@
                 } else {
                     Object.assign(enemyData.value, enemyDataDefault);
                     // enemyData.value=enemyDataDefault;
-                    score.value += 10
+                    gameConfig.value.score += 10
                     // clearInterval(id);
                     // return;
                 }
@@ -188,38 +198,40 @@
     // 监听游戏是否结束
     function gameOverCheck() {
         let id = setInterval(() => {
-            if (!isGameover.value) {
-                isGameover.value = isCollision(playerData.value, enemyData.value)
+            if (!gameConfig.value.isGameover) {
+                gameConfig.value.isGameover = isCollision(playerData.value, enemyData.value)
+                // console.log("continue")
             } else {
-                isGameover.value = true;
+                // console.log(playerData.value,enemyData.value)
+                gameConfig.value.isGameover = true;
                 clearInterval(id);
                 //播放玩家受伤动画
-                playerDead();
+                dino.value.playerDead();
                 boardAnimateClass.value.border_background_move=false;
-                console.log("isgameover", isGameover)
+                console.log("isgameover", gameConfig.value.isGameover)
                 console.log("gameover")
                 return;
             }
         }, 10)
     }
     // 玩家阵亡动画
-    function playerDead() {
-        console.log('playerDead')
-        playerClass.value.player_gameover = true;
-        // setTimeout(() => {
-        //     playerClass.value.player_gameover = false;
-        // }, 2000);
-        let index = 0
-        let id = setInterval(() => {
-            playerData.value.display_img = hurt_animation[index]
-            index += 1;
-            if (index >= hurt_animation.length) {
-                clearInterval(id);
-                return;
-            }
-        }, 100)
+    // function playerDead() {
+    //     console.log('playerDead')
+    //     playerClass.value.player_gameover = true;
+    //     // setTimeout(() => {
+    //     //     playerClass.value.player_gameover = false;
+    //     // }, 2000);
+    //     let index = 0
+    //     let id = setInterval(() => {
+    //         playerData.value.display_img = hurt_animation[index]
+    //         index += 1;
+    //         if (index >= hurt_animation.length) {
+    //             clearInterval(id);
+    //             return;
+    //         }
+    //     }, 100)
 
-    }
+    // }
     //生成一定范围内随机整数
 
 

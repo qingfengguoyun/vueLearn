@@ -29,3 +29,9 @@ export interface Player extends BaseCom{
     speed?:number,
 
 }
+
+export interface GameConfig {
+    isGameover:boolean,
+    isPaused:boolean,
+    score:number
+}
