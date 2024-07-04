@@ -45,6 +45,11 @@ export let useCommonStore=defineStore('commonStore',{
             sessionStorage.setItem("mainCom","userInfoChange");
             this.mainCom="userInfoChange";
         },
+        toSelectComponent(comName:string){
+            console.log(comName);
+            sessionStorage.setItem("mainCom",comName);
+            this.mainCom=comName;
+        },
 
     },
     state(){
@@ -52,7 +57,6 @@ export let useCommonStore=defineStore('commonStore',{
             // 标识FrontPage界面mainContent区域显示哪个组件
             // 界面刷新将导致pinia也被重置，因此若想保留组件的显示状态，只能存在sessionStorage中
             mainCom:sessionStorage.getItem('mainCom') as string==null? "mainChatRoom" as String :sessionStorage.getItem('mainCom') as string,
-            needOnlineUserCom: true,
         }
     },
     getters:{
@@ -63,6 +67,6 @@ export let useCommonStore=defineStore('commonStore',{
             else{
                 return true;
             }
-        }
+        },
     }
 })

@@ -76,7 +76,7 @@ vite.config.ts中
  // 并根据rewrite修改请求路径
 eg：
     proxy:{
-      '/ws': {
+      '/socket.io': {
         target: IS_DEVELOP?`http://${getNetworkIp()}:${SOCKET_PORT}`:`${REMOTE_BASE_IP}:${SOCKET_PORT}`,
         ws: true,
       },
@@ -98,9 +98,129 @@ location / {
 location /api {
   proxy_pass http://{后端服务ip}:{后端服务端口号};
 }
-//前者表示匹配不到任何界面时重定向至index.html，再通过js进行路由
+//前者表示匹配不到任何界面时重定向至index.html，再通过js进行路由（解决刷新404）
 //后者设置反向代理，将路径中包含”/api“的请求转发至指定服务器
 
-**宝塔客户端中，以上配置写在”伪静态“配置中
+**宝塔客户端中，以上配置可以写在”伪静态“配置中，也可以写在配置文件中
+
+4，代理路径拼接规则 
+
+若proxy_pass地址以"/"结尾，即：proxy_pass http://{后端服务ip}:{后端服务端口号}/ ，
+表示移除location 匹配到的内容再拼接至地址后
+
+eg：
+location  /api{
+proxy_pass http://123.56.221.66:8200/
+}
+则请求 ”/api/get “通过代理转发后变为 http://123.56.221.66/get，/api被移除
 
 
+2024-06-27
+
+1， <template>标签的特性和作用：
+（1）在通常 html 标签中使用：
+<template> 标签并不会在最终渲染的 HTML 结构中留下任何痕迹，仅用作模板的占位符。
+因为<template> 标签在渲染时并不会生成额外的 DOM 元素，所以适合在v-if，v-for等指令时使用
+eg：
+<ul>
+	<template v-for="(com,index) in comList" :key="index">
+	<li>...></li>
+	</template>
+</ul>
+
+在自定义组件标签中使用：
+<template></template>作为插槽使用
+
+
+2，以string为key值的数组（伪map）
+
+eg： 
+interface ComMap{
+[key:string]:any
+}
+
+通常数组获取值使用下标，eg：array[0]，array[1]
+该结构对象获取值使用key值，eg：comMap['key1']，comMap['key2']，获取失败时返回undifined
+
+获取comMap的全部key值组成的数组：Object.keys(comMap)
+获取comMap的全部value值组成的数组：Object.values(comMap)
+
+**undifined在作为布尔值时视为false
+
+
+2024-07-03：
+
+1，ts展开运算符 '...'
+
+展开运算符（…）用于将数组或对象的元素展开为单个元素。它通常用于创建数组或对象的副本，
+或将多个数组或对象合并为一个。
+
+eg: 在创建对象时使用例
+interface A{
+a:number
+(其他属性）
+}
+
+interface B extend A {
+b:number
+}
+
+let comA={
+a:100
+}
+
+let comB={
+...comA,(将基于comA自动填充A接口中的属性，而不用手动赋值）
+b:200
+}
+
+2，setInterval() 定时任务
+
+格式：
+let id=setInterval(()=>{
+/**任务逻辑**/
+},每次执行间隔时间)
+
+当需要终止定时任务时，使用clearInterval(id)，并return；
+eg：
+let id=setInterval(()=>{
+            playerImg.value=hurt_animation[index]
+            index+=1;
+            if(index>=hurt_animation.length){
+                clearInterval(id);
+                return;
+            }
+        },100)  
+
+
+2024-07-04：
+
+1，js/ts的对象，key值不可包含"-"符号
+
+'''
+标识符可以包含字母（大小写均可）、数字和下划线 _。
+标识符必须以字母、下划线 _ 或美元符 $ 开头，后续可以是字母、数字、下划线 _ 或美元符 $。
+'-' 字符在 JavaScript 中通常用作减号运算符，而不是作为变量名或对象属性名的一部分。
+'''
+应使用驼峰命名法或下划线命名
+
+
+2，css的style，vus3的ts对象双向绑定style方式
+
+css中的style样式经常出现包含'-'的样式名，例如background-image，background-size等，
+但实际上，使用驼峰命名法，css亦可识别，例如：backgroundImage等效于background-image，
+（在<template>中组件的style中直接写‘backgroundImage’会提示没有该css属性，但实际可以生效）
+
+因此虽然ts对象的key值不能包含"-"，但可使用驼峰命名法声明属性值以控制css样式
+eg：
+let config={
+（width,height...等属性）
+}
+let style={
+        width: `${config.width}px`,
+        height: `${config.height}px`,
+        top: `${config.top}px`,
+        left: `${config.left}px`,
+        backgroundImage: `url('${config.display_img}')`,
+        backgroundSize: 'auto 100%',
+    }

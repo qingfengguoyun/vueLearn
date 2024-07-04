@@ -11,7 +11,7 @@
 
             <!-- header -->
             <div class="row border-bottom">
-                <headerMenu></headerMenu>
+                <HeaderMenu></HeaderMenu>
             </div>
             <!-- sub header -->
             <!-- <div class="row wrapper border-bottom white-bg page-heading">
@@ -44,7 +44,7 @@
             <!-- mainContent -->
             <div class="wrapper wrapper-content row">
                 <!-- vue动态组件，通过特殊的:is属性指定组件 -->
-                <component :is="mainConList[mainCom as string] || mainConList[0]" ref="chatComponentRef"></component>
+                <component :is="mainConList[mainCom as string] || Object.values(mainConList)[0]" ref="chatComponentRef"></component>
                 <onlineUser v-if="commonStore.showOnlineUser"></onlineUser>
 
             </div>
@@ -115,6 +115,13 @@ let mainConList: ComponentsMap = {
     "userInfo" : UserInfo,
     "userInfoChange": UserInfoChange,
 }
+// 如果mainCom记录的界面组件不在mainConList中，则重置为默认显示组件（第0位）
+// 获取mainConList的全部key值组成的数组
+let keys=Object.keys(mainConList)
+if(!keys.includes(mainCom.value as string)){
+    mainCom.value=keys[0]
+}
+
 
 
 //setup阶段，chatComponentRef=ref()还没有被赋值，在onMounted生命周期中才可获取值

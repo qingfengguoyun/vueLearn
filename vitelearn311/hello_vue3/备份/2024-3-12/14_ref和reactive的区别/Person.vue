@@ -51,6 +51,7 @@ import { ref,reactive } from 'vue';
             brand:"宝马",
             price:90
         })//这种方式可以更新，assign将后者的属性值依据名称，将值赋给了car中对应的同名属性
+        
     }
     function changeCar2(){
         //使用ref定义响应式对象的情况下，可以对value直接赋值

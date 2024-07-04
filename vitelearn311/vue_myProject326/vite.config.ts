@@ -12,6 +12,7 @@ import { Socket } from 'socket.io-client';
 // VITE_APP_ENV= 'development' / 'publish'
 const MODE="development"
 
+// 是否为开发状态
 const IS_DEVELOP=false;
 
 // socket端口
