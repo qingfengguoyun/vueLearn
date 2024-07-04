@@ -1,9 +1,10 @@
 <template>
   <div class="outer">
-    <h2>我是App组件</h2>
+    <!-- <h2>我是App组件</h2>
     <img src="http://www.atguigu.com/images/index_new/logo.png" alt="">
     <br>
-    <Modal/>
+    <Modal/> -->
+    
   </div>
 </template>
 
