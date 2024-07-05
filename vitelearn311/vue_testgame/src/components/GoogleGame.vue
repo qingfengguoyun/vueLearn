@@ -8,11 +8,13 @@
 
             </BaseComponent> -->
             <Dino :comData="playerData" :comDataDefault="playerDataDefault" :gameConfig="gameConfig" ref="dino"></Dino>
+
+            <Obstacle :comData="enemyData" :comDataDefault="enemyDataDefault" :gameConfig="gameConfig" ref="obstacle" ></Obstacle>
             
-            <BaseComponent ref="enemy" :config="enemyData" v-if="!(enemyData.left >= displayBoard.width)">
-                <!-- <el-image :src="enemyImg" ></el-image> -->
+            <!-- <BaseComponent ref="enemy" :config="enemyData" v-if="!(enemyData.left >= displayBoard.width)">
+
                 <div class="fire_loop" :style="toStyle(enemyData)"></div>
-            </BaseComponent>
+            </BaseComponent> -->
         </div>
     </div>
 
@@ -27,7 +29,7 @@
         }
 </script>
 <script lang='ts' setup>
-    import { onMounted, ref, watch, type Ref, reactive } from 'vue';
+    import { onMounted, ref, watch, type Ref, reactive, provide } from 'vue';
     import BaseComponent from '@/components/BaseComponent.vue';
     import { ElMessage } from 'element-plus';
     import { useComponentRef } from '@/hooks/useComponentRef';
@@ -35,12 +37,14 @@
     import { initBaseCom, initEnemy, initPlayer, toSizeStyle, toStyle } from '@/hooks/useBaseCom';
     import { cloneDeep } from 'lodash';
     import Dino from '@/components/Dino.vue';
+import Obstacle from './Obstacle.vue';
 
     let gameConfig:Ref<GameConfig>=ref({
         isGameover:false,
         isPaused:false,
         score:0
     })
+    provide('gameConfig',gameConfig)
     let displayBoard: Ref<BaseCom> = ref(initBaseCom(600, 300, 0, 0))
     let boardAnimateClass=ref({
         // border_background: true,
@@ -57,11 +61,12 @@
         // 'img/charactors/dino/hurt_2.png',
         'img/charactors/dino/hurt_3.png'
     ]
-
     let playerDataDefault: Player = initPlayer(40, 40, 50, ground - 40, 25, 25, 800, 'img/charactors/dino/walk.gif')
+
     let enemy = useComponentRef(BaseComponent);
     let enemyData: Ref<Enemy> = ref(initEnemy(48, 64, 400, ground - 64, 30, 40, 200, 10, 'img/charactors/fire/burning_loop_1.png'))
     let enemyDataDefault: Enemy = initEnemy(48, 64, 400, ground - 64, 30, 40, 200, 10, 'img/charactors/fire/burning_loop_1.png')
+    let obstacle= ref();
 
 
     //游戏初始化/重置方法
@@ -80,13 +85,14 @@
         dino.value.reset();
         //障碍物重置
         Object.assign(enemyData.value, enemyDataDefault);
-        Object.assign(boardAnimateClass.value, {
-            border_background_move:  gameConfig.value.isGameover,
-        })
+        obstacle.value.reset();
+        // Object.assign(boardAnimateClass.value, {
+        //     border_background_move:  gameConfig.value.isGameover,
+        // })
     }
     function gameStart() {
         gameInit();
-        enemyMove();
+        obstacle.value.enemyMove();
         boardMove();
         gameOverCheck();
     }

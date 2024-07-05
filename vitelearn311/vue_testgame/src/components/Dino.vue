@@ -17,14 +17,17 @@ export default {
 import { toSizeStyle, toStyle } from "@/hooks/useBaseCom";
 import { useComponentRef } from "@/hooks/useComponentRef";
 import type { BaseCom, GameConfig, Player } from "@/types";
-import { computed, onMounted, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, watchEffect, reactive,inject,type Ref } from 'vue';
 
 let baseComponent = useComponentRef(HTMLElement);
-let { comData, comDataDefault, gameConfig } = defineProps<{ comData: Player, comDataDefault: Player, gameConfig: GameConfig }>();
+let { comData, comDataDefault } = defineProps<{ comData: Player, comDataDefault: Player }>();
+let gameConfig=inject<Ref<GameConfig>>("gameConfig") as Ref<GameConfig>;
 
+
+// let defaultData=
 
 let playerClass = ref({
-    player_gameover: false
+    player_gameover: false,
 })
 
 let hurt_animation = [
@@ -61,12 +64,12 @@ function playerJump() {
     console.log('gravity', gravity)
     //当前速度
     let s: number = comData.speed as number;
-    if (!comData.isActive && !gameConfig.isGameover) {
+    if (!comData.isActive && !gameConfig.value.isGameover) {
         //isPause=true：禁止操作
         comData.isActive = true
         let id = setInterval(() => {
             //如果gameover则保持玩家当前位置，并结束定时任务
-            if (gameConfig.isGameover) {
+            if (gameConfig.value.isGameover) {
                 clearInterval(id);
                 return;
             }
