@@ -12,13 +12,17 @@
         }
 </script>
 <script lang='ts' setup>
-    import { ref, inject,type Ref } from "vue";
+    import { ref, inject, type Ref } from "vue";
     import { cloneDeep } from 'lodash';
     import { toSizeStyle, toStyle } from "@/hooks/useBaseCom";
     import { useComponentRef } from "@/hooks/useComponentRef";
     import type { Enemy, GameConfig } from "@/types";
-    //组件初始化属性（位置，判定区，显示图片等)
-    let { comData, comDataDefault } = defineProps<{ comData: Enemy, comDataDefault: Enemy }>();
+    import { getRamdomInit } from "@/hooks/useUtils";
+    // 组件初始化属性（位置，判定区，显示图片等)
+    let { baseCom } = defineProps<{ baseCom: Enemy}>();
+    let comData=ref(baseCom)
+    // 组件默认值
+    let comDataDefault=cloneDeep(comData.value)
     //组件动画类
     let animationClasses = ref({
         fire_loop: true,
@@ -37,25 +41,25 @@
         console.log("enemyMove")
         const intervalTime = 20; // 每0.05秒执行一次
         //当前速度
-        let s: number = comData.speed as number;
+        let s: number = comData.value.speed as number;
 
-        comData.isActive = true;
-        if (comData.isActive && !gameConfig.value.isGameover) {
+        comData.value.isActive = true;
+        if (comData.value.isActive && !gameConfig.value.isGameover) {
 
             let id = setInterval(() => {
                 // console.log(gameConfig)
-                if (gameConfig.value.isGameover) {
+                if (comData.value.isActive && gameConfig.value.isGameover) {
                     clearInterval(id);
                     return;
                 }
-                if (comData.left + comData.width >= 0) {
-                    comData.left -= s * intervalTime / 1000
-                    comData.hitbox_left -= s * intervalTime / 1000
-                    // console.log('enemyHit',comData.hitbox_left)
+                if (comData.value.left + comData.value.width >= 0) {
+                    comData.value.left -= s * intervalTime / 1000
+                    comData.value.hitbox_left -= s * intervalTime / 1000
+                    // console.log('enemyHit',comData.value.hitbox_left)
 
                 } else {
-                    Object.assign(comData, comDataDefault);
-                    // comData=enemyDataDefault;
+                    enemyInit();
+                
                     gameConfig.value.score += 10
                     // clearInterval(id);
                     // return;
@@ -66,16 +70,22 @@
 
     //障碍角色刷新方法
     function enemyInit() {
-
+        Object.assign(comData.value, comDataDefault);
+        let distance = getRamdomInit(0, 200);
+        comData.value.left += distance;
+        comData.value.hitbox_left += distance
+        comData.value.isActive = true;
     }
 
 
     //组件重置
     function reset() {
         Object.assign(animationClasses.value, animationClassesDefault)
+        Object.assign(comData.value,comDataDefault);
         // animationClasses.value.player_gameover = false;
     }
     defineExpose({
+        comData,
         reset,
         enemyMove,
     })

@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     BaseComponent: typeof import('./src/components/BaseComponent.vue')['default']
+    copy: typeof import('./src/components/BaseComponent copy.vue')['default']
     Dino: typeof import('./src/components/Dino.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElImage: typeof import('element-plus/es')['ElImage']
@@ -19,6 +20,7 @@ declare module 'vue' {
     IconEcosystem: typeof import('./src/components/icons/IconEcosystem.vue')['default']
     IconSupport: typeof import('./src/components/icons/IconSupport.vue')['default']
     IconTooling: typeof import('./src/components/icons/IconTooling.vue')['default']
+    Life: typeof import('./src/components/Life.vue')['default']
     Obstacle: typeof import('./src/components/Obstacle.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

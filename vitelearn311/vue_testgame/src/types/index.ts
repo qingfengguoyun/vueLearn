@@ -19,6 +19,7 @@ export interface HitBox extends BaseCom{
 
 export interface Enemy extends BaseCom{
 
+    type?: string,
     speed?:number,
     score?:number,
 
@@ -33,5 +34,6 @@ export interface Player extends BaseCom{
 export interface GameConfig {
     isGameover:boolean,
     isPaused:boolean,
-    score:number
+    score:number,
+    lifeRemain?:number,
 }

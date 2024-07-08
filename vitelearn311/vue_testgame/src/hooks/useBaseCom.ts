@@ -78,6 +78,7 @@ export function initEnemy(w?: number, h?: number, left?: number, top?: number, h
         ...baseCom,
         speed: speed || 200,
         score: score || 10,
+        type: ""
     }
     return enemy;
 }

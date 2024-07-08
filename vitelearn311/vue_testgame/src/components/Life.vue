@@ -1,5 +1,5 @@
 <template>
-    <div class="baseCom" :style="toStyle(comData)" :class="animationClasses">
+    <div class="baseCom" :style="toStyle(comData)" :class="animationClasses" v-if="comData.isActive">
         <slot>
             <!-- <div :style="toStyle(comData)"></div> -->
         </slot>
@@ -18,7 +18,9 @@
     import type { BaseCom, Enemy, GameConfig } from "@/types";
     import { getRamdomInit } from "@/hooks/useUtils";
     // 组件初始化属性（位置，判定区，显示图片等)
-    let { comData, comDataDefault } = defineProps<{ comData: BaseCom, comDataDefault?: BaseCom }>();
+    let { baseCom} = defineProps<{ baseCom: BaseCom }>();
+    let comData=ref(baseCom)
+    let comDataDefault=cloneDeep(comData)
     //组件动画类
     let animationClasses = ref({
         // fire_loop: true,
@@ -27,19 +29,19 @@
     let animationClassesDefault = cloneDeep(animationClasses.value);
     //游戏总配置项
     let gameConfig = inject<Ref<GameConfig>>("gameConfig") as Ref<GameConfig>;
-
     // 组件各项内容（comData）初始化
-    function comInit(){
+    
+    function comInit() {
         // 对组件各项内容（comData）进行初始化
-        // comData.height=0;
-        // ...
-
+        comData.value.display_img="img/charactors/dino/stand.gif"
+        comData.value.isActive=true;
         // 组件默认值备份
         comDataDefault=cloneDeep(comData)
     }
     // 组件初始化
     comInit()
-    
+
+
     // 实现组件自定义逻辑，封装为方法(例如移动，各种动作,动画等)
 
     // function move(){
@@ -54,6 +56,7 @@
     //组件重置
     function reset() {
         Object.assign(animationClasses.value, animationClassesDefault)
+        comData.value.isActive=true;
         // animationClasses.value.player_gameover = false;
     }
     defineExpose({
