@@ -19,10 +19,10 @@
     import type { Enemy, GameConfig } from "@/types";
     import { getRamdomInit } from "@/hooks/useUtils";
     // 组件初始化属性（位置，判定区，显示图片等)
-    let { baseCom } = defineProps<{ baseCom: Enemy}>();
-    let comData=ref(baseCom)
+    let { baseCom } = defineProps<{ baseCom: Enemy }>();
+    let comData = ref(baseCom)
     // 组件默认值
-    let comDataDefault=cloneDeep(comData.value)
+    let comDataDefault = cloneDeep(comData.value)
     //组件动画类
     let animationClasses = ref({
         fire_loop: true,
@@ -32,6 +32,17 @@
     //游戏总配置项
     let gameConfig = inject<Ref<GameConfig>>("gameConfig") as Ref<GameConfig>;
 
+    // 组件各项内容（comData）初始化
+    function comInit() {
+        // 对组件各项内容（comData）进行初始化
+        // comData.value.height=0;
+        // ...
+
+        // 组件默认值备份
+        comDataDefault = cloneDeep(comData.value)
+    }
+    // 组件初始化
+    comInit()
     /**
      * 实现组件独有逻辑，封装为方法
      */
@@ -59,7 +70,7 @@
 
                 } else {
                     enemyInit();
-                
+
                     gameConfig.value.score += 10
                     // clearInterval(id);
                     // return;
@@ -77,17 +88,22 @@
         comData.value.isActive = true;
     }
 
+    function speedUp() {
+        comData.value.speed!+=0.2*comData.value.speed!
+    }
+
 
     //组件重置
     function reset() {
         Object.assign(animationClasses.value, animationClassesDefault)
-        Object.assign(comData.value,comDataDefault);
+        Object.assign(comData.value, comDataDefault);
         // animationClasses.value.player_gameover = false;
     }
     defineExpose({
         comData,
         reset,
         enemyMove,
+        speedUp,
     })
 
 </script>

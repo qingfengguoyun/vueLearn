@@ -14,15 +14,19 @@
 
             <template v-for="(lifeData, index) in lifeDatas" :key="index">
                 <Life :baseCom="lifeData" ref="lifes">
-
                 </Life>
             </template>
-
-
-            <!-- <BaseComponent ref="enemy" :config="enemyData" v-if="!(enemyData.left >= displayBoard.width)">
-
-                <div class="fire_loop" :style="toStyle(enemyData)"></div>
-            </BaseComponent> -->
+            <BaseComponent :baseCom="lifeLabel">
+                <h4>life:</h4>
+            </BaseComponent>
+            <BaseComponent :baseCom="middle(displayBoard,200,200)" v-if="gameConfig.isGameover">
+                <div>
+                    <h3>GameOver</h3>
+                    <h3>Score:{{ gameConfig.score }}</h3>
+                </div>
+                
+            </BaseComponent>
+            
         </div>
     </div>
 
@@ -38,7 +42,6 @@
 </script>
 <script lang='ts' setup>
     import { onMounted, ref, watch, type Ref, reactive, provide } from 'vue';
-    import BaseComponent from '@/components/BaseComponent.vue';
     import { ElMessage } from 'element-plus';
     import { useComponentRef } from '@/hooks/useComponentRef';
     import type { BaseCom, Enemy, GameConfig, HitBox, Player } from '@/types';
@@ -46,6 +49,7 @@
     import { cloneDeep } from 'lodash';
     import Dino from '@/components/Dino.vue';
     import Obstacle from './Obstacle.vue';
+    import BaseComponent from '@/components/BaseComponent.vue';
 
     let gameConfig: Ref<GameConfig> = ref({
         isGameover: false,
@@ -67,9 +71,15 @@
     let enemyData: Enemy = initEnemy(48, 64, 400, ground - 64, 30, 40, 200, 10, 'img/charactors/fire/burning_loop_1.png')
     let obstacle = ref();
 
-    let lifeDatas: BaseCom[] = [initBaseCom(24, 24, 0, 0), initBaseCom(24, 24, 30, 0), initBaseCom(24, 24, 60, 0)]
+    let lifeLabel:BaseCom=initBaseCom(40,24,0,0);
+    // let lifeDatas: BaseCom[] = [initBaseCom(24, 24, 50, 0), initBaseCom(24, 24, 80, 0), initBaseCom(24, 24, 110, 0)]
+    let lifeDatas: BaseCom[] = []
+    for( let index=0;index<gameConfig.value.lifeRemain!;index++){
+        
+        lifeDatas.push(initBaseCom(24, 24, 50+30*index, 0))
+    }
     let lifes = ref()
-    let lifeRemain = 3;
+    
 
     //游戏初始化/重置方法
     function gameInit() {
@@ -141,10 +151,16 @@
     function gameOverCheck() {
         let id = setInterval(() => {
             if (!gameConfig.value.isGameover) {
-                if (isCollision(dino.value.comData, obstacle.value.comData)) {
+                // 角色不为无敌状态且角色与障碍物相撞
+                if (!dino.value.comData.isProtected && isCollision(dino.value.comData, obstacle.value.comData)) {
                     gameConfig.value.lifeRemain! -= 1;
+                    console.log(gameConfig.value.lifeRemain)
                     lifes.value[gameConfig.value.lifeRemain!].comData.isActive=false;
-                    if (gameConfig.value.lifeRemain == 0) {
+                    if (gameConfig.value.lifeRemain != 0) {
+                        //执行角色受伤无敌帧
+                        dino.value.player_hurt()   
+                    }
+                    else{
                         gameConfig.value.isGameover = true;
                     }
                 }
@@ -162,6 +178,12 @@
                 return;
             }
         }, 10)
+    }
+
+    function middle(boardCom:BaseCom,width:number,height:number):BaseCom{
+        let center_x=boardCom.left+boardCom.width/2;
+        let center_y=boardCom.top+boardCom.height/2;
+        return initBaseCom(width,height,center_x-width/2,center_y-height/2)
     }
 
 
@@ -188,6 +210,7 @@
         display: flex;
         overflow: hidden;
         border: 2px solid black;
+        justify-content: center;
         /* background-image: url('/img/background/background_1.png'); */
         /* background-repeat: repeat-x; */
 
@@ -202,6 +225,7 @@
         animation-duration: 8s;
         animation-timing-function: linear;
         animation-iteration-count: infinite;
+        animation-fill-mode: forwards;
     }
 
     @keyframes border_background {

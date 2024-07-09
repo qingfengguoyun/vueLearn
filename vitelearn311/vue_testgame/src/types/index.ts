@@ -28,6 +28,7 @@ export interface Enemy extends BaseCom{
 export interface Player extends BaseCom{
 
     speed?:number,
+    isProtected:boolean,
 
 }
 

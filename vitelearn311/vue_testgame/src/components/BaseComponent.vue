@@ -18,7 +18,9 @@
     import type { BaseCom, Enemy, GameConfig } from "@/types";
     import { getRamdomInit } from "@/hooks/useUtils";
     // 组件初始化属性（位置，判定区，显示图片等)
-    let { comData, comDataDefault } = defineProps<{ comData: BaseCom, comDataDefault?: BaseCom }>();
+    let { baseCom } = defineProps<{ baseCom: BaseCom }>();
+    let comData=ref(baseCom)
+    let comDataDefault=cloneDeep(comData.value);
     //组件动画类
     let animationClasses = ref({
         // fire_loop: true,
@@ -31,11 +33,11 @@
     // 组件各项内容（comData）初始化
     function comInit(){
         // 对组件各项内容（comData）进行初始化
-        // comData.height=0;
+        // comData.value.height=0;
         // ...
 
         // 组件默认值备份
-        comDataDefault=cloneDeep(comData)
+        comDataDefault=cloneDeep(comData.value)
     }
     // 组件初始化
     comInit()
@@ -67,6 +69,9 @@
 <style scoped>
     .baseCom {
         position: absolute;
+        display: flex; 
+        justify-content: center; 
+        /* align-items: center; */
     }
 
     /* .fire_loop {

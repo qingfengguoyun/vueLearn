@@ -66,6 +66,7 @@ export function initPlayer(w?: number, h?: number, left?: number, top?: number, 
     let com: Player = {
         ...baseCom,
         speed: speed || 200,
+        isProtected: false
     }
     return com;
 }

@@ -13,7 +13,7 @@ const router = createRouter({
     },
     {
       path: '/',
-      redirect : '/game'
+      redirect : '/googleGame'
     },
     {
       path: '/googleGame',
