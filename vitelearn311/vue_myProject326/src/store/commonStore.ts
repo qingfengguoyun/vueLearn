@@ -45,11 +45,17 @@ export let useCommonStore=defineStore('commonStore',{
             sessionStorage.setItem("mainCom","userInfoChange");
             this.mainCom="userInfoChange";
         },
+        toDinoGame(){
+            console.log("toDinoGame")
+            sessionStorage.setItem("mainCom","DinoGame");
+            this.mainCom="DinoGame";
+        },
         toSelectComponent(comName:string){
             console.log(comName);
             sessionStorage.setItem("mainCom",comName);
             this.mainCom=comName;
         },
+        
 
     },
     state(){
