@@ -217,7 +217,7 @@
     }
 
     .border_background {
-        background-image: url('img/background/background_1.png');
+        background-image: url('/img/background/background_1.png');
     }
 
     .border_background_move {

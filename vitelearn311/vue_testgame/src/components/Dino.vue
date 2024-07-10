@@ -99,9 +99,11 @@
                 // console.log("top", comData.value.top)
                 s = s1;
                 if (currentTime > (totalTime - intervalTime) || comData.value.hitbox_top > comDataDefault.hitbox_top) {
+                    let isProtected=comData.value.isProtected
                     //还原玩家角色位置
                     Object.assign(comData.value, comDataDefault);
                     // comData.value=comDataDefault;
+                    comData.value.isProtected=isProtected
                     //解除禁止操作
                     comData.value.isActive = false;
                     clearInterval(id);

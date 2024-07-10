@@ -1,87 +1,71 @@
 <template>
-    <h3>点击屏幕开始游戏</h3>
-    <div class="dinoGame" :style="toSizeStyle(displayBoard)">
+    <div class="game" :style="toSizeStyle(displayBoard)">
         <div class="border_background" :class="boardAnimateClass" :style="toSizeStyle(displayBoard)"
-            @click="gameConfig.isStart?dino.playerJump():gameStart()">
+            @mousemove="handleMouseMove">
+            <Plane :baseCom="playerData" ref="playerPlane"></Plane>
             <!-- 游戏界面将显示在这里 -->
             <!-- <BaseComponent class="player" :class="playerClass" ref="player" :config="playerData" @click="playerJump">
                 
                 <div :style="toStyle(playerData)"></div>
 
             </BaseComponent> -->
-            <Dino :baseCom="playerData" :gameConfig="gameConfig" ref="dino"></Dino>
 
-            <Obstacle :baseCom="enemyData" :gameConfig="gameConfig" ref="obstacle"></Obstacle>
 
-            <template v-for="(lifeData, index) in lifeDatas" :key="index">
-                <Life :baseCom="lifeData" ref="lifes">
-                </Life>
-            </template>
-            <BaseComponent :baseCom="lifeLabel">
-                <h4>life:</h4>
-            </BaseComponent>
-            <BaseComponent :baseCom="middle(displayBoard,200,200)" v-if="gameConfig.isGameover">
-                <div>
-                    <h3>GameOver</h3>
-                    <h3>Score:{{ gameConfig.score }}</h3>
-                </div>
-                
-            </BaseComponent>
-            
         </div>
     </div>
 
-    <!-- <el-button type="primary" @click="gameStart">开始</el-button>
+    <el-button type="primary" @click="gameStart">开始</el-button>
     <h2 v-if="gameConfig.isGameover"> GameOver</h2>
-    <h2>score:{{ gameConfig.score }}</h2> -->
+    <h2>score:{{ gameConfig.score }}</h2>
 </template>
 <script lang='ts'>
     export default
         {
-            name: 'DinoGame'
+            name: 'PlaneGame'
         }
 </script>
 <script lang='ts' setup>
     import { onMounted, ref, watch, type Ref, reactive, provide } from 'vue';
     import { ElMessage } from 'element-plus';
-    import { useComponentRef } from '@/hooks/game/useComponentRef';
-    import type { BaseCom, Enemy, GameConfig, HitBox, Player } from '@/types/game';
-    import { initBaseCom, initEnemy, initPlayer, toSizeStyle, toStyle } from '@/hooks/game/useBaseCom';
+    import { useComponentRef } from '@/hooks/useComponentRef';
+    import type { BaseCom, Enemy, GameConfig, HitBox, Player } from '@/types';
+    import { initBaseCom, initEnemy, initPlayer, toSizeStyle, toStyle } from '@/hooks/useBaseCom';
     import { cloneDeep } from 'lodash';
-    import Dino from '@/components/game/Dino.vue';
-    import Obstacle from './Obstacle.vue';
-    import BaseComponent from '@/components/game/BaseComponent.vue';
+    import Dino from '@/components/Dino.vue';
+    import BaseComponent from '@/components/BaseComponent.vue';
+    import Plane from '@/components/planeGame/Plane.vue';
 
     let gameConfig: Ref<GameConfig> = ref({
-        isStart:false,
         isGameover: false,
         isPaused: false,
         score: 0,
         lifeRemain: 3,
     })
     provide('gameConfig', gameConfig)
-    let displayBoard: Ref<BaseCom> = ref(initBaseCom(600, 300, 0, 0))
+
+    let displayBoard: Ref<BaseCom> = ref(initBaseCom(300, 600, 0, 0))
+    provide('displayBoard', displayBoard.value)
     let boardAnimateClass = ref({
         // border_background: true,
         border_background_move: false,
     })
-    let ground = 270
-    let dino = ref();
 
-    let playerData: Player = initPlayer(40, 40, 50, ground - 40, 25, 25, 800, 'img/charactors/dino/walk.gif')
+
+    let playerData: Player = initPlayer(40, 40, 130, 400, 25, 25, 800, 'img/charactors/plane/plane_1.png')
+    let playerPlane = useComponentRef(Plane)
     // console.log(toStyle(playerData.value));
-    let enemyData: Enemy = initEnemy(48, 64, 400, ground - 64, 30, 40, 200, 10, 'img/charactors/fire/burning_loop_1.png')
-    let obstacle = ref();
+    // let enemyData: Enemy = initEnemy(48, 64, 400, ground - 64, 30, 40, 200, 10, 'img/charactors/fire/burning_loop_1.png')
+    // let obstacle = ref();
 
-    let lifeLabel:BaseCom=initBaseCom(40,24,0,0);
-    // let lifeDatas: BaseCom[] = [initBaseCom(24, 24, 50, 0), initBaseCom(24, 24, 80, 0), initBaseCom(24, 24, 110, 0)]
-    let lifeDatas: BaseCom[] = []
-    for( let index=0;index<gameConfig.value.lifeRemain!;index++){
-        
-        lifeDatas.push(initBaseCom(24, 24, 50+30*index, 0))
-    }
-    let lifes = ref()
-    
+    // let lifeLabel:BaseCom=initBaseCom(40,24,0,0);
+    // // let lifeDatas: BaseCom[] = [initBaseCom(24, 24, 50, 0), initBaseCom(24, 24, 80, 0), initBaseCom(24, 24, 110, 0)]
+    // let lifeDatas: BaseCom[] = []
+    // for( let index=0;index<gameConfig.value.lifeRemain!;index++){
+
+    //     lifeDatas.push(initBaseCom(24, 24, 50+30*index, 0))
+    // }
+    // let lifes = ref()
+
 
     //游戏初始化/重置方法
     function gameInit() {
@@ -89,7 +73,6 @@
         // score.value = 0;
         // 游戏总配置重置
         Object.assign(gameConfig.value, {
-            isStart:false,
             isGameover: false,
             isPaused: false,
             score: 0,
@@ -98,29 +81,35 @@
         //玩家角色重置
         // Object.assign(playerData.value, playerDataDefault);
         // 玩家组件（dino）重置
-        dino.value.reset();
+        // dino.value.reset();
         //障碍物重置
         // Object.assign(enemyData.value, enemyDataDefault);
-        obstacle.value.reset();
-        for (let index in lifes.value) {
-            lifes.value[index].reset()
-        }
+        // obstacle.value.reset();
+        // for (let index in lifes.value) {
+        //     lifes.value[index].reset()
+        // }
         // Object.assign(boardAnimateClass.value, {
         //     border_background_move:  gameConfig.value.isGameover,
         // })
     }
     function gameStart() {
-        console.log("gamestart")
         gameInit();
-        gameConfig.value.isStart=true;
-        obstacle.value.enemyMove();
-        boardMove();
-        gameOverCheck();
+        // obstacle.value.enemyMove();
+        // boardMove();
+        // gameOverCheck();
     }
     //背景开始移动
     function boardMove() {
         boardAnimateClass.value.border_background_move = true;
     }
+
+    const mouseX = ref(0);
+    const mouseY = ref(0);
+    const handleMouseMove = function (event: MouseEvent) {
+        mouseX.value = event.pageX;
+        mouseY.value = event.pageY;
+        playerPlane.value?.changePosition(mouseX.value, mouseY.value)
+    };
 
 
 
@@ -153,47 +142,42 @@
 
     }
     // 监听游戏是否结束
-    function gameOverCheck() {
-        let id = setInterval(() => {
-            if (!gameConfig.value.isGameover) {
-                // 角色不为无敌状态且角色与障碍物相撞
-                if (!dino.value.comData.isProtected && isCollision(dino.value.comData, obstacle.value.comData)) {
-                    gameConfig.value.lifeRemain! -= 1;
-                    console.log(gameConfig.value.lifeRemain)
-                    
-                    lifes.value[gameConfig.value.lifeRemain!].comData.isActive=false;
-                    if (gameConfig.value.lifeRemain != 0) {
-                        //执行角色受伤无敌帧
-                        dino.value.player_hurt()   
-                    }
-                    else{
-                        gameConfig.value.isGameover = true;
-                    }
-                    
-                }
+    // function gameOverCheck() {
+    //     let id = setInterval(() => {
+    //         if (!gameConfig.value.isGameover) {
+    //             // 角色不为无敌状态且角色与障碍物相撞
+    //             if (!dino.value.comData.isProtected && isCollision(dino.value.comData, obstacle.value.comData)) {
+    //                 gameConfig.value.lifeRemain! -= 1;
+    //                 console.log(gameConfig.value.lifeRemain)
+    //                 lifes.value[gameConfig.value.lifeRemain!].comData.isActive=false;
+    //                 if (gameConfig.value.lifeRemain != 0) {
+    //                     //执行角色受伤无敌帧
+    //                     dino.value.player_hurt()   
+    //                 }
+    //                 else{
+    //                     gameConfig.value.isGameover = true;
+    //                 }
+    //             }
 
-                // console.log("continue")
-            } else {
-                // console.log(playerData.value,enemyData.value)
-                gameConfig.value.isGameover = true;
-                gameConfig.value.isStart = false;
-                clearInterval(id);
-                //播放玩家受伤动画
-                dino.value.playerDead();
-                //背景停止移动
-                boardAnimateClass.value.border_background_move = false;
-                //               
-                console.log("isgameover", gameConfig.value.isGameover)
-                console.log("gameover")
-                return;
-            }
-        }, 16)
-    }
+    //             // console.log("continue")
+    //         } else {
+    //             // console.log(playerData.value,enemyData.value)
+    //             gameConfig.value.isGameover = true;
+    //             clearInterval(id);
+    //             //播放玩家受伤动画
+    //             dino.value.playerDead();
+    //             boardAnimateClass.value.border_background_move = false;
+    //             console.log("isgameover", gameConfig.value.isGameover)
+    //             console.log("gameover")
+    //             return;
+    //         }
+    //     }, 10)
+    // }
 
-    function middle(boardCom:BaseCom,width:number,height:number):BaseCom{
-        let center_x=boardCom.left+boardCom.width/2;
-        let center_y=boardCom.top+boardCom.height/2;
-        return initBaseCom(width,height,center_x-width/2,center_y-height/2)
+    function middle(boardCom: BaseCom, width: number, height: number): BaseCom {
+        let center_x = boardCom.left + boardCom.width / 2;
+        let center_y = boardCom.top + boardCom.height / 2;
+        return initBaseCom(width, height, center_x - width / 2, center_y - height / 2)
     }
 
 
@@ -211,7 +195,7 @@
 
 </script>
 <style scoped>
-    .dinoGame {
+    .game {
         text-align: left;
         /* width: 600px;
         height: 300px; */
@@ -223,12 +207,12 @@
         justify-content: center;
         /* background-image: url('/img/background/background_1.png'); */
         /* background-repeat: repeat-x; */
-        padding: 0
 
     }
 
     .border_background {
-        background-image: url('/img/background/background_1.png');
+        /* background-image: url('/img/background/background_1.png'); */
+        background-color: aquamarine
     }
 
     .border_background_move {
