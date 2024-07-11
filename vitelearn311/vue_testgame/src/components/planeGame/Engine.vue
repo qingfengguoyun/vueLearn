@@ -24,6 +24,7 @@
     //组件动画类
     let animationClasses = ref({
         // fire_loop: true,
+        engine_loop:true
     })
     //组件动画默认配置（重置时使用）
     let animationClassesDefault = cloneDeep(animationClasses.value);
@@ -72,6 +73,23 @@
         display: flex; 
         justify-content: center; 
         /* align-items: center; */
+    }
+
+    @keyframes engine_loop{
+        from {
+            background-position: 0% 0px;
+        }
+
+        to {
+            background-position: 400% 0px;
+        }
+    }
+
+    .engine_loop{
+        animation-name: engine_loop;
+        animation-duration: 0.3s;
+        animation-iteration-count: infinite;
+        animation-timing-function: steps(4);
     }
 
     /* .fire_loop {

@@ -8,7 +8,7 @@
 <script lang='ts'>
     export default
         {
-            name: "BaseCom"
+            name: "Weapon"
         }
 </script>
 <script lang='ts' setup>
@@ -24,6 +24,7 @@
     //组件动画类
     let animationClasses = ref({
         // fire_loop: true,
+        weapon_shoot:false,
     })
     //组件动画默认配置（重置时使用）
     let animationClassesDefault = cloneDeep(animationClasses.value);
@@ -51,6 +52,14 @@
     //     },50);
     // }  
 
+    function weapon_shoot(){
+        animationClasses.value.weapon_shoot=false;
+        animationClasses.value.weapon_shoot=true;
+        setTimeout(()=>{
+            animationClasses.value.weapon_shoot=false;
+        },100)
+    }
+
     // 自定义逻辑结束
 
     //组件重置
@@ -63,6 +72,7 @@
         reset,
         //自定义逻辑
         // move
+        weapon_shoot,
     })
 
 </script>
@@ -72,6 +82,23 @@
         display: flex; 
         justify-content: center; 
         /* align-items: center; */
+    }
+
+    .weapon_shoot{
+        animation-name: weapon_shoot;
+        animation-duration: 0.1s;
+        animation-iteration-count: 1;
+        animation-timing-function: steps(5);
+    }
+
+    @keyframes weapon_shoot{
+        from{
+            background-position: 500% 0px;
+        }
+        to{
+            background-position: 0% 0px;
+        }
+
     }
 
     /* .fire_loop {

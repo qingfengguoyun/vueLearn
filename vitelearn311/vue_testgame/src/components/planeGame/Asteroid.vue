@@ -1,5 +1,5 @@
 <template>
-    <div class="baseCom" :style="toStyle(comData)" :class="animationClasses">
+    <div class="baseCom" :style="toStyle(comData)"  :class="animationClasses">
         <slot>
             <!-- <div :style="toStyle(comData)"></div> -->
         </slot>
@@ -8,7 +8,7 @@
 <script lang='ts'>
     export default
         {
-            name: "BaseCom"
+            name: "Asteroid"
         }
 </script>
 <script lang='ts' setup>
@@ -24,6 +24,8 @@
     //组件动画类
     let animationClasses = ref({
         // fire_loop: true,
+        asteroid_explode:false,
+        asteroid_roll:true,
     })
     //组件动画默认配置（重置时使用）
     let animationClassesDefault = cloneDeep(animationClasses.value);
@@ -51,6 +53,18 @@
     //     },50);
     // }  
 
+    function asteroidExplode() {
+        // comData.value.displayImg
+        comData.value.display_img="img/charactors/asteroid/Asteroid_1_explode.png"
+        animationClasses.value.asteroid_roll=false;
+        animationClasses.value.asteroid_explode=true;
+        let id =setTimeout(() => {
+            comData.value.isActive=false;
+            animationClasses.value.asteroid_explode=false;
+            reset();
+        }, 1000);
+    }
+
     // 自定义逻辑结束
 
     //组件重置
@@ -63,6 +77,7 @@
         reset,
         //自定义逻辑
         // move
+        asteroidExplode
     })
 
 </script>
@@ -72,6 +87,39 @@
         display: flex; 
         justify-content: center; 
         /* align-items: center; */
+    }
+
+    .asteroid_explode{
+        animation-name: asteroid_explode;
+        animation-duration: 1s;
+        animation-iteration-count: 1;
+        animation-timing-function: steps(8);
+    }
+
+    @keyframes asteroid_explode{
+        from {
+            background-position: 0% 0px;
+        }
+
+        to {
+            background-position: -800% 0px;
+        }
+    }
+
+    .asteroid_roll{
+        animation-name: asteroid_roll;
+        animation-duration: 4s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+    }
+
+    @keyframes asteroid_roll{
+        from {
+            transform: rotate(0deg);
+        }
+        to{
+            transform: rotate(360deg);
+        }
     }
 
     /* .fire_loop {
@@ -87,9 +135,8 @@
             background-position: 0% 0px;
         }
 
-        // background-position: x, y; 表示背景图向右/上移动，若想从左到右展示背景图，x应设置为负值
         to {
-            background-position: -800% 0px;
+            background-position: 800% 0px;
         }
 
     } */

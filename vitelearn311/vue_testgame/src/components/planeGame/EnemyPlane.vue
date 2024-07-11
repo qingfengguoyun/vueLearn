@@ -1,5 +1,5 @@
 <template>
-    <div class="baseCom" :style="toStyle(comData)" :class="animationClasses">
+    <div class="baseCom" :style="toStyle(comData)" style="transform: rotate(180deg);" :class="animationClasses">
         <slot>
             <!-- <div :style="toStyle(comData)"></div> -->
         </slot>
@@ -8,7 +8,7 @@
 <script lang='ts'>
     export default
         {
-            name: "BaseCom"
+            name: "EnemyPlane"
         }
 </script>
 <script lang='ts' setup>
@@ -87,9 +87,8 @@
             background-position: 0% 0px;
         }
 
-        // background-position: x, y; 表示背景图向右/上移动，若想从左到右展示背景图，x应设置为负值
         to {
-            background-position: -800% 0px;
+            background-position: 800% 0px;
         }
 
     } */

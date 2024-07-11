@@ -9,12 +9,16 @@
                 <div :style="toStyle(playerData)"></div>
 
             </BaseComponent> -->
+            <EnemyPlane :baseCom="enemyPlaneData"></EnemyPlane>
+            <Asteroid :baseCom="asteroidData" ref="asteroid"></Asteroid>
+            
+            
 
 
         </div>
     </div>
 
-    <el-button type="primary" @click="gameStart">开始</el-button>
+    <el-button type="primary" @click="playerPlane?.weapon?.weapon_shoot">开始</el-button>
     <h2 v-if="gameConfig.isGameover"> GameOver</h2>
     <h2>score:{{ gameConfig.score }}</h2>
 </template>
@@ -34,6 +38,8 @@
     import Dino from '@/components/Dino.vue';
     import BaseComponent from '@/components/BaseComponent.vue';
     import Plane from '@/components/planeGame/Plane.vue';
+    import EnemyPlane from '@/components/planeGame/EnemyPlane.vue';
+    import Asteroid from '@/components/planeGame/Asteroid.vue';
 
     let gameConfig: Ref<GameConfig> = ref({
         isGameover: false,
@@ -53,6 +59,11 @@
 
     let playerData: Player = initPlayer(40, 40, 130, 400, 25, 25, 800, 'img/charactors/plane/plane_1.png')
     let playerPlane = useComponentRef(Plane)
+
+    let enemyPlaneData: Enemy = initEnemy(40,40,130, 200,25,25,200,10,'img/charactors/nairan/Nairan_1.png')
+
+    let asteroidData: Enemy =initEnemy(40,40,130, 300,25,25,200,10,'img/charactors/asteroid/Asteroid_1.png')
+    let asteroid=useComponentRef(Asteroid);
     // console.log(toStyle(playerData.value));
     // let enemyData: Enemy = initEnemy(48, 64, 400, ground - 64, 30, 40, 200, 10, 'img/charactors/fire/burning_loop_1.png')
     // let obstacle = ref();
@@ -212,7 +223,9 @@
 
     .border_background {
         /* background-image: url('/img/background/background_1.png'); */
-        background-color: aquamarine
+        /* background-color: aquamarine */
+        background-image: url('/img/background/Space_1.png');
+        
     }
 
     .border_background_move {
