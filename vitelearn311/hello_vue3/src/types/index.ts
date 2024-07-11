@@ -11,3 +11,7 @@ export class newsIns{
     }
 
 }
+
+export interface Config{
+    isOver:boolean
+}

@@ -13,7 +13,7 @@ import { Socket } from 'socket.io-client';
 const MODE="development"
 
 // 是否为开发状态
-const IS_DEVELOP=false;
+const IS_DEVELOP=false
 
 // socket端口
 const SOCKET_PORT=8271

@@ -8,6 +8,9 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AdminInfo: typeof import('./src/components/AdminInfo.vue')['default']
+    BaseComponent: typeof import('./src/components/game/BaseComponent.vue')['default']
+    Dino: typeof import('./src/components/game/Dino.vue')['default']
+    DinoGame: typeof import('./src/components/game/DinoGame.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCol: typeof import('element-plus/es')['ElCol']
     ElImage: typeof import('element-plus/es')['ElImage']
@@ -27,9 +30,11 @@ declare module 'vue' {
     IconEcosystem: typeof import('./src/components/icons/IconEcosystem.vue')['default']
     IconSupport: typeof import('./src/components/icons/IconSupport.vue')['default']
     IconTooling: typeof import('./src/components/icons/IconTooling.vue')['default']
+    Life: typeof import('./src/components/game/Life.vue')['default']
     MainChatRoom: typeof import('./src/components/MainChatRoom.vue')['default']
     Message: typeof import('./src/components/Message.vue')['default']
     MessageRight: typeof import('./src/components/MessageRight.vue')['default']
+    Obstacle: typeof import('./src/components/game/Obstacle.vue')['default']
     OnlineUser: typeof import('./src/components/OnlineUser.vue')['default']
     PrivateChatRoom: typeof import('./src/components/PrivateChatRoom.vue')['default']
     RightBottomWindow: typeof import('./src/components/RightBottomWindow.vue')['default']

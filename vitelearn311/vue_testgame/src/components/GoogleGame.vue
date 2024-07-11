@@ -1,20 +1,32 @@
 <template>
     <div class="googleGame" :style="toSizeStyle(displayBoard)">
-        <div class="border_background" :class="boardAnimateClass" :style="toSizeStyle(displayBoard)" @click="dino.playerJump">
+        <div class="border_background" :class="boardAnimateClass" :style="toSizeStyle(displayBoard)"
+            @click="dino.playerJump">
             <!-- 游戏界面将显示在这里 -->
             <!-- <BaseComponent class="player" :class="playerClass" ref="player" :config="playerData" @click="playerJump">
                 
                 <div :style="toStyle(playerData)"></div>
 
             </BaseComponent> -->
-            <Dino :comData="playerData" :comDataDefault="playerDataDefault" :gameConfig="gameConfig" ref="dino"></Dino>
+            <Dino :baseCom="playerData" :gameConfig="gameConfig" ref="dino"></Dino>
 
-            <Obstacle :comData="enemyData" :comDataDefault="enemyDataDefault" :gameConfig="gameConfig" ref="obstacle" ></Obstacle>
+            <Obstacle :baseCom="enemyData" :gameConfig="gameConfig" ref="obstacle"></Obstacle>
+
+            <template v-for="(lifeData, index) in lifeDatas" :key="index">
+                <Life :baseCom="lifeData" ref="lifes">
+                </Life>
+            </template>
+            <BaseComponent :baseCom="lifeLabel">
+                <h4>life:</h4>
+            </BaseComponent>
+            <BaseComponent :baseCom="middle(displayBoard,200,200)" v-if="gameConfig.isGameover">
+                <div>
+                    <h3>GameOver</h3>
+                    <h3>Score:{{ gameConfig.score }}</h3>
+                </div>
+                
+            </BaseComponent>
             
-            <!-- <BaseComponent ref="enemy" :config="enemyData" v-if="!(enemyData.left >= displayBoard.width)">
-
-                <div class="fire_loop" :style="toStyle(enemyData)"></div>
-            </BaseComponent> -->
         </div>
     </div>
 
@@ -30,62 +42,66 @@
 </script>
 <script lang='ts' setup>
     import { onMounted, ref, watch, type Ref, reactive, provide } from 'vue';
-    import BaseComponent from '@/components/BaseComponent.vue';
     import { ElMessage } from 'element-plus';
     import { useComponentRef } from '@/hooks/useComponentRef';
     import type { BaseCom, Enemy, GameConfig, HitBox, Player } from '@/types';
     import { initBaseCom, initEnemy, initPlayer, toSizeStyle, toStyle } from '@/hooks/useBaseCom';
     import { cloneDeep } from 'lodash';
     import Dino from '@/components/Dino.vue';
-import Obstacle from './Obstacle.vue';
+    import Obstacle from './Obstacle.vue';
+    import BaseComponent from '@/components/BaseComponent.vue';
 
-    let gameConfig:Ref<GameConfig>=ref({
-        isGameover:false,
-        isPaused:false,
-        score:0
+    let gameConfig: Ref<GameConfig> = ref({
+        isGameover: false,
+        isPaused: false,
+        score: 0,
+        lifeRemain: 3,
     })
-    provide('gameConfig',gameConfig)
+    provide('gameConfig', gameConfig)
     let displayBoard: Ref<BaseCom> = ref(initBaseCom(600, 300, 0, 0))
-    let boardAnimateClass=ref({
+    let boardAnimateClass = ref({
         // border_background: true,
         border_background_move: false,
     })
     let ground = 270
-    let player = useComponentRef(BaseComponent);
-    let dino=ref();
-    
-    let playerData: Ref<Player> = ref(initPlayer(40, 40, 50, ground - 40, 25, 25, 800, 'img/charactors/dino/walk.gif'))
+    let dino = ref();
+
+    let playerData: Player = initPlayer(40, 40, 50, ground - 40, 25, 25, 800, 'img/charactors/dino/walk.gif')
     // console.log(toStyle(playerData.value));
-    let hurt_animation = [
-        'img/charactors/dino/hurt_1.png',
-        // 'img/charactors/dino/hurt_2.png',
-        'img/charactors/dino/hurt_3.png'
-    ]
-    let playerDataDefault: Player = initPlayer(40, 40, 50, ground - 40, 25, 25, 800, 'img/charactors/dino/walk.gif')
+    let enemyData: Enemy = initEnemy(48, 64, 400, ground - 64, 30, 40, 200, 10, 'img/charactors/fire/burning_loop_1.png')
+    let obstacle = ref();
 
-    let enemy = useComponentRef(BaseComponent);
-    let enemyData: Ref<Enemy> = ref(initEnemy(48, 64, 400, ground - 64, 30, 40, 200, 10, 'img/charactors/fire/burning_loop_1.png'))
-    let enemyDataDefault: Enemy = initEnemy(48, 64, 400, ground - 64, 30, 40, 200, 10, 'img/charactors/fire/burning_loop_1.png')
-    let obstacle= ref();
-
+    let lifeLabel:BaseCom=initBaseCom(40,24,0,0);
+    // let lifeDatas: BaseCom[] = [initBaseCom(24, 24, 50, 0), initBaseCom(24, 24, 80, 0), initBaseCom(24, 24, 110, 0)]
+    let lifeDatas: BaseCom[] = []
+    for( let index=0;index<gameConfig.value.lifeRemain!;index++){
+        
+        lifeDatas.push(initBaseCom(24, 24, 50+30*index, 0))
+    }
+    let lifes = ref()
+    
 
     //游戏初始化/重置方法
     function gameInit() {
         // isGameover.value = false;
         // score.value = 0;
         // 游戏总配置重置
-        Object.assign(gameConfig.value,{
-            isGameover:false,
-            isPaused:false,
-            score:0
+        Object.assign(gameConfig.value, {
+            isGameover: false,
+            isPaused: false,
+            score: 0,
+            lifeRemain: 3,
         })
         //玩家角色重置
-        Object.assign(playerData.value, playerDataDefault);
+        // Object.assign(playerData.value, playerDataDefault);
         // 玩家组件（dino）重置
         dino.value.reset();
         //障碍物重置
-        Object.assign(enemyData.value, enemyDataDefault);
+        // Object.assign(enemyData.value, enemyDataDefault);
         obstacle.value.reset();
+        for (let index in lifes.value) {
+            lifes.value[index].reset()
+        }
         // Object.assign(boardAnimateClass.value, {
         //     border_background_move:  gameConfig.value.isGameover,
         // })
@@ -100,79 +116,9 @@ import Obstacle from './Obstacle.vue';
     function boardMove() {
         boardAnimateClass.value.border_background_move = true;
     }
-    //玩家角色跳跃方法
-    // function playerJump() {
-    //     const intervalTime = 20; // 每0.05秒修改一次位置
-    //     const totalTime = 800; // 跳跃总耗时
-    //     let currentTime = 0;
-    //     //加速度
-    //     let gravity = (playerData.value.speed) as number / (totalTime / 1000 / 2);
-    //     console.log('gravity', gravity)
-    //     //当前速度
-    //     let s: number = playerData.value.speed as number;
-    //     if (!playerData.value.isActive && !isGameover.value) {
-    //         //isPause=true：禁止操作
-    //         playerData.value.isActive = true
-    //         let id = setInterval(() => {
-    //             //如果gameover则保持玩家当前位置，并结束定时任务
-    //             if (isGameover.value) {
-    //                 clearInterval(id);
-    //                 return;
-    //             }
-    //             let s1 = s - intervalTime * gravity / 1000;
-    //             let avgSpeed = (s1 + s) / 2
-    //             // 显示和受击框位置变化
-    //             playerData.value.top -= avgSpeed * intervalTime / 1000;
-    //             playerData.value.hitbox_top -= avgSpeed * intervalTime / 1000;
-    //             currentTime += intervalTime;
-    //             // console.log("top", playerData.value.top)
-    //             s = s1;
-    //             if (currentTime >= (totalTime - intervalTime) || playerData.value.hitbox_top > playerDataDefault.hitbox_top) {
-    //                 //还原玩家角色位置
-    //                 Object.assign(playerData.value, playerDataDefault);
-    //                 // playerData.value=playerDataDefault;
-    //                 //解除禁止操作
-    //                 playerData.value.isActive = false;
-    //                 clearInterval(id);
-    //                 return;
-    //             }
-    //         }, intervalTime)
-    //     }
-    // }
-    //障碍角色移动方法
-    function enemyMove() {
-        console.log("enemyMove")
-        const intervalTime = 20; // 每0.05秒执行一次
-        //当前速度
-        let s: number = enemyData.value.speed as number;
 
-        enemyData.value.isActive = true;
-        if (enemyData.value.isActive && !gameConfig.value.isGameover) {
 
-            let id = setInterval(() => {
-                if (gameConfig.value.isGameover) {
-                    clearInterval(id);
-                    return;
-                }
-                if (enemyData.value.left + enemyData.value.width >= 0) {
-                    enemyData.value.left -= s * intervalTime / 1000
-                    enemyData.value.hitbox_left -= s * intervalTime / 1000
-                    // console.log('enemyHit',enemyData.value.hitbox_left)
 
-                } else {
-                    Object.assign(enemyData.value, enemyDataDefault);
-                    // enemyData.value=enemyDataDefault;
-                    gameConfig.value.score += 10
-                    // clearInterval(id);
-                    // return;
-                }
-            }, intervalTime)
-        }
-    }
-    //障碍角色刷新方法
-    function enemyInit() {
-
-    }
     //判断BaseCom是否碰撞
     function isCollision(player: BaseCom, enemy: BaseCom): boolean {
         // 计算椭圆的半径
@@ -205,7 +151,20 @@ import Obstacle from './Obstacle.vue';
     function gameOverCheck() {
         let id = setInterval(() => {
             if (!gameConfig.value.isGameover) {
-                gameConfig.value.isGameover = isCollision(playerData.value, enemyData.value)
+                // 角色不为无敌状态且角色与障碍物相撞
+                if (!dino.value.comData.isProtected && isCollision(dino.value.comData, obstacle.value.comData)) {
+                    gameConfig.value.lifeRemain! -= 1;
+                    console.log(gameConfig.value.lifeRemain)
+                    lifes.value[gameConfig.value.lifeRemain!].comData.isActive=false;
+                    if (gameConfig.value.lifeRemain != 0) {
+                        //执行角色受伤无敌帧
+                        dino.value.player_hurt()   
+                    }
+                    else{
+                        gameConfig.value.isGameover = true;
+                    }
+                }
+
                 // console.log("continue")
             } else {
                 // console.log(playerData.value,enemyData.value)
@@ -213,32 +172,20 @@ import Obstacle from './Obstacle.vue';
                 clearInterval(id);
                 //播放玩家受伤动画
                 dino.value.playerDead();
-                boardAnimateClass.value.border_background_move=false;
+                boardAnimateClass.value.border_background_move = false;
                 console.log("isgameover", gameConfig.value.isGameover)
                 console.log("gameover")
                 return;
             }
         }, 10)
     }
-    // 玩家阵亡动画
-    // function playerDead() {
-    //     console.log('playerDead')
-    //     playerClass.value.player_gameover = true;
-    //     // setTimeout(() => {
-    //     //     playerClass.value.player_gameover = false;
-    //     // }, 2000);
-    //     let index = 0
-    //     let id = setInterval(() => {
-    //         playerData.value.display_img = hurt_animation[index]
-    //         index += 1;
-    //         if (index >= hurt_animation.length) {
-    //             clearInterval(id);
-    //             return;
-    //         }
-    //     }, 100)
 
-    // }
-    //生成一定范围内随机整数
+    function middle(boardCom:BaseCom,width:number,height:number):BaseCom{
+        let center_x=boardCom.left+boardCom.width/2;
+        let center_y=boardCom.top+boardCom.height/2;
+        return initBaseCom(width,height,center_x-width/2,center_y-height/2)
+    }
+
 
 
 
@@ -263,13 +210,14 @@ import Obstacle from './Obstacle.vue';
         display: flex;
         overflow: hidden;
         border: 2px solid black;
+        justify-content: center;
         /* background-image: url('/img/background/background_1.png'); */
         /* background-repeat: repeat-x; */
 
     }
 
     .border_background {
-        background-image: url('img/background/background_1.png');
+        background-image: url('/img/background/background_1.png');
     }
 
     .border_background_move {
@@ -277,6 +225,7 @@ import Obstacle from './Obstacle.vue';
         animation-duration: 8s;
         animation-timing-function: linear;
         animation-iteration-count: infinite;
+        animation-fill-mode: forwards;
     }
 
     @keyframes border_background {

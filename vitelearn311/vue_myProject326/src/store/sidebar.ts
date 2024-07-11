@@ -33,6 +33,11 @@ let componentConfig:ComponentsMap={
         fullName:'综合记录',
         shortName:'综合',
         isAdmin:true
+    },
+    'dinoGame':{
+        fullName:'跳跃游戏',
+        shortName:'游戏',
+        isAdmin:false
     }
 }
 

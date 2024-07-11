@@ -92,6 +92,7 @@ import SideBarMini from '@/components/SideBarMini.vue';
 import SubHeader from  '@/components/SubHeader.vue';
 import UserInfo from '@/components/UserInfo.vue';
 import UserInfoChange from '@/components/UserInfoChange.vue'
+import DinoGame from "@/components/game/DinoGame.vue"
 
 let sideBarStore=useSideBar();
 let commonStore = useCommonStore();
@@ -114,6 +115,7 @@ let mainConList: ComponentsMap = {
     "fileUpload": FileUpload,
     "userInfo" : UserInfo,
     "userInfoChange": UserInfoChange,
+    "dinoGame": DinoGame,
 }
 // 如果mainCom记录的界面组件不在mainConList中，则重置为默认显示组件（第0位）
 // 获取mainConList的全部key值组成的数组

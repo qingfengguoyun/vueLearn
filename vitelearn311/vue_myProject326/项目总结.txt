@@ -224,3 +224,32 @@ let style={
         backgroundImage: `url('${config.display_img}')`,
         backgroundSize: 'auto 100%',
     }
+
+
+2024-07-05：
+
+1，组件的ref
+
+当有多个自定义组件拥有相同的‘:ref’属性时，使用ref()将获得一个数组，其成员为每个组件的实例
+
+例如：
+template中：
+<template v-if="(data,index) in arr" :key="index">
+	<BaseCom ref="baseComs"></BaseCom>
+</template>
+
+script中：
+let arr=ref([1,2,3])
+let baseComs=ref()
+
+//访问0号组件
+baseComs.value?[0].(BaseCom对外暴露的方法)
+
+2，provide，inject
+
+（1）inject可通过<>指定接收内容的结构和类型，也可通过as指定类型
+
+eg：
+let config=inject<Config>("keyName"，(默认值）) as Config
+
+

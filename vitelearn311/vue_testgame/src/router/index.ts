@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import GamePage from '@/components/GamePage.vue'
 import GoogleGame from '@/components/GoogleGame.vue'
+import PlaneGame from '@/components/planeGame/PlaneGame.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -13,12 +14,16 @@ const router = createRouter({
     },
     {
       path: '/',
-      redirect : '/game'
+      redirect : '/googleGame'
     },
     {
       path: '/googleGame',
       name: 'googleGame',
       component : GoogleGame
+    },{
+      path: '/planeGame',
+      name: 'planeGame',
+      component : PlaneGame,
     }
   ]
 })
