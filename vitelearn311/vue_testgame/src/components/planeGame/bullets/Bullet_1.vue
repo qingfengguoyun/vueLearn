@@ -1,6 +1,7 @@
 <template>
     <div class="baseCom" :style="toStyle(comData)" :class="animationClasses">
         <slot>
+            qwe
             <!-- <div :style="toStyle(comData)"></div> -->
         </slot>
     </div>
@@ -8,22 +9,25 @@
 <script lang='ts'>
     export default
         {
-            name: "BaseCom"
+            name: "Bullet_1"
         }
 </script>
 <script lang='ts' setup>
-    import { ref, inject, type Ref,watch } from "vue";
+    import { ref, inject, type Ref } from "vue";
     import { cloneDeep } from 'lodash';
     import { toSizeStyle, toStyle } from "@/hooks/useBaseCom";
     import type { BaseCom, Enemy, GameConfig } from "@/types";
     import { getRamdomInit } from "@/hooks/useUtils";
+import { tr } from "element-plus/es/locales.mjs";
     // 组件初始化属性（位置，判定区，显示图片等)
     let { baseCom } = defineProps<{ baseCom: BaseCom }>();
     let comData=ref(baseCom)
     let comDataDefault;
+    let bulletSpeed=200;
     //组件动画类
     let animationClasses = ref({
         // fire_loop: true,
+        bullet_loop:true
     })
     //组件动画默认配置（重置时使用）
     let animationClassesDefault = cloneDeep(animationClasses.value);
@@ -35,14 +39,13 @@
         // 对组件各项内容（comData）进行初始化
         // comData.value.height=0;
         // ...
-
+        bulletSpeed=200;
+        comData.value.isActive=true;
         // 组件默认值备份
         comDataDefault=cloneDeep(comData.value)
     }
     // 组件初始化
     comInit()
-
-
     
     // 实现组件自定义逻辑，封装为方法(例如移动，各种动作,动画等)
 
@@ -52,6 +55,24 @@
     //         comData.hitbox_left+=1;
     //     },50);
     // }  
+
+    function move(){
+        console.log("bullet move")
+        comData.value.isActive=true;
+        let interval=20;
+        let id=setInterval(()=>{
+            // 若isActive为false或子弹的位置超出边界
+            if(!comData.value.isActive || comData.value.top<-100){
+                comData.value.isActive=false;
+                clearInterval(id);
+            }
+            comData.value.top-=200*interval/1000;
+            comData.value.hitbox_top-=200*interval/1000;
+        },interval)
+    }
+    move()
+
+
 
     // 自定义逻辑结束
 
@@ -65,6 +86,7 @@
         reset,
         //自定义逻辑
         // move
+        move,
     })
 
 </script>
@@ -74,6 +96,24 @@
         display: flex; 
         justify-content: center; 
         /* align-items: center; */
+    }
+
+    .bullet_loop {
+        animation-name: bullet_loop;
+        animation-duration: 0.5s;
+        animation-iteration-count: infinite;
+        animation-timing-function: steps(4);
+    }
+    
+    
+    @keyframes bullet_loop{
+        from {
+            background-position: 0% 0px;
+        }
+
+        to {
+            background-position: -400% 0px;
+        }
     }
 
     /* .fire_loop {

@@ -2,7 +2,7 @@
     <div class="game" :style="toSizeStyle(displayBoard)">
         <div class="border_background" :class="boardAnimateClass" :style="toSizeStyle(displayBoard)"
             @mousemove="handleMouseMove">
-            <Plane :baseCom="playerData" ref="playerPlane"></Plane>
+            <Plane :baseCom="playerData" ref="playerPlane" @click="bulletShoot()"></Plane>
             <!-- 游戏界面将显示在这里 -->
             <!-- <BaseComponent class="player" :class="playerClass" ref="player" :config="playerData" @click="playerJump">
                 
@@ -11,14 +11,20 @@
             </BaseComponent> -->
             <EnemyPlane :baseCom="enemyPlaneData"></EnemyPlane>
             <Asteroid :baseCom="asteroidData" ref="asteroid"></Asteroid>
-            
-            
+            <!-- <Bullet_1 :baseCom="bulletData"></Bullet_1> -->
+            <template v-for="(bulletData, index) in bulletDatas" :key="bulletData">
+                {{ index }}
+                <Bullet_1 :base-com="bulletData"></Bullet_1>
+            </template>
+
+
 
 
         </div>
     </div>
 
-    <el-button type="primary" @click="playerPlane?.weapon?.weapon_shoot">开始</el-button>
+    <!-- <el-button type="primary" @click="playerPlane?.weapon?.weapon_shoot">开始</el-button> -->
+    <el-button type="primary" @click="bulletShoot">开始</el-button>
     <h2 v-if="gameConfig.isGameover"> GameOver</h2>
     <h2>score:{{ gameConfig.score }}</h2>
 </template>
@@ -33,13 +39,14 @@
     import { ElMessage } from 'element-plus';
     import { useComponentRef } from '@/hooks/useComponentRef';
     import type { BaseCom, Enemy, GameConfig, HitBox, Player } from '@/types';
-    import { initBaseCom, initEnemy, initPlayer, toSizeStyle, toStyle } from '@/hooks/useBaseCom';
+    import { getBaseComCenter, initBaseCom, initEnemy, initPlayer, toSizeStyle, toStyle } from '@/hooks/useBaseCom';
     import { cloneDeep } from 'lodash';
     import Dino from '@/components/Dino.vue';
     import BaseComponent from '@/components/BaseComponent.vue';
     import Plane from '@/components/planeGame/Plane.vue';
     import EnemyPlane from '@/components/planeGame/EnemyPlane.vue';
     import Asteroid from '@/components/planeGame/Asteroid.vue';
+    import Bullet_1 from './bullets/Bullet_1.vue';
 
     let gameConfig: Ref<GameConfig> = ref({
         isGameover: false,
@@ -49,7 +56,7 @@
     })
     provide('gameConfig', gameConfig)
 
-    let displayBoard: Ref<BaseCom> = ref(initBaseCom(300, 600, 0, 0))
+    let displayBoard: Ref<BaseCom> = ref(initBaseCom(300, 500, 0, 0))
     provide('displayBoard', displayBoard.value)
     let boardAnimateClass = ref({
         // border_background: true,
@@ -60,22 +67,16 @@
     let playerData: Player = initPlayer(40, 40, 130, 400, 25, 25, 800, 'img/charactors/plane/plane_1.png')
     let playerPlane = useComponentRef(Plane)
 
-    let enemyPlaneData: Enemy = initEnemy(40,40,130, 200,25,25,200,10,'img/charactors/nairan/Nairan_1.png')
+    let enemyPlaneData: Enemy = initEnemy(40, 40, 130, 200, 25, 25, 200, 10, 'img/charactors/nairan/Nairan_1.png')
 
-    let asteroidData: Enemy =initEnemy(40,40,130, 300,25,25,200,10,'img/charactors/asteroid/Asteroid_1.png')
-    let asteroid=useComponentRef(Asteroid);
-    // console.log(toStyle(playerData.value));
-    // let enemyData: Enemy = initEnemy(48, 64, 400, ground - 64, 30, 40, 200, 10, 'img/charactors/fire/burning_loop_1.png')
-    // let obstacle = ref();
+    let asteroidData: Enemy = initEnemy(40, 40, 130, 300, 25, 25, 200, 10, 'img/charactors/asteroid/Asteroid_1.png')
+    let asteroid = useComponentRef(Asteroid);
 
-    // let lifeLabel:BaseCom=initBaseCom(40,24,0,0);
-    // // let lifeDatas: BaseCom[] = [initBaseCom(24, 24, 50, 0), initBaseCom(24, 24, 80, 0), initBaseCom(24, 24, 110, 0)]
-    // let lifeDatas: BaseCom[] = []
-    // for( let index=0;index<gameConfig.value.lifeRemain!;index++){
 
-    //     lifeDatas.push(initBaseCom(24, 24, 50+30*index, 0))
-    // }
-    // let lifes = ref()
+    let bulletData: BaseCom = initBaseCom(40, 40, 130, 450, 25, 25, 'img/charactors/weapon/bullet/bullet_1.png')
+
+    let bulletDatas: Ref<BaseCom[]> = ref([]);
+
 
 
     //游戏初始化/重置方法
@@ -89,19 +90,6 @@
             score: 0,
             lifeRemain: 3,
         })
-        //玩家角色重置
-        // Object.assign(playerData.value, playerDataDefault);
-        // 玩家组件（dino）重置
-        // dino.value.reset();
-        //障碍物重置
-        // Object.assign(enemyData.value, enemyDataDefault);
-        // obstacle.value.reset();
-        // for (let index in lifes.value) {
-        //     lifes.value[index].reset()
-        // }
-        // Object.assign(boardAnimateClass.value, {
-        //     border_background_move:  gameConfig.value.isGameover,
-        // })
     }
     function gameStart() {
         gameInit();
@@ -152,6 +140,56 @@
         return distanceSquared <= 1;
 
     }
+
+    // 判断子弹和敌人是否碰撞
+    function checkBulletsAndEnemys() {
+        console.log("checkBulletsAndEnemy")
+        setInterval(() => {
+            for (bulletData of bulletDatas.value) {
+            
+                if (isCollision(bulletData, asteroidData)) {
+                    console.log("isCollision")
+                    bulletData.isActive = false;
+                }
+            }
+        },20)
+    }
+    checkBulletsAndEnemys()
+    // 发射子弹
+    function bulletShoot() {
+        console.log('bulletShoot')
+        bulletDatas.value.push(initBaseCom(playerPlane.value?.comData.width!,
+            playerPlane.value?.comData.height!,
+            getBaseComCenter(playerPlane.value?.comData!).center_x - playerPlane.value?.comData.width! / 2,
+            getBaseComCenter(playerPlane.value?.comData!).center_y - playerPlane.value?.comData.height!,
+            playerPlane.value?.comData.width! / 3,
+            playerPlane.value?.comData.height! / 3,
+            'img/charactors/weapon/bullet/bullet_1.png'));
+    }
+    watch(bulletDatas.value, () => {
+        console.log("watch")
+        if (bulletDatas.value.length > 8) {
+            // console.log("shift")
+            bulletDatas.value.shift()
+            // console.log(bulletDatas.value)
+            return;
+        }
+    }, { deep: false })
+    function checkBullets() {
+        console.log("checkBullet")
+        setInterval(() => {
+            // console.log("123123123",bulletDatas.value)
+            for (let i = bulletDatas.value.length - 1; i >= 0; i--) {
+                if (bulletDatas.value[i].isActive == false) {
+                    // console.log("splice")
+                    // 数组的splice移除
+                    bulletDatas.value.splice(i, 1);
+                }
+
+            }
+        }, 20)
+    }
+    checkBullets();
     // 监听游戏是否结束
     // function gameOverCheck() {
     //     let id = setInterval(() => {
@@ -223,12 +261,12 @@
 
     .border_background {
         /* background-image: url('/img/background/background_1.png'); */
-        /* background-color: aquamarine */
-        background-image: url('/img/background/Space_1.png');
-        
+        background-color: aquamarine
+            /* background-image: url('/img/background/Space_1.png'); */
+
     }
 
-    .border_background_move {
+    /* .border_background_move {
         animation-name: border_background;
         animation-duration: 8s;
         animation-timing-function: linear;
@@ -238,15 +276,15 @@
 
     @keyframes border_background {
         0% {
-            /* background-position: 0% 0px; */
+            background-position: 0% 0px;
         }
 
         100% {
             background-position: -600px 0px;
         }
-    }
+    } */
 
-    .player_gameover {
+    /* .player_gameover {
         animation-name: player_gameover;
         animation-duration: 2s;
         animation-fill-mode: forwards;
@@ -264,7 +302,7 @@
             transform: translateY(-50px);
         }
 
-        /* 最后一帧 */
+
         100% {
             transform: translateY(400px);
 
@@ -288,6 +326,6 @@
             background-position: 800% 0px;
         }
 
-    }
+    } */
 
 </style>

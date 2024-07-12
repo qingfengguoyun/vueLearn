@@ -1,4 +1,5 @@
 import type { BaseCom, Player, Enemy } from "@/types";
+import { computed } from "vue";
 
 export function toStyle(config: BaseCom) {
     return {
@@ -55,6 +56,13 @@ export function initBaseCom(w?: number, h?: number, left?: number, top?: number,
     }
 
     return baseCom;
+}
+
+export function getBaseComCenter(baseCom:BaseCom){
+    return{
+        center_x:baseCom.left+baseCom.width/2,
+        center_y:baseCom.top+baseCom.height/2,
+    }
 }
 
 

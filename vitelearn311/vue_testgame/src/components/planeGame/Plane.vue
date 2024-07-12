@@ -2,11 +2,14 @@
     <div class="baseCom" :style="toSizeStyle(comData)" >
         <slot>
             <!-- <div :style="toStyle(comData)"></div> -->
-            <div :style="toStyle(comData)" :class="animationClasses" style="z-index: 1;"></div>
+            <div :style="toStyle(comData)" :class="animationClasses" style="z-index: 1;" > </div>
             <Weapon :baseCom="weaponData" ref="weapon"></Weapon>
             <Engine :baseCom="engineData">
 
             </Engine>
+            <!-- <template v-for="(bulletData,index) in bulletDatas" :key="index">
+                <Bullet_1 :baseCom="bulletData"></Bullet_1>
+            </template> -->
         </slot>
     </div>
 </template>
@@ -19,20 +22,22 @@
 <script lang='ts' setup>
     import { ref, inject, type Ref,watch } from "vue";
     import { cloneDeep } from 'lodash';
-    import { initBaseCom, toSizeStyle, toStyle } from "@/hooks/useBaseCom";
-    import type { BaseCom, Enemy, GameConfig } from "@/types";
+    import { getBaseComCenter, initBaseCom, toSizeStyle, toStyle } from "@/hooks/useBaseCom";
+    import type { BaseCom, Enemy, GameConfig, Player } from "@/types";
     import { getRamdomInit } from "@/hooks/useUtils";
     import BaseComponent from "../BaseComponent.vue";
     import Engine from "@/components/planeGame/Engine.vue"
     import Weapon from "@/components/planeGame/weapons/Weapon.vue"
+    import Bullet_1 from "@/components/planeGame/bullets/Bullet_1.vue";
 import { useComponentRef } from "@/hooks/useComponentRef";
     // 组件初始化属性（位置，判定区，显示图片等)
-    let { baseCom } = defineProps<{ baseCom: BaseCom }>();
+    let { baseCom } = defineProps<{ baseCom: Player }>();
     let comData = ref(baseCom)
     let comDataDefault = cloneDeep(comData.value);
 
-    let engineData = ref(initBaseCom(40, 40, 0, 0, 0, 0, "/img/charactors/plane/engine_1.png"))
-    let weaponData = ref(initBaseCom(40, 40, 0, 0, 0, 0, "/img/charactors/weapon/weapon_1.png"))
+    let engineData = initBaseCom(comData.value.width, comData.value.height, 0, 0, 0, 0, "/img/charactors/plane/engine_1.png")
+    let weaponData = initBaseCom(comData.value.width, comData.value.height, 0, 0, 0, 0, "/img/charactors/weapon/weapon_1.png")
+    
     //组件动画类
     let animationClasses = ref({
         // fire_loop: true,
@@ -62,6 +67,7 @@ import { useComponentRef } from "@/hooks/useComponentRef";
         comData.value.left =  left - comData.value.width / 2;
         comData.value.top = top - comData.value.height / 2;
     }
+    // 防止组件位置超出边界
     watch(comData.value,(n,o)=>{
         if(comData.value.left<0-(comData.value.width-comData.value.hitbox_width)/2){
             comData.value.left=0-(comData.value.width-comData.value.hitbox_width)/2;
@@ -78,6 +84,7 @@ import { useComponentRef } from "@/hooks/useComponentRef";
             comData.value.top=displayBoard.height-comData.value.height;
         }
     })
+
 
     // 自定义逻辑结束
 

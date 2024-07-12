@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     Asteroid: typeof import('./src/components/planeGame/Asteroid.vue')['default']
     BaseComponent: typeof import('./src/components/BaseComponent.vue')['default']
+    Bullet_1: typeof import('./src/components/planeGame/bullets/Bullet_1.vue')['default']
     copy: typeof import('./src/components/BaseComponent copy.vue')['default']
     Dino: typeof import('./src/components/Dino.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
