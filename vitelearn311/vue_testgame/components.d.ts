@@ -9,15 +9,12 @@ declare module 'vue' {
   export interface GlobalComponents {
     Asteroid: typeof import('./src/components/planeGame/Asteroid.vue')['default']
     BaseComponent: typeof import('./src/components/BaseComponent.vue')['default']
-    copy: typeof import('./src/components/BaseComponent copy.vue')['default']
     Dino: typeof import('./src/components/Dino.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
-    ElImage: typeof import('element-plus/es')['ElImage']
     EnemyPlane: typeof import('./src/components/planeGame/EnemyPlane.vue')['default']
     Engine: typeof import('./src/components/planeGame/Engine.vue')['default']
     GamePage: typeof import('./src/components/GamePage.vue')['default']
     GoogleGame: typeof import('./src/components/GoogleGame.vue')['default']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     IconCommunity: typeof import('./src/components/icons/IconCommunity.vue')['default']
     IconDocumentation: typeof import('./src/components/icons/IconDocumentation.vue')['default']
     IconEcosystem: typeof import('./src/components/icons/IconEcosystem.vue')['default']
@@ -30,9 +27,6 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Test: typeof import('./src/components/Test.vue')['default']
-    TheWelcome: typeof import('./src/components/TheWelcome.vue')['default']
     Weapon: typeof import('./src/components/planeGame/weapons/Weapon.vue')['default']
-    Weapon_1: typeof import('./src/components/planeGame/weapons/Weapon_1.vue')['default']
-    WelcomeItem: typeof import('./src/components/WelcomeItem.vue')['default']
   }
 }
