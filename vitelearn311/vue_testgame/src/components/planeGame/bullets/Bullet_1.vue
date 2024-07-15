@@ -1,7 +1,7 @@
 <template>
     <div class="baseCom" :style="toStyle(comData)" :class="animationClasses">
         <slot>
-            qwe
+            
             <!-- <div :style="toStyle(comData)"></div> -->
         </slot>
     </div>

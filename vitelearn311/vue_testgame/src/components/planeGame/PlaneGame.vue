@@ -10,11 +10,14 @@
 
             </BaseComponent> -->
             <EnemyPlane :baseCom="enemyPlaneData"></EnemyPlane>
-            <Asteroid :baseCom="asteroidData" ref="asteroid"></Asteroid>
+            <!-- <Asteroid :baseCom="asteroidData" ref="asteroid"></Asteroid> -->
             <!-- <Bullet_1 :baseCom="bulletData"></Bullet_1> -->
+            <template v-for="(asteroidData,index) in asteroidDatas">
+                <Asteroid :baseCom="asteroidData" ref="asteroids"></Asteroid>
+            </template>
             <template v-for="(bulletData, index) in bulletDatas" :key="bulletData">
                 {{ index }}
-                <Bullet_1 :base-com="bulletData"></Bullet_1>
+                <Bullet_1 :base-com="bulletData" ref='bullets1'></Bullet_1>
             </template>
 
 
@@ -24,7 +27,7 @@
     </div>
 
     <!-- <el-button type="primary" @click="playerPlane?.weapon?.weapon_shoot">开始</el-button> -->
-    <el-button type="primary" @click="bulletShoot">开始</el-button>
+    <el-button type="primary" @click="gameStart()">开始</el-button>
     <h2 v-if="gameConfig.isGameover"> GameOver</h2>
     <h2>score:{{ gameConfig.score }}</h2>
 </template>
@@ -37,7 +40,7 @@
 <script lang='ts' setup>
     import { onMounted, ref, watch, type Ref, reactive, provide } from 'vue';
     import { ElMessage } from 'element-plus';
-    import { useComponentRef } from '@/hooks/useComponentRef';
+    import { useComponentArrayRef, useComponentRef } from '@/hooks/useComponentRef';
     import type { BaseCom, Enemy, GameConfig, HitBox, Player } from '@/types';
     import { getBaseComCenter, initBaseCom, initEnemy, initPlayer, toSizeStyle, toStyle } from '@/hooks/useBaseCom';
     import { cloneDeep } from 'lodash';
@@ -72,8 +75,14 @@
     let asteroidData: Enemy = initEnemy(40, 40, 130, 300, 25, 25, 200, 10, 'img/charactors/asteroid/Asteroid_1.png')
     let asteroid = useComponentRef(Asteroid);
 
+    let asteroidDatas:Ref<Enemy[]>=ref([]);
+    asteroidDatas.value.push(initEnemy(40, 40, 30, 100, 25, 25, 200, 10, 'img/charactors/asteroid/Asteroid_1.png'),
+    initEnemy(40, 40, 130, 100, 25, 25, 200, 10, 'img/charactors/asteroid/Asteroid_1.png'),
+    initEnemy(40, 40, 230, 100, 25, 25, 200, 10, 'img/charactors/asteroid/Asteroid_1.png'))
+    let asteroids=useComponentArrayRef(Asteroid);
 
     let bulletData: BaseCom = initBaseCom(40, 40, 130, 450, 25, 25, 'img/charactors/weapon/bullet/bullet_1.png')
+    let bullets1=ref();
 
     let bulletDatas: Ref<BaseCom[]> = ref([]);
 
@@ -90,6 +99,15 @@
             score: 0,
             lifeRemain: 3,
         })
+        //所有陨石开始移动
+        for(let i=asteroids.value!.length-1;i>=0;i--){
+            console.log(asteroids.value![i])
+            asteroids.value![i].comData.isActive=true;
+        }
+        //检测子弹与陨石碰撞
+        checkBulletsAndEnemys()
+
+        checkAsteroids()
     }
     function gameStart() {
         gameInit();
@@ -144,17 +162,23 @@
     // 判断子弹和敌人是否碰撞
     function checkBulletsAndEnemys() {
         console.log("checkBulletsAndEnemy")
+        console.log(asteroids.value)
         setInterval(() => {
-            for (bulletData of bulletDatas.value) {
-            
-                if (isCollision(bulletData, asteroidData)) {
-                    console.log("isCollision")
-                    bulletData.isActive = false;
+            for (let bd of bulletDatas.value) {
+                for(let asteroid_index=asteroids.value!.length-1;asteroid_index>=0;asteroid_index--){
+                    // console.log("@@@",asteroids.value![asteroid_index].comData)
+                    if (isCollision(bd, asteroids.value![asteroid_index].comData)) {
+                        console.log("isCollision")
+                        bd.isActive = false;
+                        console.log(asteroids.value![asteroid_index])
+                        asteroids.value![asteroid_index].asteroidExplode();                        
+                    }
                 }
+                
             }
         },20)
     }
-    checkBulletsAndEnemys()
+    
     // 发射子弹
     function bulletShoot() {
         console.log('bulletShoot')
@@ -166,15 +190,17 @@
             playerPlane.value?.comData.height! / 3,
             'img/charactors/weapon/bullet/bullet_1.png'));
     }
+    //检测子弹数量上限
     watch(bulletDatas.value, () => {
-        console.log("watch")
-        if (bulletDatas.value.length > 8) {
+        // console.log("watch")
+        if (bulletDatas.value.length > 12) {
             // console.log("shift")
             bulletDatas.value.shift()
             // console.log(bulletDatas.value)
             return;
         }
     }, { deep: false })
+    // 检测并移除失效子弹
     function checkBullets() {
         console.log("checkBullet")
         setInterval(() => {
@@ -190,6 +216,20 @@
         }, 20)
     }
     checkBullets();
+
+    
+    //陨石移动
+    function checkAsteroids(){
+        console.log("checkAsteroids")
+        let id =setInterval(()=>{
+            for(let i=asteroids.value!.length-1;i>=0;i--){
+                if(asteroids.value![i].comData.top>displayBoard.value.height){
+                    asteroids.value![i].randomReset();
+                }
+            }
+        },20)
+    }
+
     // 监听游戏是否结束
     // function gameOverCheck() {
     //     let id = setInterval(() => {

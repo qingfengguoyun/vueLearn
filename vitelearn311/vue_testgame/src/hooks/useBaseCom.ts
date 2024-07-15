@@ -91,3 +91,9 @@ export function initEnemy(w?: number, h?: number, left?: number, top?: number, h
     }
     return enemy;
 }
+
+export function validateHitbox(baseCom:BaseCom){
+    let center=getBaseComCenter(baseCom)
+    baseCom.hitbox_left=center.center_x-baseCom.hitbox_width/2;
+    baseCom.hitbox_top=center.center_y-baseCom.hitbox_height/2;
+}

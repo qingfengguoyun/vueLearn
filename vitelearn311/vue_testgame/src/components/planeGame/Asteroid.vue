@@ -14,11 +14,11 @@
 <script lang='ts' setup>
     import { ref, inject, type Ref } from "vue";
     import { cloneDeep } from 'lodash';
-    import { toSizeStyle, toStyle } from "@/hooks/useBaseCom";
+    import { toSizeStyle, toStyle, validateHitbox } from "@/hooks/useBaseCom";
     import type { BaseCom, Enemy, GameConfig } from "@/types";
     import { getRamdomInit } from "@/hooks/useUtils";
     // 组件初始化属性（位置，判定区，显示图片等)
-    let { baseCom } = defineProps<{ baseCom: BaseCom }>();
+    let { baseCom } = defineProps<{ baseCom: Enemy }>();
     let comData=ref(baseCom)
     let comDataDefault=cloneDeep(comData.value);
     //组件动画类
@@ -31,6 +31,7 @@
     let animationClassesDefault = cloneDeep(animationClasses.value);
     //游戏总配置项
     let gameConfig = inject<Ref<GameConfig>>("gameConfig") as Ref<GameConfig>;
+    let displayBoard =inject<BaseCom>("displayBoard") as BaseCom;
 
     // 组件各项内容（comData）初始化
     function comInit(){
@@ -40,6 +41,8 @@
 
         // 组件默认值备份
         comDataDefault=cloneDeep(comData.value)
+        //陨石开始移动
+        asteroidMove();
     }
     // 组件初始化
     comInit()
@@ -54,15 +57,41 @@
     // }  
 
     function asteroidExplode() {
-        // comData.value.displayImg
+        // comData.value.displayImg      
+        console.log("asteroidExplode")
+        comData.value.isActive=false
         comData.value.display_img="img/charactors/asteroid/Asteroid_1_explode.png"
         animationClasses.value.asteroid_roll=false;
         animationClasses.value.asteroid_explode=true;
         let id =setTimeout(() => {
-            comData.value.isActive=false;
-            animationClasses.value.asteroid_explode=false;
-            reset();
-        }, 1000);
+            // comData.value.isActive=false;
+            // animationClasses.value.asteroid_explode=false;
+            // reset();
+            randomReset()
+        }, 400);
+    }
+
+    function asteroidMove() {    
+        let interval=20
+        let id =setInterval(()=>{
+            if(comData.value.isActive){
+                comData.value.top+=comData.value.speed!*interval/1000;
+                comData.value.hitbox_top+=comData.value.speed!*interval/1000;
+            }
+            
+        },interval)
+    }
+    //随机初始化位置
+    function randomReset(){
+        reset();
+        comData.value.top=-comData.value.height;
+        comData.value.left=Math.random()*(displayBoard.width-comData.value.width);
+        validateHitbox(comData.value)
+        comData.value.speed=comDataDefault.speed!*0.6+(comDataDefault.speed!*0.4)*Math.random()
+        setTimeout(()=>{
+            comData.value.isActive=true
+        },Math.random()*1000)
+        
     }
 
     // 自定义逻辑结束
@@ -77,7 +106,9 @@
         reset,
         //自定义逻辑
         // move
-        asteroidExplode
+        asteroidExplode,
+        asteroidMove,
+        randomReset,
     })
 
 </script>
@@ -91,9 +122,10 @@
 
     .asteroid_explode{
         animation-name: asteroid_explode;
-        animation-duration: 1s;
+        animation-duration: 0.5s;
         animation-iteration-count: 1;
         animation-timing-function: steps(8);
+        animation-fill-mode: forwards;
     }
 
     @keyframes asteroid_explode{
