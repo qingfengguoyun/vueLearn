@@ -20,7 +20,7 @@
     // 组件初始化属性（位置，判定区，显示图片等)
     let { baseCom } = defineProps<{ baseCom: BaseCom }>();
     let comData=ref(baseCom)
-    let comDataDefault;
+    let comDataDefault:BaseCom;
     //组件动画类
     let animationClasses = ref({
         // fire_loop: true,
@@ -58,6 +58,7 @@
     //组件重置
     function reset() {
         Object.assign(animationClasses.value, animationClassesDefault)
+        Object.assign(comData.value,comDataDefault)
         // animationClasses.value.player_gameover = false;
     }
     defineExpose({

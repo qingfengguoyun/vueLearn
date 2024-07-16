@@ -9,15 +9,19 @@
                 <div :style="toStyle(playerData)"></div>
 
             </BaseComponent> -->
-            <EnemyPlane :baseCom="enemyPlaneData"></EnemyPlane>
+            <!-- <EnemyPlane :baseCom="enemyPlaneData"></EnemyPlane> -->
             <!-- <Asteroid :baseCom="asteroidData" ref="asteroid"></Asteroid> -->
             <!-- <Bullet_1 :baseCom="bulletData"></Bullet_1> -->
-            <template v-for="(asteroidData,index) in asteroidDatas">
+            <template v-for="(asteroidData, index) in asteroidDatas">
                 <Asteroid :baseCom="asteroidData" ref="asteroids"></Asteroid>
             </template>
             <template v-for="(bulletData, index) in bulletDatas" :key="bulletData">
                 {{ index }}
                 <Bullet_1 :base-com="bulletData" ref='bullets1'></Bullet_1>
+            </template>
+            <template v-for="(enemySmallPlaneData, index) in enemySmallPlaneDatas" :key="enemySmallPlaneData">
+                {{ index }}
+                <EnemyPlane :base-com="enemySmallPlaneData" ref="enemySmallPlanes"></EnemyPlane>
             </template>
 
 
@@ -28,6 +32,7 @@
 
     <!-- <el-button type="primary" @click="playerPlane?.weapon?.weapon_shoot">开始</el-button> -->
     <el-button type="primary" @click="gameStart()">开始</el-button>
+    <el-button type="primary" @click="()=>{gameConfig.isGameover=true}">游戏结束</el-button>
     <h2 v-if="gameConfig.isGameover"> GameOver</h2>
     <h2>score:{{ gameConfig.score }}</h2>
 </template>
@@ -42,7 +47,7 @@
     import { ElMessage } from 'element-plus';
     import { useComponentArrayRef, useComponentRef } from '@/hooks/useComponentRef';
     import type { BaseCom, Enemy, GameConfig, HitBox, Player } from '@/types';
-    import { getBaseComCenter, initBaseCom, initEnemy, initPlayer, toSizeStyle, toStyle } from '@/hooks/useBaseCom';
+    import { getBaseComCenter, initBaseCom, initEnemy, initPlayer, isCollision, toSizeStyle, toStyle, validateHitbox } from '@/hooks/useBaseCom';
     import { cloneDeep } from 'lodash';
     import Dino from '@/components/Dino.vue';
     import BaseComponent from '@/components/BaseComponent.vue';
@@ -50,6 +55,7 @@
     import EnemyPlane from '@/components/planeGame/EnemyPlane.vue';
     import Asteroid from '@/components/planeGame/Asteroid.vue';
     import Bullet_1 from './bullets/Bullet_1.vue';
+    import { resetObjectTodefault } from '../../hooks/useUtils';
 
     let gameConfig: Ref<GameConfig> = ref({
         isGameover: false,
@@ -70,21 +76,50 @@
     let playerData: Player = initPlayer(40, 40, 130, 400, 25, 25, 800, 'img/charactors/plane/plane_1.png')
     let playerPlane = useComponentRef(Plane)
 
-    let enemyPlaneData: Enemy = initEnemy(40, 40, 130, 200, 25, 25, 200, 10, 'img/charactors/nairan/Nairan_1.png')
+    // let enemyPlaneData: Enemy = initEnemy(40, 40, 130, 200, 25, 25, 200, 10, 'img/charactors/nairan/Nairan_1.png')
 
-    let asteroidData: Enemy = initEnemy(40, 40, 130, 300, 25, 25, 200, 10, 'img/charactors/asteroid/Asteroid_1.png')
-    let asteroid = useComponentRef(Asteroid);
+    // let asteroidData: Enemy = initEnemy(40, 40, 130, 300, 25, 25, 200, 10, 'img/charactors/asteroid/Asteroid_1.png')
+    // let asteroid = useComponentRef(Asteroid);
 
-    let asteroidDatas:Ref<Enemy[]>=ref([]);
-    asteroidDatas.value.push(initEnemy(40, 40, 30, 100, 25, 25, 200, 10, 'img/charactors/asteroid/Asteroid_1.png'),
-    initEnemy(40, 40, 130, 100, 25, 25, 200, 10, 'img/charactors/asteroid/Asteroid_1.png'),
-    initEnemy(40, 40, 230, 100, 25, 25, 200, 10, 'img/charactors/asteroid/Asteroid_1.png'))
-    let asteroids=useComponentArrayRef(Asteroid);
+    // 陨石相关配置
+    let asteroidDatas: Ref<Enemy[]> = ref([]);
+    asteroidDatas.value.push(initEnemy(40, 40, 30, 100, 25, 25, 100, 10, 'img/charactors/asteroid/Asteroid_1.png'),
+        initEnemy(40, 40, 130, 100, 25, 25, 100, 10, 'img/charactors/asteroid/Asteroid_1.png'),
+        initEnemy(40, 40, 230, 100, 25, 25, 100, 10, 'img/charactors/asteroid/Asteroid_1.png'))
+    let asteroids = useComponentArrayRef(Asteroid);
 
-    let bulletData: BaseCom = initBaseCom(40, 40, 130, 450, 25, 25, 'img/charactors/weapon/bullet/bullet_1.png')
-    let bullets1=ref();
-
+    // let bulletData: BaseCom = initBaseCom(40, 40, 130, 450, 25, 25, 'img/charactors/weapon/bullet/bullet_1.png')
+    // 自机子弹相关配置
+    let bullets1 = useComponentArrayRef(Bullet_1);
     let bulletDatas: Ref<BaseCom[]> = ref([]);
+    let bulletCount=12;
+    for (let i = 0; i < bulletCount; i++) {
+        bulletDatas.value.push(initBaseCom(playerData.width!,
+            playerData.height!,
+            -100,
+            displayBoard.value.height,
+            playerData.width! / 3,
+            playerData.height! / 3,
+            'img/charactors/weapon/bullet/bullet_1.png'));
+    }
+    let currentBullet = 0;
+
+    // 敌机相关配置
+    let enemySmallPlaneDatas:Ref<Enemy[]>=ref([]);
+    let enemySmallPlanes=useComponentArrayRef(EnemyPlane);
+    let enemySmallPlaneCount=3;
+    for(let i=0;i<enemySmallPlaneCount;i++){
+        enemySmallPlaneDatas.value.push(initEnemy(40,
+            40,
+            30+100*i,
+            50,
+            25,
+            25,
+            100,
+            10,
+            'img/charactors/enemy/nautolan/Nautolan_1.png'
+        ))
+    }
 
 
 
@@ -99,14 +134,24 @@
             score: 0,
             lifeRemain: 3,
         })
-        //所有陨石开始移动
-        for(let i=asteroids.value!.length-1;i>=0;i--){
+
+        //重置12颗子弹
+        for(let i=bullets1.value!.length-1;i>=0;i--){
+            bullets1.value![i].reset();
+        }
+
+        //重置子弹指针
+        currentBullet = 0;
+        //重置所有陨石
+        for (let i = asteroids.value!.length - 1; i >= 0; i--) {
+            asteroids.value![i].reset();
             console.log(asteroids.value![i])
-            asteroids.value![i].comData.isActive=true;
+            asteroids.value![i].randomReset()
+            asteroids.value![i].comData.isActive = true;
+            asteroids.value![i].asteroidMove()
         }
         //检测子弹与陨石碰撞
         checkBulletsAndEnemys()
-
         checkAsteroids()
     }
     function gameStart() {
@@ -130,86 +175,79 @@
 
 
 
-    //判断BaseCom是否碰撞
-    function isCollision(player: BaseCom, enemy: BaseCom): boolean {
-        // 计算椭圆的半径
-        const playerRadiusX = player.hitbox_width / 2;
-        const playerRadiusY = player.hitbox_height / 2;
-        const enemyRadiusX = enemy.hitbox_width / 2;
-        const enemyRadiusY = enemy.hitbox_height / 2;
-
-        // 计算半径之和
-        const radiusSumX = playerRadiusX + enemyRadiusX;
-        const radiusSumY = playerRadiusY + enemyRadiusY;
-
-        // 计算椭圆的中心点
-        const playerCenterX = player.hitbox_left + playerRadiusX;
-        const playerCenterY = player.hitbox_top + playerRadiusY;
-        const enemyCenterX = enemy.hitbox_left + enemyRadiusX;
-        const enemyCenterY = enemy.hitbox_top + enemyRadiusY;
-
-        // 计算椭圆之间的距离
-        const dx = Math.abs(playerCenterX - enemyCenterX);
-        const dy = Math.abs(playerCenterY - enemyCenterY);
-
-        // 判断更精确的情况
-        const distanceSquared = (dx * dx) / (radiusSumX * radiusSumX) + (dy * dy) / (radiusSumY * radiusSumY);
-
-        return distanceSquared <= 1;
-
-    }
 
     // 判断子弹和敌人是否碰撞
     function checkBulletsAndEnemys() {
         console.log("checkBulletsAndEnemy")
         console.log(asteroids.value)
-        setInterval(() => {
+        let id=setInterval(() => {
+            if(gameConfig.value.isGameover){
+                console.log("checkBulletsAndEnemy stop")
+                clearInterval(id);
+            }
             for (let bd of bulletDatas.value) {
-                for(let asteroid_index=asteroids.value!.length-1;asteroid_index>=0;asteroid_index--){
+                for (let asteroid_index = asteroids.value!.length - 1; asteroid_index >= 0; asteroid_index--) {
                     // console.log("@@@",asteroids.value![asteroid_index].comData)
                     if (isCollision(bd, asteroids.value![asteroid_index].comData)) {
                         console.log("isCollision")
                         bd.isActive = false;
                         console.log(asteroids.value![asteroid_index])
-                        asteroids.value![asteroid_index].asteroidExplode();                        
+                        asteroids.value![asteroid_index].asteroidExplode();
                     }
                 }
-                
+
             }
-        },20)
+        }, 20)
     }
-    
+
     // 发射子弹
     function bulletShoot() {
-        console.log('bulletShoot')
-        bulletDatas.value.push(initBaseCom(playerPlane.value?.comData.width!,
-            playerPlane.value?.comData.height!,
-            getBaseComCenter(playerPlane.value?.comData!).center_x - playerPlane.value?.comData.width! / 2,
-            getBaseComCenter(playerPlane.value?.comData!).center_y - playerPlane.value?.comData.height!,
-            playerPlane.value?.comData.width! / 3,
-            playerPlane.value?.comData.height! / 3,
-            'img/charactors/weapon/bullet/bullet_1.png'));
+        console.log('bulletShoot')  
+        currentBullet = (currentBullet + 1) % bulletCount;
+        bullets1.value![currentBullet].reset() 
+        // 延迟0.02秒执行，保证子弹的移动线程结束   
+        setTimeout(() => {           
+            console.log("bullet id", currentBullet)
+            bullets1.value![currentBullet].comData.left = getBaseComCenter(playerPlane.value?.comData!).center_x - playerPlane.value?.comData.width!/2,
+                bullets1.value![currentBullet].comData.top = getBaseComCenter(playerPlane.value?.comData!).center_y - playerPlane.value?.comData.height!,
+                validateHitbox(bullets1.value![currentBullet].comData)
+            bullets1.value![currentBullet].move()
+        }, 20)
+
+        // bulletDatas.value.push(initBaseCom(playerPlane.value?.comData.width!,
+        //     playerPlane.value?.comData.height!,
+        //     getBaseComCenter(playerPlane.value?.comData!).center_x - playerPlane.value?.comData.width! / 2,
+        //     getBaseComCenter(playerPlane.value?.comData!).center_y - playerPlane.value?.comData.height!,
+        //     playerPlane.value?.comData.width! / 3,
+        //     playerPlane.value?.comData.height! / 3,
+        //     'img/charactors/weapon/bullet/bullet_1.png'));
     }
     //检测子弹数量上限
-    watch(bulletDatas.value, () => {
-        // console.log("watch")
-        if (bulletDatas.value.length > 12) {
-            // console.log("shift")
-            bulletDatas.value.shift()
-            // console.log(bulletDatas.value)
-            return;
-        }
-    }, { deep: false })
+    // watch(bulletDatas.value, () => {
+    //     // console.log("watch")
+    //     if (bulletDatas.value.length > 12) {
+    //         // console.log("shift")
+    //         bulletDatas.value.shift()
+    //         // console.log(bulletDatas.value)
+    //         return;
+    //     }
+    // }, { deep: false })
     // 检测并移除失效子弹
     function checkBullets() {
         console.log("checkBullet")
-        setInterval(() => {
+        let id=setInterval(() => {
             // console.log("123123123",bulletDatas.value)
+            if(gameConfig.value.isGameover){
+                console.log("checkBullet stop")
+                clearInterval(id);
+            }
             for (let i = bulletDatas.value.length - 1; i >= 0; i--) {
                 if (bulletDatas.value[i].isActive == false) {
                     // console.log("splice")
                     // 数组的splice移除
-                    bulletDatas.value.splice(i, 1);
+                    // bulletDatas.value.splice(i, 1);
+                    bulletDatas.value[i].left = -100;
+                    bulletDatas.value[i].top = displayBoard.value.height
                 }
 
             }
@@ -217,17 +255,17 @@
     }
     checkBullets();
 
-    
+
     //陨石移动
-    function checkAsteroids(){
+    function checkAsteroids() {
         console.log("checkAsteroids")
-        let id =setInterval(()=>{
-            for(let i=asteroids.value!.length-1;i>=0;i--){
-                if(asteroids.value![i].comData.top>displayBoard.value.height){
+        let id = setInterval(() => {
+            for (let i = asteroids.value!.length - 1; i >= 0; i--) {
+                if (asteroids.value![i].comData.top > displayBoard.value.height) {
                     asteroids.value![i].randomReset();
                 }
             }
-        },20)
+        }, 20)
     }
 
     // 监听游戏是否结束

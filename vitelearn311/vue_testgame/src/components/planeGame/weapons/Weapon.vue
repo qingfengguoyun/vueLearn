@@ -65,6 +65,7 @@
     //组件重置
     function reset() {
         Object.assign(animationClasses.value, animationClassesDefault)
+        Object.assign(comData.value,comDataDefault)
         // animationClasses.value.player_gameover = false;
     }
     defineExpose({

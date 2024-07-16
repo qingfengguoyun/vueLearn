@@ -14,7 +14,7 @@
 </script>
 <script lang='ts' setup>
     import { ref, inject, type Ref } from "vue";
-    import { cloneDeep } from 'lodash';
+    import { cloneDeep, rest } from 'lodash';
     import { toSizeStyle, toStyle } from "@/hooks/useBaseCom";
     import type { BaseCom, Enemy, GameConfig } from "@/types";
     import { getRamdomInit } from "@/hooks/useUtils";
@@ -22,7 +22,7 @@ import { tr } from "element-plus/es/locales.mjs";
     // 组件初始化属性（位置，判定区，显示图片等)
     let { baseCom } = defineProps<{ baseCom: BaseCom }>();
     let comData=ref(baseCom)
-    let comDataDefault;
+    let comDataDefault:BaseCom;
     let bulletSpeed=200;
     //组件动画类
     let animationClasses = ref({
@@ -40,9 +40,10 @@ import { tr } from "element-plus/es/locales.mjs";
         // comData.value.height=0;
         // ...
         bulletSpeed=200;
-        comData.value.isActive=true;
+        // comData.value.isActive=true;
         // 组件默认值备份
         comDataDefault=cloneDeep(comData.value)
+        // move()
     }
     // 组件初始化
     comInit()
@@ -64,13 +65,14 @@ import { tr } from "element-plus/es/locales.mjs";
             // 若isActive为false或子弹的位置超出边界
             if(!comData.value.isActive || comData.value.top<-100){
                 comData.value.isActive=false;
+                reset();
                 clearInterval(id);
             }
             comData.value.top-=200*interval/1000;
             comData.value.hitbox_top-=200*interval/1000;
         },interval)
     }
-    move()
+
 
 
 
@@ -79,6 +81,7 @@ import { tr } from "element-plus/es/locales.mjs";
     //组件重置
     function reset() {
         Object.assign(animationClasses.value, animationClassesDefault)
+        Object.assign(comData.value,comDataDefault)
         // animationClasses.value.player_gameover = false;
     }
     defineExpose({
