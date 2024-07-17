@@ -80,9 +80,9 @@
             }
 
             if (comData.value.left >= displayBoard.width - comData.value.width && h_move == 'right') {
-                console.log("left")
+                // console.log("left")
                 h_speed = -comData.value.speed!;
-                console.log('h_speed', h_speed)
+                // console.log('h_speed', h_speed)
                 h_move = 'left'
             }
             if (comData.value.left <= 0 && h_move == 'left') {

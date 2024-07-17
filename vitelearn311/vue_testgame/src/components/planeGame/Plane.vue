@@ -1,5 +1,5 @@
 <template>
-    <div class="baseCom" :style="toSizeStyle(comData)" >
+    <div class="baseCom" :style="toSizeStyle(comData)" :class="animationClasses">
         <slot>
             <!-- <div :style="toStyle(comData)"></div> -->
             <div :style="toStyle(comData)" :class="animationClasses" style="z-index: 1;" > </div>
@@ -22,7 +22,7 @@
 <script lang='ts' setup>
     import { ref, inject, type Ref,watch } from "vue";
     import { cloneDeep } from 'lodash';
-    import { getBaseComCenter, initBaseCom, toSizeStyle, toStyle } from "@/hooks/useBaseCom";
+    import { getBaseComCenter, initBaseCom, toSizeStyle, toStyle, validateHitbox } from "@/hooks/useBaseCom";
     import type { BaseCom, Enemy, GameConfig, Player } from "@/types";
     import { getRamdomInit } from "@/hooks/useUtils";
     import BaseComponent from "../BaseComponent.vue";
@@ -41,6 +41,7 @@ import { useComponentRef } from "@/hooks/useComponentRef";
     //组件动画类
     let animationClasses = ref({
         // fire_loop: true,
+        protected: false,
     })
     //组件动画默认配置（重置时使用）
     let animationClassesDefault = cloneDeep(animationClasses.value);
@@ -66,6 +67,7 @@ import { useComponentRef } from "@/hooks/useComponentRef";
     function changePosition(left: number, top: number) {
         comData.value.left =  left - comData.value.width / 2;
         comData.value.top = top - comData.value.height / 2;
+        validateHitbox(comData.value)
     }
     // 防止组件位置超出边界
     watch(comData.value,(n,o)=>{
@@ -85,6 +87,22 @@ import { useComponentRef } from "@/hooks/useComponentRef";
         }
     })
 
+    let planeStatusImg=['img/charactors/plane/plane_1.png',
+        'img/charactors/plane/plane_2.png',
+        'img/charactors/plane/plane_3.png',
+        'img/charactors/plane/plane_4.png',
+    ]
+
+    function hurt(planeStatus:number){
+        comData.value.isProtected=true;
+        comData.value.display_img=planeStatusImg[planeStatus];
+        animationClasses.value.protected=true;
+        let id=setTimeout(()=>{
+            animationClasses.value.protected=false;
+            comData.value.isProtected=false;
+        },3000)
+    }
+
 
     // 自定义逻辑结束
 
@@ -101,6 +119,7 @@ import { useComponentRef } from "@/hooks/useComponentRef";
         // move
         changePosition,
         weapon,
+        hurt,
     })
 
 </script>
@@ -110,6 +129,25 @@ import { useComponentRef } from "@/hooks/useComponentRef";
         display: flex;
         justify-content: center;
         /* align-items: center; */
+    }
+
+    .protected {
+        animation: protected 0.5s infinite;
+    }
+
+    @keyframes protected {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+
     }
 
 

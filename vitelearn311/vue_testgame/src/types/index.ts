@@ -33,6 +33,7 @@ export interface Player extends BaseCom{
 }
 
 export interface GameConfig {
+    isGameStart:boolean,
     isGameover:boolean,
     isPaused:boolean,
     score:number,

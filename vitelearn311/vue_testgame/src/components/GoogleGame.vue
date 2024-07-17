@@ -52,6 +52,7 @@
     import BaseComponent from '@/components/BaseComponent.vue';
 
     let gameConfig: Ref<GameConfig> = ref({
+        isGameStart: false,
         isGameover: false,
         isPaused: false,
         score: 0,
@@ -87,6 +88,7 @@
         // score.value = 0;
         // 游戏总配置重置
         Object.assign(gameConfig.value, {
+            isGameStart: true,
             isGameover: false,
             isPaused: false,
             score: 0,

@@ -20,6 +20,7 @@
     // 组件初始化属性（位置，判定区，显示图片等)
     let { baseCom } = defineProps<{ baseCom: BaseCom }>();
     let comData=ref(baseCom)
+    // 组件默认配置
     let comDataDefault:BaseCom;
     //组件动画类
     let animationClasses = ref({
@@ -29,7 +30,6 @@
     let animationClassesDefault = cloneDeep(animationClasses.value);
     //游戏总配置项
     let gameConfig = inject<Ref<GameConfig>>("gameConfig") as Ref<GameConfig>;
-
     // 组件各项内容（comData）初始化
     function comInit(){
         // 对组件各项内容（comData）进行初始化
@@ -44,7 +44,7 @@
 
 
     
-    // 实现组件自定义逻辑，封装为方法(例如移动，各种动作,动画等)
+    // 实现组件自定义逻辑，封装为方法(例如移动，各种动作,动画等)，对外暴露
 
     // function move(){
     //     let id=setInterval(()=>{
@@ -55,11 +55,12 @@
 
     // 自定义逻辑结束
 
-    //组件重置
+    //组件重置方法
     function reset() {
+        // 动画重置
         Object.assign(animationClasses.value, animationClassesDefault)
+        // 主配置（位置，默认图片等）重置
         Object.assign(comData.value,comDataDefault)
-        // animationClasses.value.player_gameover = false;
     }
     defineExpose({
         comData,

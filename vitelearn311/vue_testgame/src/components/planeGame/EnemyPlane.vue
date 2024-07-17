@@ -1,5 +1,6 @@
 <template>
-    <div class="baseCom" :style="toStyle(comData)" style="transform: rotate(180deg);" :class="animationClasses">
+    <!-- <div class="baseCom" :style="toStyle(comData)" style="transform: rotate(180deg);" :class="animationClasses"></div> -->
+    <div class="baseCom" :style="toStyle(comData)"  :class="animationClasses">
         <slot>
             <!-- <div :style="toStyle(comData)"></div> -->
         </slot>
@@ -23,6 +24,7 @@
     let comDataDefault = cloneDeep(comData.value);
     //组件动画类
     let animationClasses = ref({
+        enemy_explode:false,
         // fire_loop: true,
     })
     //组件动画默认配置（重置时使用）
@@ -56,9 +58,7 @@
         // comData.value.displayImg      
         console.log("enemyPlaneExplode")
         comData.value.isActive = false
-        comData.value.display_img = "img/charactors/asteroid/Asteroid_1_explode.png"
-        // animationClasses.value.asteroid_roll = false;
-        // animationClasses.value.asteroid_explode = true;
+        animationClasses.value.enemy_explode=true;
         let id = setTimeout(() => {
             // comData.value.isActive=false;
             // animationClasses.value.asteroid_explode=false;
@@ -77,9 +77,9 @@
             }
 
             if (comData.value.left >= displayBoard.width - comData.value.width && h_move == 'right') {
-                console.log("left")
+                // console.log("left")
                 h_speed = -comData.value.speed!;
-                console.log('h_speed', h_speed)
+                // console.log('h_speed', h_speed)
                 h_move = 'left'
             }
             if (comData.value.left <= 0 && h_move == 'left') {
@@ -132,6 +132,25 @@
         display: flex;
         justify-content: center;
         /* align-items: center; */
+    }
+
+    @keyframes enemy_explode{
+
+        from{
+            background-position: 0% 0px
+        }
+
+        to{
+            background-position: -900% 0px;
+        }
+    }
+
+    .enemy_explode{
+        animation-name: enemy_explode;
+        animation-duration: 0.4s;
+        animation-iteration-count: 1;
+        animation-timing-function: steps(9);
+        animation-fill-mode: forwards;
     }
 
     /* .fire_loop {

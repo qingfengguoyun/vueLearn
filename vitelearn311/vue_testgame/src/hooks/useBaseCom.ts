@@ -17,6 +17,7 @@ export function toSizeStyle(config: BaseCom) {
     height: `${config.height}px`,
     top: `${config.top}px`,
     left: `${config.left}px`,
+    // backgroundSize: "auto 100%",
   };
 }
 
