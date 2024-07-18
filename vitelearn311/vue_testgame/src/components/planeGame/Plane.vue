@@ -61,13 +61,20 @@ import { useComponentRef } from "@/hooks/useComponentRef";
     // 组件初始化
     comInit()
 
+    // 监听组件位置，实时更新受击框位置
+    watch(()=>{
+       return [comData.value.left,comData.value.top]
+    }, () => {
+        validateHitbox(comData.value);
+    })
+
     // 实现组件自定义逻辑，封装为方法(例如移动，各种动作,动画等)
 
     // 改变组件位置
     function changePosition(left: number, top: number) {
         comData.value.left =  left - comData.value.width / 2;
         comData.value.top = top - comData.value.height / 2;
-        validateHitbox(comData.value)
+        // validateHitbox(comData.value)
     }
     // 防止组件位置超出边界
     watch(comData.value,(n,o)=>{

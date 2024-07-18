@@ -14,7 +14,7 @@ const router = createRouter({
     },
     {
       path: '/',
-      redirect : '/googleGame'
+      redirect : '/planeGame'
     },
     {
       path: '/googleGame',

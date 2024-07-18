@@ -12,7 +12,7 @@
         }
 </script>
 <script lang='ts' setup>
-    import { ref, inject, type Ref } from "vue";
+    import { ref, inject, type Ref, watch } from "vue";
     import { cloneDeep } from 'lodash';
     import { toSizeStyle, toStyle, validateHitbox } from "@/hooks/useBaseCom";
     import type { BaseCom, Enemy, GameConfig } from "@/types";
@@ -45,6 +45,13 @@
     // 组件初始化
     comInit()
 
+    // 监听组件位置，实时更新受击框位置
+    watch(()=>{
+       return [comData.value.left,comData.value.top]
+    }, () => {
+        validateHitbox(comData.value);
+    })
+
     // 实现组件自定义逻辑，封装为方法(例如移动，各种动作,动画等)
 
     // function move(){
@@ -75,7 +82,7 @@
         let h_move = 'right';
         let h_speed = comData.value.speed;
         let id = setInterval(() => {
-            if(gameConfig.value.isGameover){
+            if (gameConfig.value.isGameover) {
                 clearInterval(id);
             }
 
@@ -93,7 +100,7 @@
                 comData.value.top += comData.value.speed! * interval / 1000;
                 // comData.value.hitbox_top+=comData.value.speed!*interval/1000;
                 comData.value.left += h_speed! * interval / 1000;
-                validateHitbox(comData.value);
+                // validateHitbox(comData.value);
             }
 
         }, interval)
@@ -115,7 +122,7 @@
     //组件重置
     function reset() {
         Object.assign(animationClasses.value, animationClassesDefault)
-        Object.assign(comData,comDataDefault)
+        Object.assign(comData, comDataDefault)
         // animationClasses.value.player_gameover = false;
     }
     defineExpose({

@@ -1,7 +1,7 @@
 <template>
     <div class="baseCom" :style="toStyle(comData)" :class="animationClasses">
         <slot>
-            
+
             <!-- <div :style="toStyle(comData)"></div> -->
         </slot>
     </div>
@@ -13,21 +13,21 @@
         }
 </script>
 <script lang='ts' setup>
-    import { ref, inject, type Ref } from "vue";
+    import { ref, inject, type Ref, watch } from "vue";
     import { cloneDeep, rest } from 'lodash';
-    import { toSizeStyle, toStyle } from "@/hooks/useBaseCom";
+    import { toSizeStyle, toStyle, validateHitbox } from "@/hooks/useBaseCom";
     import type { BaseCom, Enemy, GameConfig } from "@/types";
     import { getRamdomInit } from "@/hooks/useUtils";
-import { tr } from "element-plus/es/locales.mjs";
+    import { tr } from "element-plus/es/locales.mjs";
     // 组件初始化属性（位置，判定区，显示图片等)
     let { baseCom } = defineProps<{ baseCom: BaseCom }>();
-    let comData=ref(baseCom)
-    let comDataDefault:BaseCom;
-    let bulletSpeed=200;
+    let comData = ref(baseCom)
+    let comDataDefault: BaseCom;
+    let bulletSpeed = 200;
     //组件动画类
     let animationClasses = ref({
         // fire_loop: true,
-        bullet_loop:true
+        bullet_loop: true
     })
     //组件动画默认配置（重置时使用）
     let animationClassesDefault = cloneDeep(animationClasses.value);
@@ -35,19 +35,26 @@ import { tr } from "element-plus/es/locales.mjs";
     let gameConfig = inject<Ref<GameConfig>>("gameConfig") as Ref<GameConfig>;
 
     // 组件各项内容（comData）初始化
-    function comInit(){
+    function comInit() {
         // 对组件各项内容（comData）进行初始化
         // comData.value.height=0;
         // ...
-        bulletSpeed=200;
+        bulletSpeed = 200;
         // comData.value.isActive=true;
         // 组件默认值备份
-        comDataDefault=cloneDeep(comData.value)
+        comDataDefault = cloneDeep(comData.value)
         // move()
     }
     // 组件初始化
     comInit()
-    
+
+    // 监听组件位置，实时更新受击框位置
+    watch(()=>{
+       return [comData.value.left,comData.value.top]
+    }, () => {
+        validateHitbox(comData.value);
+    })
+
     // 实现组件自定义逻辑，封装为方法(例如移动，各种动作,动画等)
 
     // function move(){
@@ -57,20 +64,20 @@ import { tr } from "element-plus/es/locales.mjs";
     //     },50);
     // }  
 
-    function move(){
+    function move() {
         console.log("bullet move")
-        comData.value.isActive=true;
-        let interval=20;
-        let id=setInterval(()=>{
+        comData.value.isActive = true;
+        let interval = 20;
+        let id = setInterval(() => {
             // 若isActive为false或子弹的位置超出边界
-            if(!comData.value.isActive || comData.value.top<-100){
-                comData.value.isActive=false;
+            if (!comData.value.isActive || comData.value.top < -100) {
+                comData.value.isActive = false;
                 reset();
                 clearInterval(id);
             }
-            comData.value.top-=200*interval/1000;
-            comData.value.hitbox_top-=200*interval/1000;
-        },interval)
+            comData.value.top -= 200 * interval / 1000;
+            // comData.value.hitbox_top-=200*interval/1000;
+        }, interval)
     }
 
 
@@ -81,7 +88,7 @@ import { tr } from "element-plus/es/locales.mjs";
     //组件重置
     function reset() {
         Object.assign(animationClasses.value, animationClassesDefault)
-        Object.assign(comData.value,comDataDefault)
+        Object.assign(comData.value, comDataDefault)
         // animationClasses.value.player_gameover = false;
     }
     defineExpose({
@@ -96,8 +103,8 @@ import { tr } from "element-plus/es/locales.mjs";
 <style scoped>
     .baseCom {
         position: absolute;
-        display: flex; 
-        justify-content: center; 
+        display: flex;
+        justify-content: center;
         /* align-items: center; */
     }
 
@@ -107,9 +114,9 @@ import { tr } from "element-plus/es/locales.mjs";
         animation-iteration-count: infinite;
         animation-timing-function: steps(4);
     }
-    
-    
-    @keyframes bullet_loop{
+
+
+    @keyframes bullet_loop {
         from {
             background-position: 0% 0px;
         }

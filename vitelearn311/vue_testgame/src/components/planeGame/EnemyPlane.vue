@@ -1,6 +1,6 @@
 <template>
     <!-- <div class="baseCom" :style="toStyle(comData)" style="transform: rotate(180deg);" :class="animationClasses"></div> -->
-    <div class="baseCom" :style="toStyle(comData)"  :class="animationClasses">
+    <div class="baseCom" :style="toStyle(comData)" :class="animationClasses">
         <slot>
             <!-- <div :style="toStyle(comData)"></div> -->
         </slot>
@@ -13,7 +13,7 @@
         }
 </script>
 <script lang='ts' setup>
-    import { ref, inject, type Ref } from "vue";
+    import { ref, inject, type Ref, watch } from "vue";
     import { cloneDeep } from 'lodash';
     import { toSizeStyle, toStyle, validateHitbox } from "@/hooks/useBaseCom";
     import type { BaseCom, Enemy, GameConfig } from "@/types";
@@ -24,7 +24,7 @@
     let comDataDefault = cloneDeep(comData.value);
     //组件动画类
     let animationClasses = ref({
-        enemy_explode:false,
+        enemy_explode: false,
         // fire_loop: true,
     })
     //组件动画默认配置（重置时使用）
@@ -45,6 +45,13 @@
     // 组件初始化
     comInit()
 
+    // 监听组件位置，实时更新受击框位置
+    watch(()=>{
+       return [comData.value.left,comData.value.top]
+    }, () => {
+        validateHitbox(comData.value);
+    })
+
     // 实现组件自定义逻辑，封装为方法(例如移动，各种动作,动画等)
 
     // function move(){
@@ -58,7 +65,7 @@
         // comData.value.displayImg      
         console.log("enemyPlaneExplode")
         comData.value.isActive = false
-        animationClasses.value.enemy_explode=true;
+        animationClasses.value.enemy_explode = true;
         let id = setTimeout(() => {
             // comData.value.isActive=false;
             // animationClasses.value.asteroid_explode=false;
@@ -72,7 +79,7 @@
         let h_move = 'right';
         let h_speed = comData.value.speed;
         let id = setInterval(() => {
-            if(gameConfig.value.isGameover){
+            if (gameConfig.value.isGameover) {
                 clearInterval(id);
             }
 
@@ -90,7 +97,7 @@
                 comData.value.top += comData.value.speed! * interval / 1000;
                 // comData.value.hitbox_top+=comData.value.speed!*interval/1000;
                 comData.value.left += h_speed! * interval / 1000;
-                validateHitbox(comData.value);
+                // validateHitbox(comData.value);
             }
 
         }, interval)
@@ -134,18 +141,18 @@
         /* align-items: center; */
     }
 
-    @keyframes enemy_explode{
+    @keyframes enemy_explode {
 
-        from{
+        from {
             background-position: 0% 0px
         }
 
-        to{
+        to {
             background-position: -900% 0px;
         }
     }
 
-    .enemy_explode{
+    .enemy_explode {
         animation-name: enemy_explode;
         animation-duration: 0.4s;
         animation-iteration-count: 1;

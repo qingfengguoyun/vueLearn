@@ -8,20 +8,20 @@
 <script lang='ts'>
     export default
         {
-            name: "BaseCom"
+            name: "Shield"
         }
 </script>
 <script lang='ts' setup>
-    import { ref, inject, type Ref, watch } from "vue";
+    import { ref, inject, type Ref,watch } from "vue";
     import { cloneDeep } from 'lodash';
     import { toSizeStyle, toStyle, validateHitbox } from "@/hooks/useBaseCom";
     import type { BaseCom, Enemy, GameConfig } from "@/types";
     import { getRamdomInit } from "@/hooks/useUtils";
     // 组件初始化属性（位置，判定区，显示图片等)
     let { baseCom } = defineProps<{ baseCom: BaseCom }>();
-    let comData = ref(baseCom)
+    let comData=ref(baseCom)
     // 组件默认配置
-    let comDataDefault: BaseCom;
+    let comDataDefault:BaseCom;
     //组件动画类
     let animationClasses = ref({
         // fire_loop: true,
@@ -31,26 +31,25 @@
     //游戏总配置项
     let gameConfig = inject<Ref<GameConfig>>("gameConfig") as Ref<GameConfig>;
     // 组件各项内容（comData）初始化
-    function comInit() {
+    function comInit(){
         // 对组件各项内容（comData）进行初始化
         // comData.value.height=0;
         // ...
-
+        if(!comData.value.display_img){
+            comData.value.display_img="img/charactors/shield/shield_1.png"
+        }
         // 组件默认值备份
-        comDataDefault = cloneDeep(comData.value)
+        comDataDefault=cloneDeep(comData.value)
     }
     // 组件初始化
     comInit()
 
-    // 监听组件位置，实时更新受击框位置
-    watch(()=>{
-       return [comData.value.left,comData.value.top]
-    }, () => {
+    watch(comData,()=>{
         validateHitbox(comData.value);
     })
 
 
-
+    
     // 实现组件自定义逻辑，封装为方法(例如移动，各种动作,动画等)，对外暴露
 
     // function move(){
@@ -67,7 +66,7 @@
         // 动画重置
         Object.assign(animationClasses.value, animationClassesDefault)
         // 主配置（位置，默认图片等）重置
-        Object.assign(comData.value, comDataDefault)
+        Object.assign(comData.value,comDataDefault)
     }
     defineExpose({
         comData,
@@ -80,8 +79,8 @@
 <style scoped>
     .baseCom {
         position: absolute;
-        display: flex;
-        justify-content: center;
+        display: flex; 
+        justify-content: center; 
         /* align-items: center; */
     }
 

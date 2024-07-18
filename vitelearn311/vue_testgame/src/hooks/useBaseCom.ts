@@ -87,12 +87,6 @@ export function initBaseCom(
   return baseCom;
 }
 
-export function getBaseComCenter(baseCom: BaseCom) {
-  return {
-    center_x: baseCom.left + baseCom.width / 2,
-    center_y: baseCom.top + baseCom.height / 2,
-  };
-}
 
 export function initPlayer(
   w?: number,
@@ -188,6 +182,15 @@ export function initEnemy(
   return enemy;
 }
 
+
+//获取BaseCom的中心坐标
+export function getBaseComCenter(baseCom: BaseCom) {
+  return {
+    center_x: baseCom.left + baseCom.width / 2,
+    center_y: baseCom.top + baseCom.height / 2,
+  };
+}
+
 //判断BaseCom是否碰撞
 export function isCollision(player: BaseCom, enemy: BaseCom): boolean {
   // 计算椭圆的半径
@@ -218,9 +221,15 @@ export function isCollision(player: BaseCom, enemy: BaseCom): boolean {
   return distanceSquared <= 1;
 }
 
-//更新判定区域位置a
+//更新判定区域位置
 export function validateHitbox(baseCom: BaseCom) {
   let center = getBaseComCenter(baseCom);
   baseCom.hitbox_left = center.center_x - baseCom.hitbox_width / 2;
   baseCom.hitbox_top = center.center_y - baseCom.hitbox_height / 2;
+}
+
+// 在baseCom中心创建一个指定长宽的baseCom
+export function createBaseComAtMiddle(boardCom: BaseCom, width: number, height: number): BaseCom {
+  let center=getBaseComCenter(boardCom)
+  return initBaseCom(width, height, center.center_x - width / 2, center.center_y - height / 2)
 }

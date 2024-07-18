@@ -2,7 +2,7 @@
     <div class="game" :style="toSizeStyle(displayBoard)">
         <div :style="toSizeStyle(displayBoard)" class="border_background" :class="boardAnimateClass"
             @mousemove="handleMouseMove">
-            <Plane :baseCom="playerData" ref="playerPlane" @click="bulletShoot()"></Plane>
+            <Plane :baseCom="playerData" ref="playerPlane" @click="bulletShoot()" v-if="!gameConfig.isGameover"></Plane>
             <!-- 游戏界面将显示在这里 -->
             <!-- <BaseComponent class="player" :class="playerClass" ref="player" :config="playerData" @click="playerJump">
                 
@@ -23,9 +23,33 @@
                 <!-- {{ index }} -->
                 <EnemyPlane :base-com="enemySmallPlaneData" ref="enemySmallPlanes"></EnemyPlane>
             </template>
+            <BaseComponent :base-com="initBaseCom(30, 30, 0, displayBoard.height - 30)">
+                <b>Life:</b>
+            </BaseComponent>
+            <template v-for="(playerLife, index) in playerLifes">
+                <BaseComponent :base-com="playerLife" v-if="index < gameConfig.lifeRemain!"></BaseComponent>
+            </template>
             <div>
-                Life:{{gameConfig.lifeRemain}}
+                Life:{{ gameConfig.lifeRemain }}
             </div>
+            <!-- <div v-if="!gameConfig.isGameover" class="gameover_board">
+                <b>Game Over</b><br>
+                <b>scoure:{{ gameConfig.score }}</b>
+            </div> -->
+            <BaseComponent :base-com="createBaseComAtMiddle(displayBoard, 150, 100)" v-if="!gameConfig.isGameStart"
+                @click="gameInit()">
+                <div style="text-align: center;">
+                    <h3>开始游戏</h3>
+                </div>
+            </BaseComponent>
+            <BaseComponent :base-com="createBaseComAtMiddle(displayBoard, 150, 100)" v-if="gameConfig.isGameover"
+                @click="gameInit()">
+                <div class="gameover_board">
+                    <b>Game Over</b><br>
+                    <b>Scoure:{{ gameConfig.score }}</b><br>
+                    <b>重新开始</b>
+                </div>
+            </BaseComponent>
         </div>
     </div>
 
@@ -46,7 +70,7 @@
     import { ElMessage } from 'element-plus';
     import { useComponentArrayRef, useComponentRef } from '@/hooks/useComponentRef';
     import type { BaseCom, Enemy, GameConfig, HitBox, Player } from '@/types';
-    import { getBaseComCenter, initBaseCom, initEnemy, initPlayer, isCollision, toSizeStyle, toStyle, validateHitbox } from '@/hooks/useBaseCom';
+    import { createBaseComAtMiddle, getBaseComCenter, initBaseCom, initEnemy, initPlayer, isCollision, toSizeStyle, toStyle, validateHitbox, } from '@/hooks/useBaseCom';
     import { cloneDeep } from 'lodash';
     import BaseComponent from '@/components/BaseComponent.vue';
     import Plane from '@/components/planeGame/Plane.vue';
@@ -81,10 +105,12 @@
     let playerData: Player = initPlayer(40, 40, 130, 400, 25, 25, 800, 'img/charactors/plane/plane_1.png')
     let playerPlane = useComponentRef(Plane)
 
-    // let enemyPlaneData: Enemy = initEnemy(40, 40, 130, 200, 25, 25, 200, 10, 'img/charactors/nairan/Nairan_1.png')
+    // 剩余血量图标配置
+    let playerLifes: Ref<BaseCom[]> = ref([])
+    for (let i = 0; i < 4; i++) {
+        playerLifes.value.push(initBaseCom(20, 20, 30 + 20 * i, displayBoard.value.height - 30, 0, 0, 'img/charactors/plane/plane_1.png'))
+    }
 
-    // let asteroidData: Enemy = initEnemy(40, 40, 130, 300, 25, 25, 200, 10, 'img/charactors/asteroid/Asteroid_1.png')
-    // let asteroid = useComponentRef(Asteroid);
 
     // 陨石相关配置
     let asteroidDatas: Ref<Enemy[]> = ref([]);
@@ -142,6 +168,9 @@
         })
         boardMove()
 
+        //重置自机
+        playerPlane.value?.reset();
+
         //重置12颗子弹
         for (let i = bullets1.value!.length - 1; i >= 0; i--) {
             bullets1.value![i].reset();
@@ -189,10 +218,14 @@
 
     const mouseX = ref(0);
     const mouseY = ref(0);
+    // 自机跟随鼠标位置移动
     const handleMouseMove = function (event: MouseEvent) {
-        mouseX.value = event.pageX;
-        mouseY.value = event.pageY;
-        playerPlane.value?.changePosition(mouseX.value, mouseY.value)
+        if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
+            mouseX.value = event.pageX;
+            mouseY.value = event.pageY;
+            playerPlane.value?.changePosition(mouseX.value, mouseY.value)
+        }
+
     };
 
 
@@ -210,18 +243,25 @@
             for (let bd of bulletDatas.value) {
                 for (let asteroid_index = asteroids.value!.length - 1; asteroid_index >= 0; asteroid_index--) {
                     // console.log("@@@",asteroids.value![asteroid_index].comData)
-                    if (isCollision(bd, asteroids.value![asteroid_index].comData)) {
-                        console.log("isCollision")
-                        bd.isActive = false;
-                        // console.log(asteroids.value![asteroid_index])
-                        asteroids.value![asteroid_index].asteroidExplode();
+                    if (bd.isActive && asteroids.value![asteroid_index].comData.isActive) {
+                        if (isCollision(bd, asteroids.value![asteroid_index].comData)) {
+                            console.log("isCollision")
+                            bd.isActive = false;
+                            // console.log(asteroids.value![asteroid_index])
+                            asteroids.value![asteroid_index].asteroidExplode();
+                            gameConfig.value.score += asteroids.value![asteroid_index].comData.score!;
+                        }
                     }
+
                 }
                 for (let enemyPlane of enemySmallPlanes.value!) {
-                    if (isCollision(bd, enemyPlane.comData)) {
-                        console.log("isCollision")
-                        bd.isActive = false;
-                        enemyPlane.enemyExplode();
+                    if (bd.isActive && enemyPlane.comData.isActive) {
+                        if (isCollision(bd, enemyPlane.comData)) {
+                            console.log("isCollision")
+                            bd.isActive = false;
+                            enemyPlane.enemyExplode();
+                            gameConfig.value.score += enemyPlane.comData.score!;
+                        }
                     }
                 }
             }
@@ -356,19 +396,15 @@
                 clearInterval(id);
                 return;
             } else {
-                if(gameConfig.value.lifeRemain!<=0){
-                    gameConfig.value.isGameover=true;
+                if (gameConfig.value.lifeRemain! <= 0) {
+                    gameConfig.value.isGameover = true;
                 }
 
             }
         }, 10)
     }
 
-    function middle(boardCom: BaseCom, width: number, height: number): BaseCom {
-        let center_x = boardCom.left + boardCom.width / 2;
-        let center_y = boardCom.top + boardCom.height / 2;
-        return initBaseCom(width, height, center_x - width / 2, center_y - height / 2)
-    }
+
 
 
 
@@ -423,6 +459,18 @@
             background-position: 0% 500px
         }
     }
+
+    .gameover_board {
+        /* width: 200px;
+        height: 100px; */
+        /* display: flex;
+        justify-content: center;
+        align-items: center; */
+        text-align: center;
+        /* margin: auto;
+        margin-top: 50%; */
+    }
+
 
     /* .player_gameover {
         animation-name: player_gameover;
