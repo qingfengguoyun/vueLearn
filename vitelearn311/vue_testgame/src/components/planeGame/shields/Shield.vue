@@ -25,6 +25,7 @@
     //组件动画类
     let animationClasses = ref({
         // fire_loop: true,
+        shield_loop: true,
     })
     //组件动画默认配置（重置时使用）
     let animationClassesDefault = cloneDeep(animationClasses.value);
@@ -38,13 +39,18 @@
         if(!comData.value.display_img){
             comData.value.display_img="img/charactors/shield/shield_1.png"
         }
+        // comData.value.isActive=true;
+        // console.log(comData.value.isActive)
         // 组件默认值备份
         comDataDefault=cloneDeep(comData.value)
     }
     // 组件初始化
     comInit()
 
-    watch(comData,()=>{
+    // 监听组件位置，实时更新受击框位置
+    watch(()=>{
+       return [comData.value.left,comData.value.top]
+    }, () => {
         validateHitbox(comData.value);
     })
 
@@ -82,6 +88,23 @@
         display: flex; 
         justify-content: center; 
         /* align-items: center; */
+    }
+
+    @keyframes shield_loop{
+        from {
+            background-position: 0% 0px;
+        }
+
+        to {
+            background-position: -1200% 0px;
+        }
+    }
+
+    .shield_loop {
+        animation-name: shield_loop;
+        animation-duration: 3s;
+        animation-iteration-count: infinite;
+        animation-timing-function: steps(12);
     }
 
     /* .fire_loop {

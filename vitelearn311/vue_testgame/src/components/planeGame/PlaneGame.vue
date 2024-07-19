@@ -2,7 +2,7 @@
     <div class="game" :style="toSizeStyle(displayBoard)">
         <div :style="toSizeStyle(displayBoard)" class="border_background" :class="boardAnimateClass"
             @mousemove="handleMouseMove">
-            <Plane :baseCom="playerData" ref="playerPlane" @click="bulletShoot()" v-if="!gameConfig.isGameover"></Plane>
+            <Plane :baseCom="playerData" ref="playerPlane" @click="bulletShoot()"></Plane>
             <!-- 游戏界面将显示在这里 -->
             <!-- <BaseComponent class="player" :class="playerClass" ref="player" :config="playerData" @click="playerJump">
                 
@@ -285,27 +285,47 @@
             } else {
                 for (let asteroid of asteroids.value!) {
                     // console.log("@@@",asteroids.value![asteroid_index].comData)
-                    if (isCollision(playerPlane.value!.comData, asteroid.comData)) {
+                    // 陨石有效且自机与陨石相撞（先检测陨石是否有效，因为需要播放摧毁动画，此时位置未重置但陨石已失效）
+                    if (asteroid.comData.isActive && isCollision(playerPlane.value!.comData, asteroid.comData)) {
                         console.log("asteroid isCollision")
-                        gameConfig.value.lifeRemain! -= 1;
-                        if (gameConfig.value.lifeRemain! > 0) {
-                            playerPlane.value!.hurt(maxLife - gameConfig.value.lifeRemain!)
+                        //自机处于护盾状态
+                        if (playerPlane.value!.shieldData.isActive) {
+                            console.log("shield protect")
                             asteroid.comData.isActive = false;
                             asteroid.asteroidExplode()
+                        } else {
+                            gameConfig.value.lifeRemain! -= 1;
+                            if (gameConfig.value.lifeRemain! > 0) {
+                                playerPlane.value!.hurt(maxLife - gameConfig.value.lifeRemain!)
+                                // playerPlane.value!.getShield()
+                                asteroid.comData.isActive = false;
+                                asteroid.asteroidExplode()
+                            }
                         }
-
                     }
                 }
                 for (let enemyPlane of enemySmallPlanes.value!) {
-                    if (isCollision(playerPlane.value!.comData, enemyPlane.comData)) {
+                    // 同理检测敌机有效且与自机相撞
+                    if (enemyPlane.comData.isActive && isCollision(playerPlane.value!.comData, enemyPlane.comData)) {
                         console.log("enemyPlane isCollision")
-                        gameConfig.value.lifeRemain! -= 1;
-                        if (gameConfig.value.lifeRemain! > 0) {
-                            playerPlane.value!.hurt(maxLife - gameConfig.value.lifeRemain!)
+                        //自机处于护盾状态
+                        if (playerPlane.value!.shieldData.isActive) {
+                            console.log("shield protect")
                             enemyPlane.comData.isActive = false;
                             enemyPlane.enemyExplode();
+                        } else {
+                            gameConfig.value.lifeRemain! -= 1;
+                            if (gameConfig.value.lifeRemain! > 0) {
+                                playerPlane.value!.hurt(maxLife - gameConfig.value.lifeRemain!)
+                                // playerPlane.value!.getShield()
+                                enemyPlane.comData.isActive = false;
+                                enemyPlane.enemyExplode();
+                            }
                         }
+
                     }
+
+
                 }
             }
         }, 20)

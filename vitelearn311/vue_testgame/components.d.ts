@@ -27,7 +27,8 @@ declare module 'vue' {
     PlaneGame: typeof import('./src/components/planeGame/PlaneGame.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Sheild: typeof import('./src/components/planeGame/sheilds/Sheild.vue')['default']
+    Sheild: typeof import('./src/components/planeGame/shields/Sheild.vue')['default']
+    Shield: typeof import('./src/components/planeGame/shields/Shield.vue')['default']
     Test: typeof import('./src/components/Test.vue')['default']
     Weapon: typeof import('./src/components/planeGame/weapons/Weapon.vue')['default']
   }
