@@ -76,9 +76,9 @@
     // 实现组件自定义逻辑，封装为方法(例如移动，各种动作,动画等)
 
     // 改变组件位置
-    function changePosition(left: number, top: number) {
-        comData.value.left = left - comData.value.width / 2;
-        comData.value.top = top - comData.value.height / 2;
+    function changePositionByCenter(center_x: number, center_y: number) {
+        comData.value.left = center_x - comData.value.width / 2;
+        comData.value.top = center_y - comData.value.height / 2;
         // validateHitbox(comData.value)
     }
     // 防止组件位置超出边界
@@ -139,7 +139,7 @@
         reset,
         //自定义逻辑
         // move
-        changePosition,
+        changePositionByCenter,
         weapon,
         hurt,
         getShield,

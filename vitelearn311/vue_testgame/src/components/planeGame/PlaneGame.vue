@@ -1,7 +1,6 @@
 <template>
     <div class="game" :style="toSizeStyle(displayBoard)">
-        <div :style="toSizeStyle(displayBoard)" class="border_background" :class="boardAnimateClass"
-            @mousemove="handleMouseMove">
+        <div :style="toSizeStyle(displayBoard)" class="border_background" :class="boardAnimateClass"  @mousedown="onTouchStart" @mousemove="onTouchMove" @mouseup="onTouchEnd">
             <Plane :baseCom="playerData" ref="playerPlane" @click="bulletShoot()"></Plane>
             <!-- 游戏界面将显示在这里 -->
             <!-- <BaseComponent class="player" :class="playerClass" ref="player" :config="playerData" @click="playerJump">
@@ -123,7 +122,8 @@
     // 自机子弹相关配置
     let bullets1 = useComponentArrayRef(Bullet_1);
     let bulletDatas: Ref<BaseCom[]> = ref([]);
-    let bulletCount = 12;
+    //子弹总数
+    let bulletCount = 20;
     for (let i = 0; i < bulletCount; i++) {
         bulletDatas.value.push(initBaseCom(playerData.width!,
             playerData.height!,
@@ -133,7 +133,10 @@
             playerData.height! / 3,
             'img/charactors/weapon/bullet/bullet_1.png'));
     }
+    // 当前子弹id
     let currentBullet = 0;
+    // 子弹发射冷却时间(默认300毫秒)
+    let bulletCD =250;
 
     // 敌机相关配置
     let enemySmallPlaneDatas: Ref<Enemy[]> = ref([]);
@@ -204,6 +207,8 @@
         checkBullets();
         // 检查游戏是否结束
         gameOverCheck();
+        // 拖拽过程中子弹自动射击
+        autoShotBullet()
     }
     function gameStart() {
         gameInit();
@@ -216,14 +221,50 @@
         boardAnimateClass.value.border_background_move = true;
     }
 
+    const isDragging = ref(false)
     const mouseX = ref(0);
     const mouseY = ref(0);
+
+    function onTouchStart(event: MouseEvent) {
+        if (gameConfig.value.isGameStart && !gameConfig.value.isGameover){
+            console.log(isDragging.value)
+            isDragging.value = true;
+            playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
+            event.preventDefault()
+        }
+    };
+    function onTouchMove(event: MouseEvent) {
+        
+        if (isDragging.value) {
+            mouseX.value = event.pageX;
+            mouseY.value = event.pageY;
+            playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
+        }
+    };
+    function onTouchEnd() {
+        isDragging.value = false;
+    }
+    // 拖拽过程中子弹自动射击
+    function autoShotBullet(){
+        let id=setInterval(()=>{
+            if( gameConfig.value.isGameStart && !gameConfig.value.isGameover){
+                if(gameConfig.value.isGameover){
+                    clearInterval(id);
+                    return;
+                }else{
+                    if(isDragging.value){
+                        bulletShoot();
+                    }
+                }
+            }
+        },bulletCD)
+    }
     // 自机跟随鼠标位置移动
     const handleMouseMove = function (event: MouseEvent) {
         if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
             mouseX.value = event.pageX;
             mouseY.value = event.pageY;
-            playerPlane.value?.changePosition(mouseX.value, mouseY.value)
+            playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
         }
 
     };
@@ -344,7 +385,6 @@
                 validateHitbox(bullets1.value![currentBullet].comData)
             bullets1.value![currentBullet].move()
         }, 20)
-
     }
     //检测子弹数量上限
     // watch(bulletDatas.value, () => {
