@@ -1,4 +1,5 @@
 <template>
+    <!-- <div class="baseCom" :style="toStyle(comData)" style="transform: rotate(180deg);" :class="animationClasses"></div> -->
     <div class="baseCom" :style="toStyle(comData)" :class="animationClasses">
         <slot>
             <!-- <div :style="toStyle(comData)"></div> -->
@@ -8,7 +9,7 @@
 <script lang='ts'>
     export default
         {
-            name: "Asteroid"
+            name: "EnemyPlane"
         }
 </script>
 <script lang='ts' setup>
@@ -23,9 +24,8 @@
     let comDataDefault = cloneDeep(comData.value);
     //组件动画类
     let animationClasses = ref({
+        enemy_explode: false,
         // fire_loop: true,
-        asteroid_explode: false,
-        asteroid_roll: true,
     })
     //组件动画默认配置（重置时使用）
     let animationClassesDefault = cloneDeep(animationClasses.value);
@@ -38,8 +38,8 @@
         // 对组件各项内容（comData）进行初始化
         // comData.value.height=0;
         // ...
-        comData.value.hp=1;
         // 组件默认值备份
+        comData.value.hp=1;
         comDataDefault = cloneDeep(comData.value)
     }
     // 组件初始化
@@ -61,13 +61,11 @@
     //     },50);
     // }  
 
-    function asteroidExplode() {
+    function enemyExplode() {
         // comData.value.displayImg      
-        console.log("asteroidExplode")
+        console.log("enemyPlaneExplode")
         comData.value.isActive = false
-        comData.value.display_img = "img/charactors/asteroid/Asteroid_1_explode.png"
-        animationClasses.value.asteroid_roll = false;
-        animationClasses.value.asteroid_explode = true;
+        animationClasses.value.enemy_explode = true;
         let id = setTimeout(() => {
             // comData.value.isActive=false;
             // animationClasses.value.asteroid_explode=false;
@@ -76,14 +74,14 @@
         }, 400);
     }
 
-
-    function asteroidMove() {
+    function moveStyle1() {
         let interval = 20
         let h_move = 'right';
         let h_speed = comData.value.speed;
         let id = setInterval(() => {
             if (gameConfig.value.isGameover) {
                 clearInterval(id);
+                return;
             }
 
             if (comData.value.left >= displayBoard.width - comData.value.width && h_move == 'right') {
@@ -105,6 +103,23 @@
 
         }, interval)
     }
+
+    //直线移动
+    function moveStyle2() {
+        let interval = 20
+        let h_speed = comData.value.speed;
+        let id = setInterval(() => {
+            if (gameConfig.value.isGameover) {
+                clearInterval(id);
+                return;
+            }
+            if (comData.value.isActive) {
+                comData.value.top += comData.value.speed! * interval / 1000;
+            }
+
+        }, interval)
+    }
+
     //随机初始化位置
     function randomReset() {
         reset();
@@ -116,23 +131,22 @@
             comData.value.isActive = true
         }, Math.random() * 1000)
     }
-
     // 自定义逻辑结束
 
     //组件重置
     function reset() {
         Object.assign(animationClasses.value, animationClassesDefault)
-        Object.assign(comData, comDataDefault)
+        Object.assign(comData.value, comDataDefault)
         // animationClasses.value.player_gameover = false;
     }
     defineExpose({
         comData,
         reset,
+        randomReset,
+        moveStyle1,
+        enemyExplode,
         //自定义逻辑
         // move
-        asteroidExplode,
-        asteroidMove,
-        randomReset,
     })
 
 </script>
@@ -144,39 +158,23 @@
         /* align-items: center; */
     }
 
-    .asteroid_explode {
-        animation-name: asteroid_explode;
-        animation-duration: 0.5s;
+    @keyframes enemy_explode {
+
+        from {
+            background-position: 0% 0px
+        }
+
+        to {
+            background-position: -900% 0px;
+        }
+    }
+
+    .enemy_explode {
+        animation-name: enemy_explode;
+        animation-duration: 0.4s;
         animation-iteration-count: 1;
-        animation-timing-function: steps(8);
+        animation-timing-function: steps(9);
         animation-fill-mode: forwards;
-    }
-
-    @keyframes asteroid_explode {
-        from {
-            background-position: 0% 0px;
-        }
-
-        to {
-            background-position: -800% 0px;
-        }
-    }
-
-    .asteroid_roll {
-        animation-name: asteroid_roll;
-        animation-duration: 4s;
-        animation-iteration-count: infinite;
-        animation-timing-function: linear;
-    }
-
-    @keyframes asteroid_roll {
-        from {
-            transform: rotate(0deg);
-        }
-
-        to {
-            transform: rotate(360deg);
-        }
     }
 
     /* .fire_loop {

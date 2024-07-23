@@ -1,27 +1,35 @@
 <template>
     <div class="game" :style="toSizeStyle(displayBoard)">
-        <div :style="toSizeStyle(displayBoard)" class="border_background" :class="boardAnimateClass"  @mousedown="onTouchStart" @mousemove="onTouchMove" @mouseup="onTouchEnd">
-            <Plane :baseCom="playerData" ref="playerPlane" @click="bulletShoot()"></Plane>
-            <!-- 游戏界面将显示在这里 -->
-            <!-- <BaseComponent class="player" :class="playerClass" ref="player" :config="playerData" @click="playerJump">
-                
-                <div :style="toStyle(playerData)"></div>
-
-            </BaseComponent> -->
-            <!-- <EnemyPlane :baseCom="enemyPlaneData"></EnemyPlane> -->
-            <!-- <Asteroid :baseCom="asteroidData" ref="asteroid"></Asteroid> -->
-            <!-- <Bullet_1 :baseCom="bulletData"></Bullet_1> -->
+        <div :style="toSizeStyle(displayBoard)" class="border_background" :class="boardAnimateClass"
+            @touchstart="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd" @mousedown="onMouseDown" @mousemove="onMouseMove" @mouseup="onMouseUp">
+            <!-- 自机组件 -->
+            <Plane :baseCom="playerData" ref="playerPlane" @click="bulletShoot"></Plane>
+            <!-- 陨石组件 -->
             <template v-for="(asteroidData, index) in asteroidDatas">
                 <Asteroid :baseCom="asteroidData" ref="asteroids"></Asteroid>
             </template>
+            <!-- 自机子弹组件 -->
             <template v-for="(bulletData, index) in bulletDatas" :key="bulletData">
                 <!-- {{ index }} -->
                 <Bullet_1 :base-com="bulletData" ref='bullets1'></Bullet_1>
             </template>
+            <!-- 小型敌机组件 -->
             <template v-for="(enemySmallPlaneData, index) in enemySmallPlaneDatas" :key="enemySmallPlaneData">
                 <!-- {{ index }} -->
                 <EnemyPlane :base-com="enemySmallPlaneData" ref="enemySmallPlanes"></EnemyPlane>
             </template>
+            <!-- 大型敌机组件 -->
+            <template v-for="(enemyBigPlaneData, index) in enemyBigPlaneDatas" :key="enemyBigPlaneData">
+                <!-- {{ index }} -->
+                <EnemyPlaneBig :base-com="enemyBigPlaneData" ref="enemyBigPlanes"></EnemyPlaneBig>
+            </template>
+
+            <template v-for="(enemyBulletData, index) in enemyBulletDatas" :key="enemyBulletData">
+                <!-- {{ index }} -->
+                <EnemyBullet_1 :base-com="enemyBulletData" ref='enemyBullets1'></EnemyBullet_1>
+            </template>
+
+            <!-- 其他组件 -->
             <BaseComponent :base-com="initBaseCom(30, 30, 0, displayBoard.height - 30)">
                 <b>Life:</b>
             </BaseComponent>
@@ -73,9 +81,11 @@
     import { cloneDeep } from 'lodash';
     import BaseComponent from '@/components/BaseComponent.vue';
     import Plane from '@/components/planeGame/Plane.vue';
-    import EnemyPlane from '@/components/planeGame/EnemyPlane.vue';
+    import EnemyPlane from '@/components/planeGame/enemies/EnemyPlane.vue';
+    import EnemyPlaneBig from '@/components/planeGame/enemies/EnemyPlaneBig.vue';
     import Asteroid from '@/components/planeGame/Asteroid.vue';
     import Bullet_1 from './bullets/Bullet_1.vue';
+import EnemyBullet_1 from './enemies/EnemyBullet_1.vue';
 
     // 游戏整体配置
     let gameConfig: Ref<GameConfig> = ref({
@@ -118,12 +128,11 @@
         initEnemy(40, 40, 230, 100, 25, 25, 100, 10, 'img/charactors/asteroid/Asteroid_1.png'))
     let asteroids = useComponentArrayRef(Asteroid);
 
-    // let bulletData: BaseCom = initBaseCom(40, 40, 130, 450, 25, 25, 'img/charactors/weapon/bullet/bullet_1.png')
     // 自机子弹相关配置
     let bullets1 = useComponentArrayRef(Bullet_1);
     let bulletDatas: Ref<BaseCom[]> = ref([]);
     //子弹总数
-    let bulletCount = 20;
+    let bulletCount = 15;
     for (let i = 0; i < bulletCount; i++) {
         bulletDatas.value.push(initBaseCom(playerData.width!,
             playerData.height!,
@@ -135,8 +144,8 @@
     }
     // 当前子弹id
     let currentBullet = 0;
-    // 子弹发射冷却时间(默认300毫秒)
-    let bulletCD =250;
+    // 子弹发射冷却时间(默认250毫秒)
+    let bulletCD = 250;
 
     // 敌机相关配置
     let enemySmallPlaneDatas: Ref<Enemy[]> = ref([]);
@@ -154,6 +163,28 @@
             'img/charactors/enemy/nautolan/Nautolan_1.png'
         ))
     }
+
+    //大型敌机相关配置
+    let enemyBigPlaneDatas: Ref<Enemy[]> = ref([]);
+    let enemyBigPlanes = useComponentArrayRef(EnemyPlaneBig);
+    let enemyBigPlaneCount = 2;
+    for (let i = 0; i < enemyBigPlaneCount; i++) {
+        enemyBigPlaneDatas.value.push(initEnemy(80,
+            80,
+            30 + 100 * i,
+            -100,
+            50,
+            50,
+            50,
+            30,
+            'img/charactors/enemy/nautolan/Nautolan_2.png'
+        ))
+    }
+
+    // 敌机子弹配置
+    let enemyBulletDatas:Ref<BaseCom[]>=ref([]);
+    let enemyBullets1=useComponentRef(EnemyBullet_1);
+    // enemyBulletDatas.value.push(initBaseCom(40,40,50,300,20,20))
 
 
 
@@ -174,7 +205,7 @@
         //重置自机
         playerPlane.value?.reset();
 
-        //重置12颗子弹
+        //重置子弹
         for (let i = bullets1.value!.length - 1; i >= 0; i--) {
             bullets1.value![i].reset();
         }
@@ -195,8 +226,12 @@
             enemySmallPlanes.value![i].comData.isActive = true;
             enemySmallPlanes.value![i].moveStyle1();
         }
-
-
+        // 重置所有大型敌机
+        for (let i = enemyBigPlanes.value!.length - 1; i >= 0; i--) {
+            enemyBigPlanes.value![i].randomReset();
+            enemyBigPlanes.value![i].comData.isActive = true;
+            // enemyBigPlanes.value![i].moveStyle2();
+        }
         // 检测子弹与陨石,敌机碰撞
         checkBulletsAndEnemys()
         // 检测自机和敌人是否碰撞
@@ -209,6 +244,8 @@
         gameOverCheck();
         // 拖拽过程中子弹自动射击
         autoShotBullet()
+        // 分数检测
+        checkScore()
     }
     function gameStart() {
         gameInit();
@@ -220,57 +257,74 @@
     function boardMove() {
         boardAnimateClass.value.border_background_move = true;
     }
-
+    // 自机移动
     const isDragging = ref(false)
     const mouseX = ref(0);
     const mouseY = ref(0);
 
-    function onTouchStart(event: MouseEvent) {
-        if (gameConfig.value.isGameStart && !gameConfig.value.isGameover){
-            console.log(isDragging.value)
+    function onTouchStart(event:TouchEvent) {
+        if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
             isDragging.value = true;
+            mouseX.value = event.touches[0].clientX;
+            mouseY.value = event.touches[0].clientY;
             playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
             event.preventDefault()
         }
     };
-    function onTouchMove(event: MouseEvent) {
-        
+    function onTouchMove(event:TouchEvent) {
         if (isDragging.value) {
-            mouseX.value = event.pageX;
-            mouseY.value = event.pageY;
+            mouseX.value = event.touches[0].clientX;
+            mouseY.value = event.touches[0].clientY;
             playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
         }
     };
     function onTouchEnd() {
         isDragging.value = false;
     }
-    // 拖拽过程中子弹自动射击
-    function autoShotBullet(){
-        let id=setInterval(()=>{
-            if( gameConfig.value.isGameStart && !gameConfig.value.isGameover){
-                if(gameConfig.value.isGameover){
-                    clearInterval(id);
-                    return;
-                }else{
-                    if(isDragging.value){
-                        bulletShoot();
-                    }
-                }
-            }
-        },bulletCD)
-    }
-    // 自机跟随鼠标位置移动
-    const handleMouseMove = function (event: MouseEvent) {
+
+    function onMouseDown(event: MouseEvent) {
         if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
+            isDragging.value = true;
+            mouseX.value = event.pageX;
+            mouseY.value = event.pageY;
+            playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
+            event.preventDefault()
+        }
+    };
+    function onMouseMove(event: MouseEvent) {
+        if (isDragging.value) {
             mouseX.value = event.pageX;
             mouseY.value = event.pageY;
             playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
         }
-
     };
+    function onMouseUp() {
+        isDragging.value = false;
+    }
+    // 拖拽过程中子弹自动射击
+    function autoShotBullet() {
+        let id = setInterval(() => {
+            if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
+                if (gameConfig.value.isGameover) {
+                    clearInterval(id);
+                    return;
+                } else {
+                    if (isDragging.value) {
+                        bulletShoot();
+                    }
+                }
+            }
+        }, bulletCD)
+    }
+    // 自机跟随鼠标位置移动
+    // const handleMouseMove = function (event: MouseEvent) {
+    //     if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
+    //         mouseX.value = event.pageX;
+    //         mouseY.value = event.pageY;
+    //         playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
+    //     }
 
-
-
+    // };
 
     // 判断子弹和敌人是否碰撞
     function checkBulletsAndEnemys() {
@@ -302,6 +356,25 @@
                             bd.isActive = false;
                             enemyPlane.enemyExplode();
                             gameConfig.value.score += enemyPlane.comData.score!;
+                        }
+                    }
+                }
+                // 大型敌人与自机子弹检测               
+                for (let enemyPlane of enemyBigPlanes.value!) {
+                    // 优先检测敌机与子弹是否均有效
+                    if (bd.isActive && enemyPlane.comData.isActive) {
+                        // 再检测子弹与敌机是否碰撞
+                        if (isCollision(bd, enemyPlane.comData)) {
+                            // 根据情况执行不同逻辑
+                            if (enemyPlane.comData.hp! > 0) {
+                                bd.isActive = false;
+                                enemyPlane.comData.hp! -= 1;
+                            } else {
+                                console.log("big enemy destory")
+                                bd.isActive = false;
+                                enemyPlane.enemyExplode();
+                                gameConfig.value.score += enemyPlane.comData.score!;
+                            }
                         }
                     }
                 }
@@ -365,8 +438,27 @@
                         }
 
                     }
+                }
+                for (let enemyPlane of enemyBigPlanes.value!) {
+                    // 同理检测敌机有效且与自机相撞
+                    if (enemyPlane.comData.isActive && isCollision(playerPlane.value!.comData, enemyPlane.comData)) {
+                        console.log("enemyBigPlane isCollision")
+                        //自机处于护盾状态
+                        if (playerPlane.value!.shieldData.isActive) {
+                            console.log("shield protect")
+                            enemyPlane.comData.isActive = false;
+                            enemyPlane.enemyExplode();
+                        } else {
+                            gameConfig.value.lifeRemain! -= 1;
+                            if (gameConfig.value.lifeRemain! > 0) {
+                                playerPlane.value!.hurt(maxLife - gameConfig.value.lifeRemain!)
+                                // playerPlane.value!.getShield()
+                                enemyPlane.comData.isActive = false;
+                                enemyPlane.enemyExplode();
+                            }
+                        }
 
-
+                    }
                 }
             }
         }, 20)
@@ -401,7 +493,6 @@
     function checkBullets() {
         console.log("checkBullet")
         let id = setInterval(() => {
-            // console.log("123123123",bulletDatas.value)
             if (gameConfig.value.isGameover) {
                 console.log("checkBullet stop")
                 clearInterval(id);
@@ -440,12 +531,33 @@
                     asteroids.value![i].randomReset();
                 }
             }
-            for (let enemySamllPlane of enemySmallPlanes.value!) {
-                if (enemySamllPlane.comData.top > displayBoard.value.height) {
-                    enemySamllPlane.randomReset();
+            for (let enemySmallPlane of enemySmallPlanes.value!) {
+                if (enemySmallPlane.comData.top > displayBoard.value.height) {
+                    enemySmallPlane.randomReset();
+                }
+            }
+            for (let enemyBigPlane of enemySmallPlanes.value!) {
+                if (enemyBigPlane.comData.top > displayBoard.value.height) {
+                    enemyBigPlane.randomReset();
                 }
             }
         }, 20)
+    }
+
+    function checkScore() {
+        // 监听游戏系统分数
+        // 设置定时任务，若分数大于一定值后执行逻辑，并移除定时任务
+        let id1 = setInterval(() => {
+            if (gameConfig.value.score >= 100) {
+                // 分数大于100，大型敌机开始移动
+                console.log("enemyBigPlane Start Moving")
+                for (let i = enemyBigPlanes.value!.length - 1; i >= 0; i--) {
+                    enemyBigPlanes.value![i].moveStyle2();
+                }
+                clearInterval(id1);
+                return;
+            }
+        })
     }
 
     // 监听游戏是否结束

@@ -68,17 +68,26 @@
         console.log("bullet move")
         comData.value.isActive = true;
         let interval = 20;
+        console.log("@@@"+comData.value.isActive)
         let id = setInterval(() => {
+            console.log(comData.value.isActive)
             // 若isActive为false或子弹的位置超出边界
             if (!comData.value.isActive || comData.value.top < -100) {
+                // console.log(comData.value)
+                console.log("bullet stop move")
                 comData.value.isActive = false;
                 reset();
                 clearInterval(id);
+                return;
             }
-            comData.value.top -= 200 * interval / 1000;
+            comData.value.top -= bulletSpeed * interval / 1000;
             // comData.value.hitbox_top-=200*interval/1000;
         }, interval)
     }
+
+    watch(()=>{return comData.value.isActive},()=>{
+        console.log(comData.value.isActive)
+    })
 
 
 

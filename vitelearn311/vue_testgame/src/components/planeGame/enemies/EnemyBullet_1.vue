@@ -1,7 +1,7 @@
 <template>
-    <!-- <div class="baseCom" :style="toStyle(comData)" style="transform: rotate(180deg);" :class="animationClasses"></div> -->
     <div class="baseCom" :style="toStyle(comData)" :class="animationClasses">
         <slot>
+
             <!-- <div :style="toStyle(comData)"></div> -->
         </slot>
     </div>
@@ -9,23 +9,25 @@
 <script lang='ts'>
     export default
         {
-            name: "EnemyPlane"
+            name: "EnemyBullet_1"
         }
 </script>
 <script lang='ts' setup>
     import { ref, inject, type Ref, watch } from "vue";
-    import { cloneDeep } from 'lodash';
+    import { cloneDeep, rest } from 'lodash';
     import { toSizeStyle, toStyle, validateHitbox } from "@/hooks/useBaseCom";
     import type { BaseCom, Enemy, GameConfig } from "@/types";
     import { getRamdomInit } from "@/hooks/useUtils";
+    import { tr } from "element-plus/es/locales.mjs";
     // 组件初始化属性（位置，判定区，显示图片等)
-    let { baseCom } = defineProps<{ baseCom: Enemy }>();
+    let { baseCom } = defineProps<{ baseCom: BaseCom }>();
     let comData = ref(baseCom)
-    let comDataDefault = cloneDeep(comData.value);
+    let comDataDefault: BaseCom;
+    let bulletSpeed = 200;
     //组件动画类
     let animationClasses = ref({
-        enemy_explode: false,
         // fire_loop: true,
+        bullet_loop: true
     })
     //组件动画默认配置（重置时使用）
     let animationClassesDefault = cloneDeep(animationClasses.value);
@@ -38,16 +40,19 @@
         // 对组件各项内容（comData）进行初始化
         // comData.value.height=0;
         // ...
-
+        bulletSpeed = 100;
+        comData.value.display_img = "img/charactors/weapon/bullet/nautolan_bullet_1.png"
+        // comData.value.isActive=true;
         // 组件默认值备份
         comDataDefault = cloneDeep(comData.value)
+        // move()
     }
     // 组件初始化
     comInit()
 
     // 监听组件位置，实时更新受击框位置
-    watch(()=>{
-       return [comData.value.left,comData.value.top]
+    watch(() => {
+        return [comData.value.left, comData.value.top]
     }, () => {
         validateHitbox(comData.value);
     })
@@ -61,59 +66,25 @@
     //     },50);
     // }  
 
-    function enemyExplode() {
-        // comData.value.displayImg      
-        console.log("enemyPlaneExplode")
-        comData.value.isActive = false
-        animationClasses.value.enemy_explode = true;
-        let id = setTimeout(() => {
-            // comData.value.isActive=false;
-            // animationClasses.value.asteroid_explode=false;
-            // reset();
-            randomReset()
-        }, 400);
-    }
-
-    function moveStyle1() {
-        let interval = 20
-        let h_move = 'right';
-        let h_speed = comData.value.speed;
+    function move() {
+        console.log("enemy bullet move")
+        comData.value.isActive = true;
+        let interval = 20;
         let id = setInterval(() => {
-            if (gameConfig.value.isGameover) {
+            // 若isActive为false或子弹的位置超出边界
+            if (!comData.value.isActive || comData.value.top > displayBoard.height+50) {
+                comData.value.isActive = false;
+                reset();
                 clearInterval(id);
             }
-
-            if (comData.value.left >= displayBoard.width - comData.value.width && h_move == 'right') {
-                // console.log("left")
-                h_speed = -comData.value.speed!;
-                // console.log('h_speed', h_speed)
-                h_move = 'left'
-            }
-            if (comData.value.left <= 0 && h_move == 'left') {
-                h_speed = comData.value.speed!;
-                h_move = 'right'
-            }
-            if (comData.value.isActive) {
-                comData.value.top += comData.value.speed! * interval / 1000;
-                // comData.value.hitbox_top+=comData.value.speed!*interval/1000;
-                comData.value.left += h_speed! * interval / 1000;
-                // validateHitbox(comData.value);
-            }
-
+            comData.value.top += bulletSpeed * interval / 1000;
+            // comData.value.hitbox_top-=200*interval/1000;
         }, interval)
     }
 
-    //随机初始化位置
-    function randomReset() {
-        reset();
-        comData.value.top = -comData.value.height;
-        comData.value.left = Math.random() * (displayBoard.width - comData.value.width);
-        validateHitbox(comData.value)
-        comData.value.speed = comDataDefault.speed! * 0.6 + (comDataDefault.speed! * 0.4) * Math.random()
-        setTimeout(() => {
-            comData.value.isActive = true
-        }, Math.random() * 1000)
-    }
+
+
+
     // 自定义逻辑结束
 
     //组件重置
@@ -125,11 +96,9 @@
     defineExpose({
         comData,
         reset,
-        randomReset,
-        moveStyle1,
-        enemyExplode,
         //自定义逻辑
         // move
+        move,
     })
 
 </script>
@@ -141,23 +110,22 @@
         /* align-items: center; */
     }
 
-    @keyframes enemy_explode {
+    .bullet_loop {
+        animation-name: bullet_loop;
+        animation-duration: 1s;
+        animation-iteration-count: infinite;
+        animation-timing-function: steps(16);
+    }
 
+
+    @keyframes bullet_loop {
         from {
-            background-position: 0% 0px
+            background-position: 0% 0px;
         }
 
         to {
-            background-position: -900% 0px;
+            background-position: -1600% 0px;
         }
-    }
-
-    .enemy_explode {
-        animation-name: enemy_explode;
-        animation-duration: 0.4s;
-        animation-iteration-count: 1;
-        animation-timing-function: steps(9);
-        animation-fill-mode: forwards;
     }
 
     /* .fire_loop {
@@ -173,8 +141,9 @@
             background-position: 0% 0px;
         }
 
+        // background-position: x, y; 表示背景图向右/上移动，若想从左到右展示背景图，x应设置为负值
         to {
-            background-position: 800% 0px;
+            background-position: -800% 0px;
         }
 
     } */
