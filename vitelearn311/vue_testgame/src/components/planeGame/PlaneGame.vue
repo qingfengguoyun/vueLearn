@@ -44,7 +44,12 @@
                 <b>Game Over</b><br>
                 <b>scoure:{{ gameConfig.score }}</b>
             </div> -->
-            <BaseComponent :base-com="createBaseComAtMiddle(displayBoard, 150, 100)" v-if="!gameConfig.isGameStart"
+            <BaseComponent :base-com="initBaseCom(200, 100, 50, 150)" v-if="!gameConfig.isGameStart">
+                <div style="text-align: center;">
+                    <h1><b>飞机大战</b></h1>
+                </div>
+            </BaseComponent>
+            <BaseComponent :base-com="initBaseCom(200, 100, 50, 350)" v-if="!gameConfig.isGameStart"
                 @click="gameInit()">
                 <div style="text-align: center;">
                     <h3>开始游戏</h3>
@@ -54,7 +59,7 @@
                 @click="gameInit()">
                 <div class="gameover_board">
                     <b>Game Over</b><br>
-                    <b>Scoure:{{ gameConfig.score }}</b><br>
+                    <b>Score:{{ gameConfig.score }}</b><br>
                     <b>重新开始</b>
                 </div>
             </BaseComponent>
@@ -567,6 +572,32 @@
                 return;
             }
         })
+    }
+
+    // 大型敌机发射子弹
+    function enemyBulletShot() {
+        console.log("big enemy Plane start shoting")
+        let interval=20;
+        let id = setInterval(() => {
+            if (gameConfig.value.isGameover) {
+                console.log("big enemy Plane stop shot")
+                clearInterval(id);
+                return;
+            }
+            if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
+                for (let enemyBigPlane of enemyBigPlanes.value!) {
+                    if(enemyBigPlane.comData.isActive){
+                        if(enemyBigPlane.comData.shot_cd!>0){
+                            enemyBigPlane.comData.shot_cd!-=interval;
+                        }else{
+                            // 在敌机中心生成一个敌方子弹并移动
+                            createBaseComAtMiddle(enemyBigPlane.comData,40,40)
+                        }
+                    }
+                }
+            }
+        }, interval)
+
     }
 
     // 监听游戏是否结束

@@ -46,6 +46,7 @@
         // ...
         comData.value.display_img = "img/charactors/enemy/nautolan/Nautolan_2.png"
         comData.value.hp = 5;
+        comData.value.shot_cd=3000;
         // 组件默认值备份
         comDataSnipaste = cloneDeep(comData.value)
         comDataDefault = cloneDeep(comData.value)

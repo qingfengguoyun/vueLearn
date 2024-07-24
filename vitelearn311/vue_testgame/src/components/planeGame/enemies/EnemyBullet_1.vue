@@ -46,6 +46,8 @@
         // 组件默认值备份
         comDataDefault = cloneDeep(comData.value)
         // move()
+        // // 敌机子弹创建时直接执行移动方法
+        // move()
     }
     // 组件初始化
     comInit()
@@ -99,6 +101,7 @@
         //自定义逻辑
         // move
         move,
+        bulletSpeed,
     })
 
 </script>

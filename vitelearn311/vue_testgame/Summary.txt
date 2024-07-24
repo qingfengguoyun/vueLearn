@@ -17,3 +17,40 @@ maximum-scale=2: 最大缩放比例为 2.0。这限制了用户在浏览器中�
 
 以上 <meta> 标签的作用是确保网页在移动设备上能够良好地适应屏幕大小，
 并控制页面的初始缩放比例及最大缩放比例，
+
+
+2，移动端点击事件：@touchstart @touchmove @touchend
+
+对应电脑端的 @mousedown @mousemove @mouseup
+
+创建拖拽检测变量isDragged，在@touchstart中令isDragged=true
+touchmove中if(isDragged==true)执行相应逻辑
+touchend中令isDragged=false
+
+eg：
+    // 自机移动
+    const isDragging = ref(false)
+    const mouseX = ref(0);
+    const mouseY = ref(0);
+
+    function onTouchStart(event: TouchEvent) {
+        if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
+            isDragging.value = true;
+            mouseX.value = event.touches[0].clientX;
+            mouseY.value = event.touches[0].clientY;
+            playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
+            event.preventDefault()
+        }
+    };
+    function onTouchMove(event: TouchEvent) {
+        if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
+            if (isDragging.value) {
+                mouseX.value = event.touches[0].clientX;
+                mouseY.value = event.touches[0].clientY;
+                playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
+            }
+        }
+    };
+    function onTouchEnd() {
+        isDragging.value = false;
+    }
