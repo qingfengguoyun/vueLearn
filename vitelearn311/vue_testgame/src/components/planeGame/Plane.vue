@@ -25,7 +25,7 @@
 <script lang='ts' setup>
     import { ref, inject, type Ref, watch, computed } from "vue";
     import { cloneDeep } from 'lodash';
-    import { getBaseComCenter, initBaseCom, toSizeStyle, toStyle, validateHitbox } from "@/hooks/useBaseCom";
+    import { getBaseComCenter, initBaseCom, toSizeStyle, toStyle } from "@/hooks/useBaseCom";
     import type { BaseCom, Enemy, GameConfig, Player } from "@/types";
     import { getRamdomInit } from "@/hooks/useUtils";
     import BaseComponent from "../BaseComponent.vue";
@@ -37,7 +37,10 @@
     // 组件初始化属性（位置，判定区，显示图片等)
     let { baseCom } = defineProps<{ baseCom: Player }>();
     let comData = ref(baseCom)
-    let comDataDefault = cloneDeep(comData.value);
+    // 组件创建时的初始化配置(彻底重置时使用，例如游戏重置)
+    let comDataDefault: Player;
+    // 组件临时配置(用于记录组件数值的临时状态（例如速度等属性修改，组件刷新时使用)
+    let comDataSnipaste: Player;
 
     let engineData = initBaseCom(comData.value.width, comData.value.height, 0, 0, 0, 0, "/img/charactors/plane/engine_1.png")
     let weaponData = initBaseCom(comData.value.width, comData.value.height, 0, 0, 0, 0, "/img/charactors/weapon/weapon_1.png")
@@ -61,17 +64,18 @@
         // ...
 
         // 组件默认值备份
+        comDataSnipaste = cloneDeep(comData.value)
         comDataDefault = cloneDeep(comData.value)
     }
     // 组件初始化
     comInit()
 
     // 监听组件位置，实时更新受击框位置
-    watch(() => {
-        return [comData.value.left, comData.value.top]
-    }, () => {
-        validateHitbox(comData.value);
-    })
+    // watch(() => {
+    //     return [comData.value.left, comData.value.top]
+    // }, () => {
+    //     validateHitbox(comData.value);
+    // })
 
     // 实现组件自定义逻辑，封装为方法(例如移动，各种动作,动画等)
 
@@ -116,27 +120,38 @@
     }
 
     //获取护盾
-    function getShield(){
-        comData.value.isProtected=true;
-        shieldData.isActive=true;
-        let id= setTimeout(()=>{
-            shieldData.isActive=false;
+    function getShield() {
+        comData.value.isProtected = true;
+        shieldData.isActive = true;
+        let id = setTimeout(() => {
+            shieldData.isActive = false;
             comData.value.isProtected = false;
-        },50000)
+        }, 50000)
     }
-
 
     // 自定义逻辑结束
 
-    //组件重置
+    // 组件重置方法
     function reset() {
+        // 动画重置
         Object.assign(animationClasses.value, animationClassesDefault)
+        // 主配置（位置，默认图片等）重置
         Object.assign(comData.value, comDataDefault)
-        // animationClasses.value.player_gameover = false;
+    }
+    // 组件还原初始默认状态
+    function resetDefault() {
+        // 动画重置
+        Object.assign(animationClasses.value, animationClassesDefault)
+        // 主配置（位置，默认图片等）重置
+        // 临时配置重置为默认
+        Object.assign(comDataSnipaste, comDataDefault)
+        // 组件数据重置
+        Object.assign(comData.value, comDataDefault)
     }
     defineExpose({
         comData,
         reset,
+        resetDefault,
         //自定义逻辑
         // move
         changePositionByCenter,

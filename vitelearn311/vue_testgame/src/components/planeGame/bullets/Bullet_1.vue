@@ -22,7 +22,11 @@
     // 组件初始化属性（位置，判定区，显示图片等)
     let { baseCom } = defineProps<{ baseCom: BaseCom }>();
     let comData = ref(baseCom)
+    // 组件默认配置
+    // 组件创建时的初始化配置(彻底重置时使用，例如游戏重置)
     let comDataDefault: BaseCom;
+    // 组件临时配置(用于记录组件数值的临时状态（例如速度等属性修改，组件刷新时使用)
+    let comDataSnipaste: BaseCom;
     let bulletSpeed = 200;
     //组件动画类
     let animationClasses = ref({
@@ -42,6 +46,7 @@
         bulletSpeed = 200;
         // comData.value.isActive=true;
         // 组件默认值备份
+        comDataSnipaste=cloneDeep(comData.value)
         comDataDefault = cloneDeep(comData.value)
         // move()
     }
@@ -49,8 +54,8 @@
     comInit()
 
     // 监听组件位置，实时更新受击框位置
-    watch(()=>{
-       return [comData.value.left,comData.value.top]
+    watch(() => {
+        return [comData.value.left, comData.value.top]
     }, () => {
         validateHitbox(comData.value);
     })
@@ -68,7 +73,7 @@
         console.log("bullet move")
         comData.value.isActive = true;
         let interval = 20;
-        console.log("@@@"+comData.value.isActive)
+        console.log("@@@" + comData.value.isActive)
         let id = setInterval(() => {
             console.log(comData.value.isActive)
             // 若isActive为false或子弹的位置超出边界
@@ -85,7 +90,7 @@
         }, interval)
     }
 
-    watch(()=>{return comData.value.isActive},()=>{
+    watch(() => { return comData.value.isActive }, () => {
         console.log(comData.value.isActive)
     })
 
@@ -94,15 +99,27 @@
 
     // 自定义逻辑结束
 
-    //组件重置
+    // 组件重置方法(临时，刷新组件用)
     function reset() {
+        // 动画重置
         Object.assign(animationClasses.value, animationClassesDefault)
+        // 主配置（位置，默认图片等）重置
         Object.assign(comData.value, comDataDefault)
-        // animationClasses.value.player_gameover = false;
+    }
+    // 组件还原初始默认状态（完全重置使用）
+    function resetDefault(){
+        // 动画重置
+        Object.assign(animationClasses.value, animationClassesDefault)
+        // 主配置（位置，默认图片等）重置
+        // 临时配置重置为默认
+        Object.assign(comDataSnipaste, comDataDefault)
+        // 组件数据重置
+        Object.assign(comData.value, comDataDefault)
     }
     defineExpose({
         comData,
         reset,
+        resetDefault,
         //自定义逻辑
         // move
         move,

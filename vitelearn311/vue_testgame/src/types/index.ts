@@ -1,13 +1,15 @@
+import { readonly } from "vue";
+
 export interface BaseCom{
     id?:number,
     top:number,
     left:number,
     width:number,
     height:number,
-    hitbox_top:number,
-    hitbox_left:number,
     hitbox_width:number,
     hitbox_height:number,
+    hitbox_top:number,
+    hitbox_left:number,
     display_img:string,
     isActive:boolean,
     isPause:boolean,

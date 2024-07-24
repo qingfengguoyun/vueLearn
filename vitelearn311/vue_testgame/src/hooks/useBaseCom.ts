@@ -87,7 +87,6 @@ export function initBaseCom(
   return baseCom;
 }
 
-
 export function initPlayer(
   w?: number,
   h?: number,

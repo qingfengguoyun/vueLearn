@@ -21,7 +21,13 @@
     // 组件初始化属性（位置，判定区，显示图片等)
     let { baseCom } = defineProps<{ baseCom: Enemy }>();
     let comData = ref(baseCom)
-    let comDataDefault = cloneDeep(comData.value);
+
+    // 组件默认配置
+    // 组件创建时的初始化配置(彻底重置时使用，例如游戏重置)
+    let comDataDefault: Enemy;
+    // 组件临时配置(用于记录组件数值的临时状态（例如速度等属性修改，组件刷新时使用)
+    let comDataSnipaste: Enemy;
+
     //组件动画类
     let animationClasses = ref({
         enemy_explode: false,
@@ -38,17 +44,18 @@
         // 对组件各项内容（comData）进行初始化
         // comData.value.height=0;
         // ...
-        comData.value.display_img="img/charactors/enemy/nautolan/Nautolan_2.png"
-        comData.value.hp=5;
+        comData.value.display_img = "img/charactors/enemy/nautolan/Nautolan_2.png"
+        comData.value.hp = 5;
         // 组件默认值备份
+        comDataSnipaste = cloneDeep(comData.value)
         comDataDefault = cloneDeep(comData.value)
     }
     // 组件初始化
     comInit()
 
     // 监听组件位置，实时更新受击框位置
-    watch(()=>{
-       return [comData.value.left,comData.value.top]
+    watch(() => {
+        return [comData.value.left, comData.value.top]
     }, () => {
         validateHitbox(comData.value);
     })
@@ -134,15 +141,27 @@
     }
     // 自定义逻辑结束
 
-    //组件重置
+    // 组件重置方法(临时，刷新组件用，例如越界刷新位置等)
     function reset() {
+        // 动画重置
         Object.assign(animationClasses.value, animationClassesDefault)
+        // 主配置（位置，默认图片等）重置
         Object.assign(comData.value, comDataDefault)
-        // animationClasses.value.player_gameover = false;
+    }
+    // 组件还原初始默认状态（完全重置，游戏重置等时机使用）
+    function resetDefault(){
+        // 动画重置
+        Object.assign(animationClasses.value, animationClassesDefault)
+        // 主配置（位置，默认图片等）重置
+        // 临时配置重置为默认
+        Object.assign(comDataSnipaste, comDataDefault)
+        // 组件数据重置
+        Object.assign(comData.value, comDataDefault)
     }
     defineExpose({
         comData,
         reset,
+        resetDefault,
         randomReset,
         moveStyle1,
         moveStyle2,

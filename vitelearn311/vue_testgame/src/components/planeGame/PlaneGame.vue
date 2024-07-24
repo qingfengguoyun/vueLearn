@@ -1,7 +1,8 @@
 <template>
     <div class="game" :style="toSizeStyle(displayBoard)">
         <div :style="toSizeStyle(displayBoard)" class="border_background" :class="boardAnimateClass"
-            @touchstart="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd" @mousedown="onMouseDown" @mousemove="onMouseMove" @mouseup="onMouseUp">
+            @touchstart="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd" @mousedown="onMouseDown"
+            @mousemove="onMouseMove" @mouseup="onMouseUp">
             <!-- 自机组件 -->
             <Plane :baseCom="playerData" ref="playerPlane" @click="bulletShoot"></Plane>
             <!-- 陨石组件 -->
@@ -85,7 +86,7 @@
     import EnemyPlaneBig from '@/components/planeGame/enemies/EnemyPlaneBig.vue';
     import Asteroid from '@/components/planeGame/Asteroid.vue';
     import Bullet_1 from './bullets/Bullet_1.vue';
-import EnemyBullet_1 from './enemies/EnemyBullet_1.vue';
+    import EnemyBullet_1 from './enemies/EnemyBullet_1.vue';
 
     // 游戏整体配置
     let gameConfig: Ref<GameConfig> = ref({
@@ -182,8 +183,8 @@ import EnemyBullet_1 from './enemies/EnemyBullet_1.vue';
     }
 
     // 敌机子弹配置
-    let enemyBulletDatas:Ref<BaseCom[]>=ref([]);
-    let enemyBullets1=useComponentRef(EnemyBullet_1);
+    let enemyBulletDatas: Ref<BaseCom[]> = ref([]);
+    let enemyBullets1 = useComponentRef(EnemyBullet_1);
     // enemyBulletDatas.value.push(initBaseCom(40,40,50,300,20,20))
 
 
@@ -203,18 +204,18 @@ import EnemyBullet_1 from './enemies/EnemyBullet_1.vue';
         boardMove()
 
         //重置自机
-        playerPlane.value?.reset();
+        playerPlane.value?.resetDefault();
 
         //重置子弹
         for (let i = bullets1.value!.length - 1; i >= 0; i--) {
-            bullets1.value![i].reset();
+            bullets1.value![i].resetDefault();
         }
         //重置子弹指针
         currentBullet = 0;
 
         //重置所有陨石
         for (let i = asteroids.value!.length - 1; i >= 0; i--) {
-            asteroids.value![i].reset();
+            asteroids.value![i].resetDefault();
             console.log(asteroids.value![i])
             asteroids.value![i].randomReset()
             asteroids.value![i].comData.isActive = true;
@@ -222,12 +223,14 @@ import EnemyBullet_1 from './enemies/EnemyBullet_1.vue';
         }
         // 重置所有敌机
         for (let i = enemySmallPlanes.value!.length - 1; i >= 0; i--) {
+            enemySmallPlanes.value![i].resetDefault();
             enemySmallPlanes.value![i].randomReset();
             enemySmallPlanes.value![i].comData.isActive = true;
             enemySmallPlanes.value![i].moveStyle1();
         }
         // 重置所有大型敌机
         for (let i = enemyBigPlanes.value!.length - 1; i >= 0; i--) {
+            enemyBigPlanes.value![i].resetDefault();
             enemyBigPlanes.value![i].randomReset();
             enemyBigPlanes.value![i].comData.isActive = true;
             // enemyBigPlanes.value![i].moveStyle2();
@@ -262,7 +265,7 @@ import EnemyBullet_1 from './enemies/EnemyBullet_1.vue';
     const mouseX = ref(0);
     const mouseY = ref(0);
 
-    function onTouchStart(event:TouchEvent) {
+    function onTouchStart(event: TouchEvent) {
         if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
             isDragging.value = true;
             mouseX.value = event.touches[0].clientX;
@@ -271,11 +274,13 @@ import EnemyBullet_1 from './enemies/EnemyBullet_1.vue';
             event.preventDefault()
         }
     };
-    function onTouchMove(event:TouchEvent) {
-        if (isDragging.value) {
-            mouseX.value = event.touches[0].clientX;
-            mouseY.value = event.touches[0].clientY;
-            playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
+    function onTouchMove(event: TouchEvent) {
+        if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
+            if (isDragging.value) {
+                mouseX.value = event.touches[0].clientX;
+                mouseY.value = event.touches[0].clientY;
+                playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
+            }
         }
     };
     function onTouchEnd() {
@@ -292,26 +297,30 @@ import EnemyBullet_1 from './enemies/EnemyBullet_1.vue';
         }
     };
     function onMouseMove(event: MouseEvent) {
-        if (isDragging.value) {
-            mouseX.value = event.pageX;
-            mouseY.value = event.pageY;
-            playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
+        if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
+            if (isDragging.value) {
+                mouseX.value = event.pageX;
+                mouseY.value = event.pageY;
+                playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
+            }
         }
+
     };
     function onMouseUp() {
         isDragging.value = false;
     }
     // 拖拽过程中子弹自动射击
     function autoShotBullet() {
+        console.log("autoshot start")
         let id = setInterval(() => {
+            if (gameConfig.value.isGameover) {
+                console.log("autoShot stop")
+                clearInterval(id);
+                return;
+            }
             if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
-                if (gameConfig.value.isGameover) {
-                    clearInterval(id);
-                    return;
-                } else {
-                    if (isDragging.value) {
-                        bulletShoot();
-                    }
+                if (isDragging.value) {
+                    bulletShoot();
                 }
             }
         }, bulletCD)
@@ -466,12 +475,12 @@ import EnemyBullet_1 from './enemies/EnemyBullet_1.vue';
 
     // 发射子弹
     function bulletShoot() {
-        console.log('bulletShoot')
+        // console.log('bulletShoot')
         currentBullet = (currentBullet + 1) % bulletCount;
         bullets1.value![currentBullet].reset()
         // 延迟0.02秒执行，保证子弹的移动线程结束   
         setTimeout(() => {
-            console.log("bullet id", currentBullet)
+            // console.log("bullet id", currentBullet)
             bullets1.value![currentBullet].comData.left = getBaseComCenter(playerPlane.value?.comData!).center_x - playerPlane.value?.comData.width! / 2,
                 bullets1.value![currentBullet].comData.top = getBaseComCenter(playerPlane.value?.comData!).center_y - playerPlane.value?.comData.height!,
                 validateHitbox(bullets1.value![currentBullet].comData)
