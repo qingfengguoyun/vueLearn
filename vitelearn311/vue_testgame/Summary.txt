@@ -1,0 +1,19 @@
+2024-7-24
+
+1，网页的 viewport的 meta 标签，用于控制界面显示大小（适配移动端显示）
+eg:
+meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2">
+
+
+name="viewport": 这里的 name 属性指定了这个 meta 标签的名称，即视口设置。
+
+content="width=device-width, initial-scale=1.0, maximum-scale=2":
+
+width=device-width: 这个部分告诉浏览器，视口的宽度应该等于设备的宽度。这使得网页可以根据设备宽度进行自适应布局。
+
+initial-scale=1.0: 初始缩放比例为 1.0。这意味着当页面加载时，页面的缩放比例被设置为 100%，即不进行缩放。这有助于确保页面在不同设备上的显示效果一致。
+
+maximum-scale=2: 最大缩放比例为 2.0。这限制了用户在浏览器中手动缩放页面的能力，确保页面不会被过度放大。
+
+以上 <meta> 标签的作用是确保网页在移动设备上能够良好地适应屏幕大小，
+并控制页面的初始缩放比例及最大缩放比例，
