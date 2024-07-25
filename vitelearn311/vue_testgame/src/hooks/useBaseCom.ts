@@ -128,6 +128,7 @@ export function initPlayer(
     ...baseCom,
     speed: speed || 200,
     isProtected: false,
+    shot_cd:200,
   };
   return com;
 }

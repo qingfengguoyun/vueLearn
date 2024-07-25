@@ -140,6 +140,11 @@
             comData.value.isActive = true
         }, Math.random() * 1000)
     }
+
+    //重置子弹发射cd
+    function resetShotCD(){
+        comData.value.shot_cd=comDataSnipaste.shot_cd;
+    }
     // 自定义逻辑结束
 
     // 组件重置方法(临时，刷新组件用，例如越界刷新位置等)
@@ -167,6 +172,7 @@
         moveStyle1,
         moveStyle2,
         enemyExplode,
+        resetShotCD,
         //自定义逻辑
         // move
     })

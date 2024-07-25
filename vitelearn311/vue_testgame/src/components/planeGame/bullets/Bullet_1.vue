@@ -75,7 +75,7 @@
         let interval = 20;
         console.log("@@@" + comData.value.isActive)
         let id = setInterval(() => {
-            console.log(comData.value.isActive)
+            // console.log(comData.value.isActive)
             // 若isActive为false或子弹的位置超出边界
             if (!comData.value.isActive || comData.value.top < -100) {
                 // console.log(comData.value)

@@ -33,6 +33,7 @@ export interface Player extends BaseCom{
 
     speed?:number,
     isProtected:boolean,
+    shot_cd?:number
 
 }
 

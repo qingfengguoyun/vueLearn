@@ -25,7 +25,7 @@
 <script lang='ts' setup>
     import { ref, inject, type Ref, watch, computed } from "vue";
     import { cloneDeep } from 'lodash';
-    import { getBaseComCenter, initBaseCom, toSizeStyle, toStyle } from "@/hooks/useBaseCom";
+    import { getBaseComCenter, initBaseCom, toSizeStyle, toStyle, validateHitbox } from "@/hooks/useBaseCom";
     import type { BaseCom, Enemy, GameConfig, Player } from "@/types";
     import { getRamdomInit } from "@/hooks/useUtils";
     import BaseComponent from "../BaseComponent.vue";
@@ -71,11 +71,11 @@
     comInit()
 
     // 监听组件位置，实时更新受击框位置
-    // watch(() => {
-    //     return [comData.value.left, comData.value.top]
-    // }, () => {
-    //     validateHitbox(comData.value);
-    // })
+    watch(() => {
+        return [comData.value.left, comData.value.top]
+    }, () => {
+        validateHitbox(comData.value);
+    })
 
     // 实现组件自定义逻辑，封装为方法(例如移动，各种动作,动画等)
 
@@ -128,6 +128,10 @@
             comData.value.isProtected = false;
         }, 50000)
     }
+    //重置子弹发射cd
+    function resetShotCD() {
+        comData.value.shot_cd = comDataSnipaste.shot_cd;
+    }
 
     // 自定义逻辑结束
 
@@ -159,6 +163,7 @@
         hurt,
         getShield,
         shieldData,
+        resetShotCD,
     })
 
 </script>
