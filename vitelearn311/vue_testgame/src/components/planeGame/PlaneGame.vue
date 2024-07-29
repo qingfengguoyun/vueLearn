@@ -117,21 +117,21 @@
 
 
     // 自机配置
-    let playerData: Player = initPlayer(40, 40, 130, 400, 25, 25, 800, 'img/charactors/plane/plane_1.png')
+    let playerData: Player = initPlayer(40, 40, 130, 400, 25, 25, 800, './img/charactors/plane/plane_1.png')
     let playerPlane = useComponentRef(Plane)
 
     // 剩余血量图标配置
     let playerLifes: Ref<BaseCom[]> = ref([])
     for (let i = 0; i < 4; i++) {
-        playerLifes.value.push(initBaseCom(20, 20, 30 + 20 * i, displayBoard.value.height - 30, 0, 0, 'img/charactors/plane/plane_1.png'))
+        playerLifes.value.push(initBaseCom(20, 20, 30 + 20 * i, displayBoard.value.height - 30, 0, 0, './img/charactors/plane/plane_1.png'))
     }
 
 
     // 陨石相关配置
     let asteroidDatas: Ref<Enemy[]> = ref([]);
-    asteroidDatas.value.push(initEnemy(40, 40, 30, 100, 25, 25, 100, 10, 'img/charactors/asteroid/Asteroid_1.png'),
+    asteroidDatas.value.push(initEnemy(40, 40, 30, 100, 25, 25, 100, 10, './img/charactors/asteroid/Asteroid_1.png'),
         initEnemy(40, 40, 130, 100, 25, 25, 100, 10, 'img/charactors/asteroid/Asteroid_1.png'),
-        initEnemy(40, 40, 230, 100, 25, 25, 100, 10, 'img/charactors/asteroid/Asteroid_1.png'))
+        initEnemy(40, 40, 230, 100, 25, 25, 100, 10, './img/charactors/asteroid/Asteroid_1.png'))
     let asteroids = useComponentArrayRef(Asteroid);
 
     // 自机子弹相关配置
@@ -181,7 +181,7 @@
             50,
             50,
             30,
-            'img/charactors/enemy/nautolan/Nautolan_2.png'
+            './img/charactors/enemy/nautolan/Nautolan_2.png'
         ))
     }
 
@@ -197,7 +197,7 @@
             displayBoard.value.height,
             15,
             15,
-            'img/charactors/weapon/bullet/nautolan_bullet_1.png'));
+            './img/charactors/weapon/bullet/nautolan_bullet_1.png'));
     }
     // 当前子弹id
     let currentEnemyBullet = 0;
@@ -715,7 +715,7 @@
     .border_background {
         /* background-image: url('/img/background/background_1.png'); */
         /* background-color: aquamarine */
-        background-image: url('/img/background/space_1.png');
+        background-image: url('./img/background/space_1.png');
         background-size: auto 100%;
         background-repeat: repeat;
 

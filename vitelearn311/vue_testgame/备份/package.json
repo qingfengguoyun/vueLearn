@@ -5,6 +5,17 @@
   "private": false,
   "type": "module",
 
+  "main": "./dist/vue_testgame.umd.cjs",
+  "module": "./dist/vue_testgame.js",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/vue_testgame.js",
+      "require": "./dist/vue_testgame.umd.cjs"
+    }
+  },
 
   "scripts": {
     "dev": "vite",
