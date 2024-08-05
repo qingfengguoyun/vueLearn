@@ -89,6 +89,10 @@
                 clearInterval(id);
                 return;
             }
+            // 如果游戏为暂停状态，不执行后续逻辑
+            if (gameConfig.value.isPaused) {
+                return;
+            }
 
             if (comData.value.left >= displayBoard.width - comData.value.width && h_move == 'right') {
                 // console.log("left")
@@ -117,6 +121,10 @@
         let id = setInterval(() => {
             if (gameConfig.value.isGameover) {
                 clearInterval(id);
+                return;
+            }
+            // 如果游戏为暂停状态，不执行后续逻辑
+            if (gameConfig.value.isPaused) {
                 return;
             }
             if (comData.value.isActive) {

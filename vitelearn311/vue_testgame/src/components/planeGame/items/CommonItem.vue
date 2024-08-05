@@ -1,5 +1,4 @@
 <template>
-    <!-- <div class="baseCom" :style="toStyle(comData)" style="transform: rotate(180deg);" :class="animationClasses"></div> -->
     <div class="baseCom" :style="toStyle(comData)" :class="animationClasses">
         <slot>
             <!-- <div :style="toStyle(comData)"></div> -->
@@ -9,44 +8,43 @@
 <script lang='ts'>
     export default
         {
-            name: "EnemyPlaneBig"
+            name: "BaseCom"
         }
 </script>
 <script lang='ts' setup>
     import { ref, inject, type Ref, watch } from "vue";
     import { cloneDeep } from 'lodash';
     import { toSizeStyle, toStyle, validateHitbox } from "@/hooks/useBaseCom";
-    import type { BaseCom, Enemy, GameConfig } from "@/types";
+    import type { BaseCom, Enemy, GameConfig, Item } from "@/types";
     import { getRamdomInit } from "@/hooks/useUtils";
     // 组件初始化属性（位置，判定区，显示图片等)
-    let { baseCom } = defineProps<{ baseCom: Enemy }>();
+    let { baseCom } = defineProps<{ baseCom: Item }>();
     let comData = ref(baseCom)
-
     // 组件默认配置
     // 组件创建时的初始化配置(彻底重置时使用，例如游戏重置)
-    let comDataDefault: Enemy;
+    let comDataDefault: Item;
     // 组件临时配置(用于记录组件数值的临时状态（例如速度等属性修改，组件刷新时使用)
-    let comDataSnipaste: Enemy;
-
+    let comDataSnipaste: Item;
     //组件动画类
     let animationClasses = ref({
-        enemy_explode: false,
         // fire_loop: true,
+        // bullet_loop: true
     })
     //组件动画默认配置（重置时使用）
     let animationClassesDefault = cloneDeep(animationClasses.value);
     //游戏总配置项
     let gameConfig = inject<Ref<GameConfig>>("gameConfig") as Ref<GameConfig>;
     let displayBoard = inject<BaseCom>("displayBoard") as BaseCom;
-
     // 组件各项内容（comData）初始化
     function comInit() {
         // 对组件各项内容（comData）进行初始化
         // comData.value.height=0;
         // ...
-        comData.value.display_img = "img/charactors/enemy/nautolan/Nautolan_2.png"
-        comData.value.hp = 5;
-        comData.value.shot_cd = 3000;
+        if (!comData.value.type) {
+            comData.value.type = "commonItem"
+        }
+        comData.value.speed = 150
+
         // 组件默认值备份
         comDataSnipaste = cloneDeep(comData.value)
         comDataDefault = cloneDeep(comData.value)
@@ -61,7 +59,9 @@
         validateHitbox(comData.value);
     })
 
-    // 实现组件自定义逻辑，封装为方法(例如移动，各种动作,动画等)
+
+
+    // 实现组件自定义逻辑，封装为方法(例如移动，各种动作,动画等)，对外暴露
 
     // function move(){
     //     let id=setInterval(()=>{
@@ -69,20 +69,6 @@
     //         comData.hitbox_left+=1;
     //     },50);
     // }  
-
-    function enemyExplode() {
-        // comData.value.displayImg      
-        console.log("enemyPlaneExplode")
-        comData.value.isActive = false
-        animationClasses.value.enemy_explode = true;
-        let id = setTimeout(() => {
-            // comData.value.isActive=false;
-            // animationClasses.value.asteroid_explode=false;
-            // reset();
-            randomReset()
-        }, 400);
-    }
-
     function moveStyle1() {
         let interval = 20
         let h_move = 'right';
@@ -126,10 +112,6 @@
                 clearInterval(id);
                 return;
             }
-            // 如果游戏为暂停状态，不执行后续逻辑
-            if (gameConfig.value.isPaused) {
-                return;
-            }
             if (comData.value.isActive) {
                 comData.value.top += comData.value.speed! * interval / 1000;
             }
@@ -149,10 +131,6 @@
         }, Math.random() * 1000)
     }
 
-    //重置子弹发射cd
-    function resetShotCD() {
-        comData.value.shot_cd = comDataSnipaste.shot_cd;
-    }
     // 自定义逻辑结束
 
     // 组件重置方法(临时，刷新组件用，例如越界刷新位置等)
@@ -178,9 +156,6 @@
         resetDefault,
         randomReset,
         moveStyle1,
-        moveStyle2,
-        enemyExplode,
-        resetShotCD,
         //自定义逻辑
         // move
     })
@@ -192,25 +167,6 @@
         display: flex;
         justify-content: center;
         /* align-items: center; */
-    }
-
-    @keyframes enemy_explode {
-
-        from {
-            background-position: 0% 0px
-        }
-
-        to {
-            background-position: -1300% 0px;
-        }
-    }
-
-    .enemy_explode {
-        animation-name: enemy_explode;
-        animation-duration: 0.8s;
-        animation-iteration-count: 1;
-        animation-timing-function: steps(13);
-        animation-fill-mode: forwards;
     }
 
     /* .fire_loop {
@@ -226,8 +182,9 @@
             background-position: 0% 0px;
         }
 
+        // background-position: x, y; 表示背景图向右/上移动，若想从左到右展示背景图，x应设置为负值
         to {
-            background-position: 800% 0px;
+            background-position: -800% 0px;
         }
 
     } */

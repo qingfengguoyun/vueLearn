@@ -1,4 +1,4 @@
-import type { BaseCom, Player, Enemy } from "@/types";
+import type { BaseCom, Player, Enemy, Item } from "@/types";
 import { computed } from "vue";
 
 export function toStyle(config: BaseCom) {
@@ -128,7 +128,12 @@ export function initPlayer(
     ...baseCom,
     speed: speed || 200,
     isProtected: false,
-    shot_cd:200,
+    shot_cd: 200,
+    shield_duration:0,
+    hp:4,
+    max_hp:4,
+    power_level:0,
+    max_power_level:2,
   };
   return com;
 }
@@ -182,6 +187,43 @@ export function initEnemy(
   return enemy;
 }
 
+export function initItem(
+  w?: number,
+  h?: number,
+  left?: number,
+  top?: number,
+  h_w?: number,
+  h_h?: number,
+) :Item;
+export function initItem(
+  w?: number,
+  h?: number,
+  left?: number,
+  top?: number,
+  h_w?: number,
+  h_h?: number,
+  type?: string,
+) :Item;
+export function initItem(
+  w?: number,
+  h?: number,
+  left?: number,
+  top?: number,
+  h_w?: number,
+  h_h?: number,
+  type?:string,
+  speed?: number,
+  display_img?: string
+) :Item {
+  let baseCom = initBaseCom(w, h, left, top, h_w, h_h, display_img);
+  let item: Item = {
+    ...baseCom,
+    speed: speed || 200,
+    type: type || "commonItem",
+    item_cd:10000,
+  };
+  return item;
+}
 
 //获取BaseCom的中心坐标
 export function getBaseComCenter(baseCom: BaseCom) {
@@ -229,7 +271,16 @@ export function validateHitbox(baseCom: BaseCom) {
 }
 
 // 在baseCom中心创建一个指定长宽的baseCom
-export function createBaseComAtMiddle(boardCom: BaseCom, width: number, height: number): BaseCom {
-  let center=getBaseComCenter(boardCom)
-  return initBaseCom(width, height, center.center_x - width / 2, center.center_y - height / 2)
+export function createBaseComAtMiddle(
+  boardCom: BaseCom,
+  width: number,
+  height: number
+): BaseCom {
+  let center = getBaseComCenter(boardCom);
+  return initBaseCom(
+    width,
+    height,
+    center.center_x - width / 2,
+    center.center_y - height / 2
+  );
 }

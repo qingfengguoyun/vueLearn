@@ -29,16 +29,23 @@
                 <!-- {{ index }} -->
                 <EnemyBullet_1 :base-com="enemyBulletData" ref='enemyBullets1'></EnemyBullet_1>
             </template>
+            <!-- 道具组件 -->
+            <ShieldItem :base-com="shieldItemData" ref="shieldItem"></ShieldItem>
+            <!-- <PowerUp :base-com="powerUpItemData" ref="powerUpItem"></PowerUp> -->
+            <ExtraLife :base-com="extraLifeItemData" ref="extraLifeItem"></ExtraLife>
+            <template v-for="(powerUpItemData, index) in powerUpItemDatas " :key="powerUpItemData">
+                <PowerUp :base-com="powerUpItemData" ref="powerUpItems"></PowerUp>
+            </template>
 
             <!-- 其他组件 -->
             <BaseComponent :base-com="initBaseCom(30, 30, 0, displayBoard.height - 30)">
                 <b>Life:</b>
             </BaseComponent>
             <template v-for="(playerLife, index) in playerLifes">
-                <BaseComponent :base-com="playerLife" v-if="index < gameConfig.lifeRemain!"></BaseComponent>
+                <BaseComponent :base-com="playerLife" v-if="index < playerData.hp!"></BaseComponent>
             </template>
             <div>
-                Life:{{ gameConfig.lifeRemain }}
+                Life:{{ playerData.hp! }}
             </div>
             <!-- <div v-if="!gameConfig.isGameover" class="gameover_board">
                 <b>Game Over</b><br>
@@ -60,9 +67,16 @@
                 <div class="gameover_board">
                     <b>Game Over</b><br>
                     <b>Score:{{ gameConfig.score }}</b><br>
+                    <!-- <b>asteroid:{{ destoryRecord.asteroid }}</b><br>
+                    <b>enemyPlane:{{ destoryRecord.enemyPlane }}</b><br>
+                    <b>enemyPlaneBig:{{ destoryRecord.enemyPlaneBig }}</b><br> -->
                     <b>重新开始</b>
                 </div>
             </BaseComponent>
+            <!-- <BaseComponent :base-com="initBaseCom(50, 50, 250, 0)" @click.stop="gamePause()">
+                <img :src="gameConfig.isPaused?'/img/status':''">
+            </BaseComponent> -->
+            <GamePause :base-com="initBaseCom(40, 30, 250, 20)" v-if="gameConfig.isGameStart && !gameConfig.isGameover" @click.stop="gamePause()"></GamePause>
         </div>
     </div>
 
@@ -82,8 +96,8 @@
     import { onMounted, ref, watch, type Ref, reactive, provide } from 'vue';
     import { ElMessage } from 'element-plus';
     import { useComponentArrayRef, useComponentRef } from '@/hooks/useComponentRef';
-    import type { BaseCom, Enemy, GameConfig, HitBox, Player } from '@/types';
-    import { createBaseComAtMiddle, getBaseComCenter, initBaseCom, initEnemy, initPlayer, isCollision, toSizeStyle, toStyle, validateHitbox, } from '@/hooks/useBaseCom';
+    import type { BaseCom, Enemy, GameConfig, HitBox, Item, Player } from '@/types';
+    import { createBaseComAtMiddle, getBaseComCenter, initBaseCom, initEnemy, initItem, initPlayer, isCollision, toSizeStyle, toStyle, validateHitbox, } from '@/hooks/useBaseCom';
     import { cloneDeep } from 'lodash';
     import BaseComponent from '@/components/BaseComponent.vue';
     import Plane from '@/components/planeGame/Plane.vue';
@@ -92,6 +106,10 @@
     import Asteroid from '@/components/planeGame/Asteroid.vue';
     import Bullet_1 from './bullets/Bullet_1.vue';
     import EnemyBullet_1 from './enemies/EnemyBullet_1.vue';
+    import ShieldItem from './items/ShieldItem.vue';
+    import PowerUp from './items/PowerUp.vue';
+    import ExtraLife from './items/ExtraLife.vue';
+    import GamePause from './status/GamePause.vue';
 
     // 游戏整体配置
     let gameConfig: Ref<GameConfig> = ref({
@@ -99,7 +117,12 @@
         isGameover: false,
         isPaused: false,
         score: 0,
-        lifeRemain: 4,
+    })
+    // 玩家击破敌人记录
+    let destoryRecord = ref({
+        asteroid: 0,
+        enemyPlane: 0,
+        enemyPlaneBig: 0,
     })
     provide('gameConfig', gameConfig)
 
@@ -113,11 +136,11 @@
     let boardAnimateClassDefault = cloneDeep(boardAnimateClass.value);
 
     //额外配置
-    let maxLife = 4;
+    // let maxLife = 4;
 
 
     // 自机配置
-    let playerData: Player = initPlayer(40, 40, 130, 400, 25, 25, 800, './img/charactors/plane/plane_1.png')
+    let playerData: Ref<Player> = ref(initPlayer(40, 40, 130, 400, 25, 25, 800, './img/charactors/plane/plane_1.png'))
     let playerPlane = useComponentRef(Plane)
 
     // 剩余血量图标配置
@@ -126,11 +149,10 @@
         playerLifes.value.push(initBaseCom(20, 20, 30 + 20 * i, displayBoard.value.height - 30, 0, 0, './img/charactors/plane/plane_1.png'))
     }
 
-
     // 陨石相关配置
     let asteroidDatas: Ref<Enemy[]> = ref([]);
     asteroidDatas.value.push(initEnemy(40, 40, 30, 100, 25, 25, 100, 10, './img/charactors/asteroid/Asteroid_1.png'),
-        initEnemy(40, 40, 130, 100, 25, 25, 100, 10, 'img/charactors/asteroid/Asteroid_1.png'),
+        initEnemy(40, 40, 130, 100, 25, 25, 100, 10, './img/charactors/asteroid/Asteroid_1.png'),
         initEnemy(40, 40, 230, 100, 25, 25, 100, 10, './img/charactors/asteroid/Asteroid_1.png'))
     let asteroids = useComponentArrayRef(Asteroid);
 
@@ -140,13 +162,13 @@
     //子弹总数
     let bulletCount = 15;
     for (let i = 0; i < bulletCount; i++) {
-        bulletDatas.value.push(initBaseCom(playerData.width!,
-            playerData.height!,
+        bulletDatas.value.push(initBaseCom(playerData.value.width!,
+            playerData.value.height!,
             -100,
             displayBoard.value.height,
-            playerData.width! / 3,
-            playerData.height! / 3,
-            'img/charactors/weapon/bullet/bullet_1.png'));
+            playerData.value.width! / 3,
+            playerData.value.height! / 3,
+            './img/charactors/weapon/bullet/bullet_1.png'));
     }
     // 当前子弹id
     let currentBullet = 0;
@@ -203,21 +225,56 @@
     let currentEnemyBullet = 0;
     // enemyBulletDatas.value.push(initBaseCom(40,40,50,300,20,20))
 
+    //局内道具
+    //护盾
+    let shieldItemData: Ref<Item> = ref(initItem(30, 30, 100, 300, 20, 20))
+    let shieldItem = useComponentRef(ShieldItem);
+    //额外生命
+    let extraLifeItemData: Ref<Item> = ref(initItem(30, 30, 100, 300, 20, 20))
+    let extraLifeItem = useComponentRef(ExtraLife);
+    //火力增强
+    let powerUpItemDatas: Ref<Item[]> = ref([])
+    for (let i = 0; i < 3; i++) {
+        powerUpItemDatas.value.push(initItem(30, 30, 100, 300, 20, 20))
+    }
+    let powerUpItems = useComponentArrayRef(PowerUp)
+    //火力道具生成cd
+    let powerUpItemCd = 8000
+    let powerUpItemCdDefault = 8000
+    // let powerUpItem = useComponentRef(PowerUp);
 
+    // 道具生成次数
+    let itemGeneratedTimes = ref({
+        shieldItem: 0,
+        extraLifeItem: 0,
+        powerUpItem: 0,
+    })
 
     //游戏初始化/重置方法
     function gameInit() {
-        // isGameover.value = false;
-        // score.value = 0;
+
         // 游戏总配置重置
         Object.assign(gameConfig.value, {
             isGameStart: true,
             isGameover: false,
             isPaused: false,
             score: 0,
-            lifeRemain: 4,
         })
         boardMove()
+
+        //玩家击破敌人记录重置
+        destoryRecord.value = {
+            asteroid: 0,
+            enemyPlane: 0,
+            enemyPlaneBig: 0,
+        }
+
+        // 道具生成次数重置
+        itemGeneratedTimes.value = {
+            shieldItem: 0,
+            extraLifeItem: 0,
+            powerUpItem: 0,
+        }
 
         //重置自机
         playerPlane.value?.resetDefault();
@@ -256,14 +313,28 @@
             enemyBigPlanes.value![i].resetDefault();
             enemyBigPlanes.value![i].randomReset();
             enemyBigPlanes.value![i].comData.isActive = true;
+            // 大型敌机开始游戏时不执行move
             // enemyBigPlanes.value![i].moveStyle2();
         }
+        // 重置道具
+        shieldItem.value?.resetDefault();
+        shieldItem.value?.randomReset();
+        extraLifeItem.value?.resetDefault();
+        extraLifeItem.value?.randomReset();
+        for (let powerUpItem of powerUpItems.value!) {
+            powerUpItem.resetDefault();
+            powerUpItem.randomReset();
+        }
+        powerUpItemCd = powerUpItemCdDefault
+
         // 检测子弹与陨石,敌机碰撞
         checkBulletsAndEnemys()
         // 检测自机和敌人是否碰撞
         checkPlayerPlaneAndEnemys()
+        // 检测自机与道具
+        checkPlayerAndItem()
         // 陨石，敌机等超出边界检测
-        checkOutBoardEnemys()
+        checkOutBoardCom()
         // 检测并移除失效子弹
         checkBullets();
         // 检查游戏是否结束
@@ -272,12 +343,20 @@
         autoShotBullet()
         // 分数检测
         checkScore()
+        // 局内道具生成
+        itemGenerate()
+
     }
     function gameStart() {
         gameInit();
         // obstacle.value.enemyMove();
         // boardMove();
-        // gameOverCheck();
+        // 
+        gameOverCheck();
+    }
+    function gamePause() {
+        gameConfig.value.isPaused = !gameConfig.value.isPaused
+        console.log(gameConfig.value.isPaused ? "game paused" : "game continue")
     }
     //背景开始移动
     function boardMove() {
@@ -335,34 +414,30 @@
     // 拖拽过程中子弹自动射击
     function autoShotBullet() {
         console.log("autoshot start")
-        let interval=20
+        let interval = 20
         let id = setInterval(() => {
             if (gameConfig.value.isGameover) {
                 console.log("autoShot stop")
                 clearInterval(id);
                 return;
             }
+            // 如果游戏为暂停状态，不执行后续逻辑
+            if (gameConfig.value.isPaused) {
+                return;
+            }
             if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
                 if (isDragging.value) {
-                    if(playerPlane.value!.comData.shot_cd!>=0){
-                        playerPlane.value!.comData.shot_cd!-=interval
-                    }else{
+                    if (playerPlane.value!.comData.shot_cd! >= 0) {
+                        playerPlane.value!.comData.shot_cd! -= interval
+                    } else {
                         bulletShoot();
                         playerPlane.value!.resetShotCD();
-                    }                    
+                    }
                 }
             }
         }, 20)
     }
-    // 自机跟随鼠标位置移动
-    // const handleMouseMove = function (event: MouseEvent) {
-    //     if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
-    //         mouseX.value = event.pageX;
-    //         mouseY.value = event.pageY;
-    //         playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
-    //     }
 
-    // };
 
     // 判断子弹和敌人是否碰撞
     function checkBulletsAndEnemys() {
@@ -372,6 +447,10 @@
             if (gameConfig.value.isGameover) {
                 console.log("checkBulletsAndEnemy stop")
                 clearInterval(id);
+            }
+            // 如果游戏为暂停状态，不执行后续逻辑
+            if (gameConfig.value.isPaused) {
+                return;
             }
             for (let bd of bulletDatas.value) {
                 for (let asteroid_index = asteroids.value!.length - 1; asteroid_index >= 0; asteroid_index--) {
@@ -383,6 +462,7 @@
                             // console.log(asteroids.value![asteroid_index])
                             asteroids.value![asteroid_index].asteroidExplode();
                             gameConfig.value.score += asteroids.value![asteroid_index].comData.score!;
+                            destoryRecord.value.asteroid += 1;
                         }
                     }
 
@@ -394,6 +474,7 @@
                             bd.isActive = false;
                             enemyPlane.enemyExplode();
                             gameConfig.value.score += enemyPlane.comData.score!;
+                            destoryRecord.value.enemyPlane += 1;
                         }
                     }
                 }
@@ -412,6 +493,7 @@
                                 bd.isActive = false;
                                 enemyPlane.enemyExplode();
                                 gameConfig.value.score += enemyPlane.comData.score!;
+                                destoryRecord.value.enemyPlaneBig += 1;
                             }
                         }
                     }
@@ -431,8 +513,13 @@
                 //需要return,否则最后一次循环会完整执行一遍
                 return;
             }
+            // 如果游戏为暂停状态，不执行后续逻辑
+            if (gameConfig.value.isPaused) {
+                return;
+            }
             //如果角色处于保护状态则不检测
-            if (playerPlane.value!.comData.isProtected) {
+            // TODO :保护状态检测盾牌碰撞，否则else逻辑无法检测盾牌击坠敌方
+            if (playerPlane.value?.comData.isProtected) {
 
             } else {
                 //检测陨石
@@ -446,10 +533,11 @@
                             console.log("shield protect")
                             asteroid.comData.isActive = false;
                             asteroid.asteroidExplode()
+                            destoryRecord.value.asteroid += 1;
                         } else {
-                            gameConfig.value.lifeRemain! -= 1;
-                            if (gameConfig.value.lifeRemain! > 0) {
-                                playerPlane.value!.hurt(maxLife - gameConfig.value.lifeRemain!)
+                            playerPlane.value!.comData.hp! -= 1;
+                            if (playerPlane.value!.comData.hp! > 0) {
+                                playerPlane.value!.hurt(playerPlane.value!.comData.max_hp! - playerPlane.value!.comData.hp!)
                                 // playerPlane.value!.getShield()
                                 asteroid.comData.isActive = false;
                                 asteroid.asteroidExplode()
@@ -467,10 +555,11 @@
                             console.log("shield protect")
                             enemyPlane.comData.isActive = false;
                             enemyPlane.enemyExplode();
+                            destoryRecord.value.enemyPlane += 1;
                         } else {
-                            gameConfig.value.lifeRemain! -= 1;
-                            if (gameConfig.value.lifeRemain! > 0) {
-                                playerPlane.value!.hurt(maxLife - gameConfig.value.lifeRemain!)
+                            playerPlane.value!.comData.hp! -= 1;
+                            if (playerPlane.value!.comData.hp! > 0) {
+                                playerPlane.value!.hurt(playerPlane.value!.comData.max_hp! - playerPlane.value!.comData.hp!)
                                 // playerPlane.value!.getShield()
                                 enemyPlane.comData.isActive = false;
                                 enemyPlane.enemyExplode();
@@ -489,10 +578,11 @@
                             console.log("shield protect")
                             enemyPlane.comData.isActive = false;
                             enemyPlane.enemyExplode();
+                            destoryRecord.value.enemyPlaneBig += 1;
                         } else {
-                            gameConfig.value.lifeRemain! -= 1;
-                            if (gameConfig.value.lifeRemain! > 0) {
-                                playerPlane.value!.hurt(maxLife - gameConfig.value.lifeRemain!)
+                            playerPlane.value!.comData.hp! -= 1;
+                            if (playerPlane.value!.comData.hp! > 0) {
+                                playerPlane.value!.hurt(playerPlane.value!.comData.max_hp! - playerPlane.value!.comData.hp!)
                                 // playerPlane.value!.getShield()
                                 enemyPlane.comData.isActive = false;
                                 enemyPlane.enemyExplode();
@@ -512,9 +602,9 @@
                             console.log("shield protect")
                             enemyBullet.comData.isActive = false;
                         } else {
-                            gameConfig.value.lifeRemain! -= 1;
-                            if (gameConfig.value.lifeRemain! > 0) {
-                                playerPlane.value!.hurt(maxLife - gameConfig.value.lifeRemain!)
+                            playerPlane.value!.comData.hp! -= 1;
+                            if (playerPlane.value!.comData.hp! > 0) {
+                                playerPlane.value!.hurt(playerPlane.value!.comData.max_hp! - playerPlane.value!.comData.hp!)
                                 // playerPlane.value!.getShield()
                                 enemyBullet.comData.isActive = false;
                             }
@@ -522,7 +612,46 @@
 
                     }
                 }
+
             }
+        }, 20)
+    }
+
+    // 判断自机与道具
+    function checkPlayerAndItem() {
+        console.log("checkPlayerAndItem")
+        // console.log(asteroids.value)
+        let id = setInterval(() => {
+            if (gameConfig.value.isGameover) {
+                console.log("checkPlayerAndItem stop")
+                clearInterval(id);
+                //需要return,否则最后一次循环会完整执行一遍
+                return;
+            }
+            // 如果游戏为暂停状态，不执行后续逻辑
+            if (gameConfig.value.isPaused) {
+                return;
+            }
+            // 检测护盾
+            if (shieldItem.value?.comData.isActive) {
+                checkItem(shieldItem.value.comData);
+                // console.log("is get item", isCollision(playerPlane.value?.comData!, shieldItem.value.comData));
+            }
+
+            // 检测额外生命道具
+            if (extraLifeItem.value?.comData.isActive) {
+                checkItem(extraLifeItem.value.comData);
+                // checkPlayerAndItem(extraLifeItemData)
+            }
+
+            // 检测火力强化道具
+            for (let powerUpItem of powerUpItems.value!) {
+                if (powerUpItem.comData.isActive) {
+                    checkItem(powerUpItem.comData, powerUpItem)
+                }
+            }
+
+
         }, 20)
     }
 
@@ -558,21 +687,25 @@
             enemyBullets1.value![currentEnemyBullet].comData.left = getBaseComCenter(enemyPlaneComData).center_x - 30 / 2;
             enemyBullets1.value![currentEnemyBullet].comData.top = getBaseComCenter(enemyPlaneComData).center_y;
             validateHitbox(enemyBullets1.value![currentEnemyBullet].comData)
-            console.log(currentEnemyBullet);
-            console.log(enemyBullets1.value![currentEnemyBullet].comData.top)
+            // console.log(currentEnemyBullet);
+            // console.log(enemyBullets1.value![currentEnemyBullet].comData.top)
             enemyBullets1.value![currentEnemyBullet].move()
             //子弹下标后移
             currentEnemyBullet = (currentEnemyBullet + 1) % bulletCount;
         }, 20)
     }
-        // 大型敌机发射子弹
-        function enemyPlaneShot() {
+    // 大型敌机发射子弹
+    function enemyPlaneShot() {
         console.log("big enemy Plane start shoting")
         let interval = 20;
-        let id = setInterval( () => {
+        let id = setInterval(() => {
             if (gameConfig.value.isGameover) {
                 console.log("big enemy Plane stop shot")
                 clearInterval(id);
+                return;
+            }
+            // 如果游戏为暂停状态，不执行后续逻辑
+            if (gameConfig.value.isPaused) {
                 return;
             }
             if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
@@ -581,7 +714,7 @@
                         if (enemyBigPlane.comData.shot_cd! > 0) {
                             enemyBigPlane.comData.shot_cd! -= interval;
                         } else {
-                            console.log("shot!!")
+                            // console.log("shot!!")
                             // 在敌机中心生成一个敌方子弹并移动
                             enemyBulletShoot(enemyBigPlane.comData);
                             //重置敌机子弹发射cd
@@ -603,6 +736,10 @@
                 clearInterval(id);
                 return;
             }
+            // 如果游戏为暂停状态，不执行后续逻辑
+            if (gameConfig.value.isPaused) {
+                return;
+            }
 
             //自机子弹检测
             for (let bullet of bullets1.value!) {
@@ -621,12 +758,17 @@
 
 
 
-    // 越界敌人重置
-    function checkOutBoardEnemys() {
-        console.log("checkOutBoardEnemys")
+    // 越界组件重置
+    function checkOutBoardCom() {
+        console.log("checkOutBoardComs")
         let id = setInterval(() => {
             if (gameConfig.value.isGameover) {
+                console.log("stop checkOutBoardComs")
                 clearInterval(id);
+                return;
+            }
+            // 如果游戏为暂停状态，不执行后续逻辑
+            if (gameConfig.value.isPaused) {
                 return;
             }
             for (let i = asteroids.value!.length - 1; i >= 0; i--) {
@@ -644,6 +786,19 @@
                     enemyBigPlane.randomReset();
                 }
             }
+            // 道具组件越界检测
+            if (shieldItem.value?.comData.top! > displayBoard.value.height) {
+                shieldItem.value?.randomReset();
+            }
+            if (extraLifeItem.value?.comData.top! > displayBoard.value.height) {
+                extraLifeItem.value?.randomReset();
+            }
+            for (let powerUpItem of powerUpItems.value!) {
+                if (powerUpItem.comData.top! > displayBoard.value.height) {
+                    powerUpItem.randomReset();
+                }
+            }
+
         }, 20)
     }
     // 分数检测
@@ -651,6 +806,15 @@
         // 监听游戏系统分数
         // 设置定时任务，若分数大于一定值后执行逻辑，并移除定时任务
         let id1 = setInterval(() => {
+            if (gameConfig.value.isGameover) {
+                console.log("checkScore stop")
+                clearInterval(id1);
+                return;
+            }
+            // 如果游戏为暂停状态，不执行后续逻辑
+            if (gameConfig.value.isPaused) {
+                return;
+            }
             if (gameConfig.value.score >= 0) {
                 // 分数大于100，大型敌机开始移动
                 console.log("enemyBigPlane Start Moving")
@@ -665,6 +829,106 @@
         })
     }
 
+    // 道具生成
+    function itemGenerate() {
+        console.log("itemGenerate start")
+        shieldItem.value?.randomReset()
+        extraLifeItem.value?.randomReset()
+        for (let powerUpItem of powerUpItems.value!) {
+            powerUpItem.randomReset()
+        }
+
+        //道具组件开启移动线程
+        // shieldItem.value?.moveStyle1()
+        // extraLifeItem.value?.moveStyle1()
+        // powerUpItem.value?.moveStyle1()
+        let interval = 20;
+        let id = setInterval(() => {
+            if (gameConfig.value.isGameover) {
+                console.log("itemGenerate stop")
+                clearInterval(id);
+                return;
+            }
+            // 如果游戏为暂停状态，不执行后续逻辑
+            if (gameConfig.value.isPaused) {
+                return;
+            }
+            // 每击破5个大型敌机生成一个护盾道具
+            if (destoryRecord.value.enemyPlaneBig - itemGeneratedTimes.value.shieldItem * 5 >= 5) {
+                console.log("generate sheild")
+                console.log(shieldItem.value!.comData.isActive!)
+                // 如果护盾组件没有生效，则护盾组件重置并开始移动
+                if (!shieldItem.value!.comData.isActive!) {
+                    shieldItem.value!.randomReset();
+                    shieldItem.value!.comData.isActive = true;
+                    shieldItem.value!.moveStyle1();
+                }
+                itemGeneratedTimes.value.shieldItem += 1;
+            }
+            // 每500分生成一个加命道具
+            if (gameConfig.value.score - itemGeneratedTimes.value.extraLifeItem * 500 >= 500) {
+                // 如果额外血量组件未生效，则重置并开始移动
+                console.log("generate extraLife")
+                if (!extraLifeItem.value!.comData.isActive!) {
+                    extraLifeItem.value!.randomReset();
+                    extraLifeItem.value!.moveStyle1();
+                }
+                itemGeneratedTimes.value.extraLifeItem += 1;
+            }
+            // 经过固定cd生成一个火力道具
+            powerUpItemCd -= interval
+            if (powerUpItemCd <= 0) {
+                console.log("generate powerUp")
+                // 选择一个未生效的火力道具组件开始移动
+                for (let powerUpItem of powerUpItems.value!) {
+                    console.log("powerupitem", powerUpItem.comData.isActive)
+                    if (!powerUpItem.comData.isActive) {
+                        powerUpItem.randomReset()
+                        powerUpItem.comData.isActive = true;
+                        powerUpItem.moveStyle2();
+                        break;
+                    }
+                }
+                itemGeneratedTimes.value.powerUpItem += 1;
+                powerUpItemCd = powerUpItemCdDefault
+            }
+        }, interval)
+    }
+
+    /**
+     * 
+     * @param item 道具组件数值
+     * @param itemCom  道具组件对象
+     */
+    function checkItem(item: Item, itemCom?: any) {
+
+        if (isCollision(playerPlane.value!.comData, item)) {
+            console.log("item get")
+            console.log(item.type)
+            if (item.type == "shield") {
+                console.log("get shield")
+                playerPlane.value!.getShield();
+                shieldItem.value?.comData.isActive != false;
+                shieldItem.value?.randomReset()
+            } else if (item.type == "extraLife") {
+                console.log("get extraLife")
+                if (playerPlane.value!.comData.hp! < playerPlane.value!.comData.max_hp!) {
+                    playerPlane.value!.comData.hp! += 1;
+                    playerPlane.value!.setPlaneStatusImg(playerPlane.value!.comData.max_hp! - playerPlane.value!.comData.hp!)
+                }
+                extraLifeItem.value?.comData.isActive != false;
+                extraLifeItem.value?.randomReset();
+            } else if (item.type == "powerUp") {
+                console.log("get powerUp")
+                playerPlane.value?.getPowerUp()
+                itemCom.comData.isActive != false;
+                itemCom.randomReset();
+            }
+
+        }
+    }
+
+
 
 
     // 监听游戏是否结束
@@ -675,18 +939,13 @@
                 clearInterval(id);
                 return;
             } else {
-                if (gameConfig.value.lifeRemain! <= 0) {
+                if (playerPlane.value?.comData.hp! <= 0) {
                     gameConfig.value.isGameover = true;
                 }
 
             }
         }, 10)
     }
-
-
-
-
-
 
     onMounted(() => {
 
@@ -715,7 +974,7 @@
     .border_background {
         /* background-image: url('/img/background/background_1.png'); */
         /* background-color: aquamarine */
-        background-image: url('./img/background/space_1.png');
+        background-image: url('/img/background/space_1.png');
         background-size: auto 100%;
         background-repeat: repeat;
 

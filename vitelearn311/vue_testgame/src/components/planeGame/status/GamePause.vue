@@ -8,41 +8,41 @@
 <script lang='ts'>
     export default
         {
-            name: "Shield"
+            name: "GamePause"
         }
 </script>
 <script lang='ts' setup>
-    import { ref, inject, type Ref,watch } from "vue";
+    import { ref, inject, type Ref, watch } from "vue";
     import { cloneDeep } from 'lodash';
-    import { toSizeStyle, toStyle, validateHitbox } from "@/hooks/useBaseCom";
+    import { toSizeStyle, toStyle,validateHitbox} from "@/hooks/useBaseCom";
     import type { BaseCom, Enemy, GameConfig } from "@/types";
     import { getRamdomInit } from "@/hooks/useUtils";
     // 组件初始化属性（位置，判定区，显示图片等)
     let { baseCom } = defineProps<{ baseCom: BaseCom }>();
-    let comData=ref(baseCom)
+    let comData = ref(baseCom)
     // 组件默认配置
-    let comDataDefault:BaseCom;
+    // 组件创建时的初始化配置(彻底重置时使用，例如游戏重置)
+    let comDataDefault: BaseCom;
+    // 组件临时配置(用于记录组件数值的临时状态（例如速度等属性修改，组件刷新时使用)
+    let comDataSnipaste:BaseCom;
     //组件动画类
     let animationClasses = ref({
         // fire_loop: true,
-        shield_loop: true,
     })
     //组件动画默认配置（重置时使用）
     let animationClassesDefault = cloneDeep(animationClasses.value);
     //游戏总配置项
     let gameConfig = inject<Ref<GameConfig>>("gameConfig") as Ref<GameConfig>;
     // 组件各项内容（comData）初始化
-    function comInit(){
+    function comInit() {
         // 对组件各项内容（comData）进行初始化
         // comData.value.height=0;
         // ...
-        if(!comData.value.display_img){
-            comData.value.display_img="./img/charactors/shield/shield_1.png"
-        }
-        // comData.value.isActive=true;
-        // console.log(comData.value.isActive)
+        comData.value.display_img="./img/status/pause_1.png"
+
         // 组件默认值备份
-        comDataDefault=cloneDeep(comData.value)
+        comDataSnipaste=cloneDeep(comData.value)
+        comDataDefault = cloneDeep(comData.value)
     }
     // 组件初始化
     comInit()
@@ -55,7 +55,7 @@
     })
 
 
-    
+
     // 实现组件自定义逻辑，封装为方法(例如移动，各种动作,动画等)，对外暴露
 
     // function move(){
@@ -64,19 +64,42 @@
     //         comData.hitbox_left+=1;
     //     },50);
     // }  
+    // function gamePause(){
+    //     gameConfig.value.isPaused=!gameConfig.value.isPaused;
+    //     console.log(gameConfig.value.isPaused?"game paused":"game resume" )
+    //     comData.value.display_img=gameConfig.value.isPaused?"./img/status/resume_1.png":"./img/status/pause_1.png"
+    // }
+    watch(()=>{
+        return gameConfig.value.isPaused;
+    },(o,n)=>{
+        // console.log(gameConfig.value.isPaused?"game paused":"game resume" )
+        comData.value.display_img=gameConfig.value.isPaused?"./img/status/resume_1.png":"./img/status/pause_1.png"
+    })
 
     // 自定义逻辑结束
 
-    //组件重置方法
+    // 组件重置方法(临时，刷新组件用，例如越界刷新位置等)
     function reset() {
         // 动画重置
         Object.assign(animationClasses.value, animationClassesDefault)
         // 主配置（位置，默认图片等）重置
-        Object.assign(comData.value,comDataDefault)
+        Object.assign(comData.value, comDataDefault)
+    }
+    // 组件还原初始默认状态（完全重置，游戏重置等时机使用）
+    function resetDefault(){
+        // 动画重置
+        Object.assign(animationClasses.value, animationClassesDefault)
+        // 主配置（位置，默认图片等）重置
+        // 临时配置重置为默认
+        Object.assign(comDataSnipaste, comDataDefault)
+        // 组件数据重置
+        Object.assign(comData.value, comDataDefault)
     }
     defineExpose({
         comData,
         reset,
+        resetDefault,
+        // gamePause,
         //自定义逻辑
         // move
     })
@@ -85,26 +108,9 @@
 <style scoped>
     .baseCom {
         position: absolute;
-        display: flex; 
-        justify-content: center; 
+        display: flex;
+        justify-content: center;
         /* align-items: center; */
-    }
-
-    @keyframes shield_loop{
-        from {
-            background-position: 0% 0px;
-        }
-
-        to {
-            background-position: -1200% 0px;
-        }
-    }
-
-    .shield_loop {
-        animation-name: shield_loop;
-        animation-duration: 3s;
-        animation-iteration-count: infinite;
-        animation-timing-function: steps(12);
     }
 
     /* .fire_loop {

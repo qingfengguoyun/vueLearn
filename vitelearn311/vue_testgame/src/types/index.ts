@@ -34,7 +34,19 @@ export interface Player extends BaseCom{
     speed?:number,
     isProtected:boolean,
     shot_cd?:number
+    shield_duration?:number
+    hp?:number,
+    max_hp?:number,
+    // 火力等級
+    power_level?:number,
+    max_power_level?:number,
 
+}
+
+export interface Item extends BaseCom{
+    type?:string,
+    speed?:number,
+    item_cd?:number,
 }
 
 export interface GameConfig {

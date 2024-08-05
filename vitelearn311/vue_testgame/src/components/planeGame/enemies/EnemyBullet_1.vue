@@ -26,7 +26,7 @@
     // 组件创建时的初始化配置(彻底重置时使用，例如游戏重置)
     let comDataDefault: BaseCom;
     // 组件临时配置(用于记录组件数值的临时状态（例如速度等属性修改，组件刷新时使用)
-    let comDataSnipaste:BaseCom;
+    let comDataSnipaste: BaseCom;
     let bulletSpeed = 200;
     //组件动画类
     let animationClasses = ref({
@@ -48,7 +48,7 @@
         comData.value.display_img = "img/charactors/weapon/bullet/nautolan_bullet_1.png"
         // comData.value.isActive=true;
         // 组件默认值备份
-        comDataSnipaste=cloneDeep(comData.value)
+        comDataSnipaste = cloneDeep(comData.value)
         comDataDefault = cloneDeep(comData.value)
         // move()
         // // 敌机子弹创建时直接执行移动方法
@@ -79,10 +79,15 @@
         let interval = 20;
         let id = setInterval(() => {
             // 若isActive为false或子弹的位置超出边界
-            if (!comData.value.isActive || comData.value.top > displayBoard.height+50) {
+            if (!comData.value.isActive || comData.value.top > displayBoard.height + 50) {
                 comData.value.isActive = false;
                 reset();
                 clearInterval(id);
+                return;
+            }
+            // 如果游戏为暂停状态，不执行后续逻辑
+            if (gameConfig.value.isPaused) {
+                return;
             }
             comData.value.top += bulletSpeed * interval / 1000;
             // comData.value.hitbox_top-=200*interval/1000;
@@ -102,7 +107,7 @@
         Object.assign(comData.value, comDataDefault)
     }
     // 组件还原初始默认状态（完全重置，游戏重置等时机使用）
-    function resetDefault(){
+    function resetDefault() {
         // 动画重置
         Object.assign(animationClasses.value, animationClassesDefault)
         // 主配置（位置，默认图片等）重置

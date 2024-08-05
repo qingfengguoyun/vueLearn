@@ -23,7 +23,7 @@
         }
 </script>
 <script lang='ts' setup>
-    import { ref, inject, type Ref, watch, computed } from "vue";
+    import { ref, inject, type Ref, watch, computed, withCtx } from "vue";
     import { cloneDeep } from 'lodash';
     import { getBaseComCenter, initBaseCom, toSizeStyle, toStyle, validateHitbox } from "@/hooks/useBaseCom";
     import type { BaseCom, Enemy, GameConfig, Player } from "@/types";
@@ -62,7 +62,10 @@
         // 对组件各项内容（comData）进行初始化
         // comData.value.height=0;
         // ...
-
+        comData.value.isActive=true;
+        comData.value.shot_cd=200;
+        comData.value.max_hp=4;
+        comData.value.hp=4;
         // 组件默认值备份
         comDataSnipaste = cloneDeep(comData.value)
         comDataDefault = cloneDeep(comData.value)
@@ -109,27 +112,82 @@
         'img/charactors/plane/plane_4.png',
     ]
 
+    // 根据血量修改显示图像
+    function setPlaneStatusImg(planeStatus: number){
+        comData.value.display_img = planeStatusImg[planeStatus];
+    }
+
     function hurt(planeStatus: number) {
         comData.value.isProtected = true;
-        comData.value.display_img = planeStatusImg[planeStatus];
+        setPlaneStatusImg(planeStatus)
         animationClasses.value.protected = true;
+        //三秒后移除无敌状态
         let id = setTimeout(() => {
+            // 移除保护动画
             animationClasses.value.protected = false;
-            comData.value.isProtected = false;
+            //护盾未生效，移除保护状态
+            if(!shieldData.isActive){
+                comData.value.isProtected = false;
+            }           
         }, 3000)
     }
 
     //获取护盾
     function getShield() {
-        comData.value.isProtected = true;
-        shieldData.isActive = true;
-        let id = setTimeout(() => {
-            shieldData.isActive = false;
-            comData.value.isProtected = false;
-        }, 50000)
+        //不为保护状态，则开启护盾，并启动监听护盾持续时间线程
+        if (!comData.value.isProtected) {
+            comData.value.isProtected = true;
+            shieldData.isActive = true;
+            comData.value.shield_duration = 5000;
+            let interval = 20;
+            //启动监听线程
+            let id = setInterval(() => {
+                if (comData.value.shield_duration! <= 0) {
+                    comData.value.isProtected = false;
+                    shieldData.isActive = false;
+                    comData.value.shield_duration = 0;
+                    clearInterval(id);
+                    return;
+                } else {
+                    comData.value.shield_duration! -= interval;
+                }
+            }, 20)
+        }
+        //保护状态再次获得护盾，刷新护盾时间
+        else {
+            comData.value.isProtected = true;
+            shieldData.isActive = true;
+            comData.value.shield_duration = 5000;
+        }
     }
+
+    // 监听快照的子弹发射cd，依据power_level实时计算
+    watch(()=>{
+        return comData.value.power_level
+    },(o,n)=>{
+        if(comData.value.power_level!>comData.value.max_power_level!){
+            comData.value.power_level=comData.value.max_power_level!;
+        }
+        if(comData.value.power_level!<0){
+            comData.value.power_level=0;
+        }
+        comDataSnipaste.shot_cd=comDataDefault.shot_cd!-40*comData.value.power_level!
+        console.log("power_level",comData.value.power_level,"shot_cd",comDataSnipaste.shot_cd)
+    })
+
+    //获取提升火力道具
+    function getPowerUp() {
+        // 修改火力等级，并启动延时任务，5秒后降低一级火力等级
+        // 初始cd为200毫秒，每级火力等级减少40毫秒，最大火力等级为2
+        comData.value.power_level!+=1;
+        let id=setTimeout(()=>{
+            comData.value.power_level!-=1;
+        },5000)
+    }
+
     //重置子弹发射cd
     function resetShotCD() {
+        // 重置cd为快照中的发射cd
         comData.value.shot_cd = comDataSnipaste.shot_cd;
     }
 
@@ -164,6 +222,8 @@
         getShield,
         shieldData,
         resetShotCD,
+        setPlaneStatusImg,
+        getPowerUp,
     })
 
 </script>

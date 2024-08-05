@@ -46,7 +46,7 @@
         bulletSpeed = 200;
         // comData.value.isActive=true;
         // 组件默认值备份
-        comDataSnipaste=cloneDeep(comData.value)
+        comDataSnipaste = cloneDeep(comData.value)
         comDataDefault = cloneDeep(comData.value)
         // move()
     }
@@ -70,19 +70,23 @@
     // }  
 
     function move() {
-        console.log("bullet move")
+        // console.log("bullet move")
         comData.value.isActive = true;
         let interval = 20;
-        console.log("@@@" + comData.value.isActive)
+        // console.log("@@@" + comData.value.isActive)
         let id = setInterval(() => {
             // console.log(comData.value.isActive)
             // 若isActive为false或子弹的位置超出边界
             if (!comData.value.isActive || comData.value.top < -100) {
                 // console.log(comData.value)
-                console.log("bullet stop move")
+                // console.log("bullet stop move")
                 comData.value.isActive = false;
                 reset();
                 clearInterval(id);
+                return;
+            }
+            // 如果游戏为暂停状态，不执行后续逻辑
+            if (gameConfig.value.isPaused) {
                 return;
             }
             comData.value.top -= bulletSpeed * interval / 1000;
@@ -90,9 +94,9 @@
         }, interval)
     }
 
-    watch(() => { return comData.value.isActive }, () => {
-        console.log(comData.value.isActive)
-    })
+    // watch(() => { return comData.value.isActive }, () => {
+    //     console.log(comData.value.isActive)
+    // })
 
 
 
@@ -107,7 +111,7 @@
         Object.assign(comData.value, comDataDefault)
     }
     // 组件还原初始默认状态（完全重置使用）
-    function resetDefault(){
+    function resetDefault() {
         // 动画重置
         Object.assign(animationClasses.value, animationClassesDefault)
         // 主配置（位置，默认图片等）重置
