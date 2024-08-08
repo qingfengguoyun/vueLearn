@@ -4,7 +4,7 @@
             @touchstart="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd" @mousedown="onMouseDown"
             @mousemove="onMouseMove" @mouseup="onMouseUp">
             <!-- 自机组件 -->
-            <Plane :baseCom="playerData" ref="playerPlane" @click="bulletShoot"></Plane>
+            <Plane :baseCom="playerData" ref="playerPlane"></Plane>
             <!-- 陨石组件 -->
             <template v-for="(asteroidData, index) in asteroidDatas">
                 <Asteroid :baseCom="asteroidData" ref="asteroids"></Asteroid>
@@ -29,6 +29,9 @@
                 <!-- {{ index }} -->
                 <EnemyBullet_1 :base-com="enemyBulletData" ref='enemyBullets1'></EnemyBullet_1>
             </template>
+            <!-- 敌方boss组件 -->
+            <EnemyPlaneBoss :base-com="enemyBossPlaneData" ref='enemyBossPlane'></EnemyPlaneBoss>
+
             <!-- 道具组件 -->
             <ShieldItem :base-com="shieldItemData" ref="shieldItem"></ShieldItem>
             <!-- <PowerUp :base-com="powerUpItemData" ref="powerUpItem"></PowerUp> -->
@@ -73,10 +76,15 @@
                     <b>重新开始</b>
                 </div>
             </BaseComponent>
-            <!-- <BaseComponent :base-com="initBaseCom(50, 50, 250, 0)" @click.stop="gamePause()">
-                <img :src="gameConfig.isPaused?'/img/status':''">
-            </BaseComponent> -->
-            <GamePause :base-com="initBaseCom(40, 30, 250, 20)" v-if="gameConfig.isGameStart && !gameConfig.isGameover" @click.stop="gamePause()"></GamePause>
+            <BaseComponent :base-com="createBaseComAtMiddle(displayBoard, 150, 100)" v-if="enemyBossPlaneData.bossEnter">
+                <div class="warning_board">
+                    <h1><b>warning!!</b></h1>
+                </div>
+            </BaseComponent>
+            <!-- 游戏暂停按钮 -->
+            <GamePause :base-com="gamePauseButtonData" ref="gamePauseButton"
+                v-if="gameConfig.isGameStart && !gameConfig.isGameover" @click.stop="gamePause()">
+            </GamePause>
         </div>
     </div>
 
@@ -96,7 +104,7 @@
     import { onMounted, ref, watch, type Ref, reactive, provide } from 'vue';
     import { ElMessage } from 'element-plus';
     import { useComponentArrayRef, useComponentRef } from '@/hooks/useComponentRef';
-    import type { BaseCom, Enemy, GameConfig, HitBox, Item, Player } from '@/types';
+    import type { BaseCom, Enemy, EnemyBoss, GameConfig, HitBox, Item, Player } from '@/types';
     import { createBaseComAtMiddle, getBaseComCenter, initBaseCom, initEnemy, initItem, initPlayer, isCollision, toSizeStyle, toStyle, validateHitbox, } from '@/hooks/useBaseCom';
     import { cloneDeep } from 'lodash';
     import BaseComponent from '@/components/BaseComponent.vue';
@@ -110,12 +118,15 @@
     import PowerUp from './items/PowerUp.vue';
     import ExtraLife from './items/ExtraLife.vue';
     import GamePause from './status/GamePause.vue';
+    import EnemyPlaneBoss from './enemies/EnemyPlaneBoss.vue';
 
     // 游戏整体配置
     let gameConfig: Ref<GameConfig> = ref({
         isGameStart: false,
         isGameover: false,
         isPaused: false,
+        isBossClear: false,
+        isBossAppear: false,
         score: 0,
     })
     // 玩家击破敌人记录
@@ -138,6 +149,9 @@
     //额外配置
     // let maxLife = 4;
 
+    // 暂停按钮
+    let gamePauseButtonData: Ref<BaseCom> = ref(initBaseCom(40, 30, 250, 10))
+    let gamePauseButton = useComponentRef(GamePause)
 
     // 自机配置
     let playerData: Ref<Player> = ref(initPlayer(40, 40, 130, 400, 25, 25, 800, './img/charactors/plane/plane_1.png'))
@@ -207,6 +221,10 @@
         ))
     }
 
+    // boss敌机配置
+    let enemyBossPlaneData: Ref<EnemyBoss> = ref(initEnemy(120, 120, 0, 500, 60, 60, 0, 100));
+    let enemyBossPlane = useComponentRef(EnemyPlaneBoss);
+
     // 敌机子弹配置(使用预置定量子弹，而非动态生成子弹组件的策略)
     let enemyBulletDatas: Ref<BaseCom[]> = ref([]);
     let enemyBullets1 = useComponentArrayRef(EnemyBullet_1);
@@ -258,6 +276,8 @@
             isGameStart: true,
             isGameover: false,
             isPaused: false,
+            isBossClear: false,
+            isBossAppear: false,
             score: 0,
         })
         boardMove()
@@ -316,6 +336,8 @@
             // 大型敌机开始游戏时不执行move
             // enemyBigPlanes.value![i].moveStyle2();
         }
+        // 重置敌方boss
+        enemyBossPlane.value?.reset();
         // 重置道具
         shieldItem.value?.resetDefault();
         shieldItem.value?.randomReset();
@@ -326,6 +348,7 @@
             powerUpItem.randomReset();
         }
         powerUpItemCd = powerUpItemCdDefault
+
 
         // 检测子弹与陨石,敌机碰撞
         checkBulletsAndEnemys()
@@ -370,8 +393,8 @@
     function onTouchStart(event: TouchEvent) {
         if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
             isDragging.value = true;
-            mouseX.value = event.touches[0].clientX;
-            mouseY.value = event.touches[0].clientY;
+            mouseX.value = event.touches[0].clientX + displayBoard.value.left;
+            mouseY.value = event.touches[0].clientY + displayBoard.value.top;
             playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
             event.preventDefault()
         }
@@ -379,8 +402,8 @@
     function onTouchMove(event: TouchEvent) {
         if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
             if (isDragging.value) {
-                mouseX.value = event.touches[0].clientX;
-                mouseY.value = event.touches[0].clientY;
+                mouseX.value = event.touches[0].clientX + displayBoard.value.left;
+                mouseY.value = event.touches[0].clientY + displayBoard.value.top;
                 playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
             }
         }
@@ -390,10 +413,13 @@
     }
 
     function onMouseDown(event: MouseEvent) {
+        mouseX.value = event.pageX + displayBoard.value.left;
+        mouseY.value = event.pageY + displayBoard.value.top;
+
         if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
             isDragging.value = true;
-            mouseX.value = event.pageX;
-            mouseY.value = event.pageY;
+            mouseX.value = event.pageX + displayBoard.value.left;
+            mouseY.value = event.pageY + displayBoard.value.top;
             playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
             event.preventDefault()
         }
@@ -401,9 +427,10 @@
     function onMouseMove(event: MouseEvent) {
         if (gameConfig.value.isGameStart && !gameConfig.value.isGameover) {
             if (isDragging.value) {
-                mouseX.value = event.pageX;
-                mouseY.value = event.pageY;
+                mouseX.value = event.pageX + displayBoard.value.left;
+                mouseY.value = event.pageY + displayBoard.value.top;
                 playerPlane.value?.changePositionByCenter(mouseX.value, mouseY.value)
+
             }
         }
 
@@ -498,6 +525,25 @@
                         }
                     }
                 }
+                // boss敌机与自机子弹检测               
+
+                if (bd.isActive && enemyBossPlane.value?.comData.isActive) {
+                    // 再检测子弹与敌机是否碰撞
+                    if (isCollision(bd, enemyBossPlane.value?.comData)) {
+                        // 根据情况执行不同逻辑
+                        if (enemyBossPlane.value?.comData.hp! > 0) {
+                            bd.isActive = false;
+                            enemyBossPlane.value!.comData.hp! -= 1;
+                        } else {
+                            console.log("boss destory")
+                            bd.isActive = false;
+                            enemyBossPlane.value?.enemyExplode();
+                            gameConfig.value.score += enemyBossPlane.value?.comData.score!;
+                            // destoryRecord.value.enemyPlaneBig += 1;
+                        }
+                    }
+                }
+
             }
         }, 20)
     }
@@ -572,7 +618,7 @@
                 for (let enemyPlane of enemyBigPlanes.value!) {
                     // 同理检测敌机有效且与自机相撞
                     if (enemyPlane.comData.isActive && isCollision(playerPlane.value!.comData, enemyPlane.comData)) {
-                        console.log("enemyBigPlane isCollision")
+                        console.log("enemyBossPlane isCollision")
                         //自机处于护盾状态
                         if (playerPlane.value!.shieldData.isActive) {
                             console.log("shield protect")
@@ -591,7 +637,27 @@
 
                     }
                 }
+                // 检测boss敌机
+                // 检测boss敌机有效且与自机相撞
+                if (enemyBossPlane.value?.comData.isActive && isCollision(playerPlane.value!.comData, enemyBossPlane.value?.comData)) {
+                    console.log("enemyBigPlane isCollision")
+                    //自机处于护盾状态
+                    if (playerPlane.value!.shieldData.isActive) {
+                        console.log("shield protect")
+                        // enemyPlane.comData.isActive = false;
+                        // enemyPlane.enemyExplode();
+                        // destoryRecord.value.enemyPlaneBig += 1;
+                    } else {
+                        playerPlane.value!.comData.hp! -= 1;
+                        if (playerPlane.value!.comData.hp! > 0) {
+                            playerPlane.value!.hurt(playerPlane.value!.comData.max_hp! - playerPlane.value!.comData.hp!)
+                            // playerPlane.value!.getShield()
+                            // enemyPlane.comData.isActive = false;
+                            // enemyPlane.enemyExplode();
+                        }
+                    }
 
+                }
                 // 检测敌方子弹_1
                 for (let enemyBullet of enemyBullets1.value!) {
                     // 同理检测敌方子弹有效且与自机相撞
@@ -694,7 +760,7 @@
             currentEnemyBullet = (currentEnemyBullet + 1) % bulletCount;
         }, 20)
     }
-    // 大型敌机发射子弹
+    // 大型/boss敌机发射子弹
     function enemyPlaneShot() {
         console.log("big enemy Plane start shoting")
         let interval = 20;
@@ -720,6 +786,17 @@
                             //重置敌机子弹发射cd
                             enemyBigPlane.resetShotCD()
                         }
+                    }
+                }
+                if (enemyBossPlane.value?.comData.isActive) {
+                    if (enemyBossPlane.value?.comData.shot_cd! > 0) {
+                        enemyBossPlane.value!.comData.shot_cd! -= interval;
+                    } else {
+                        // console.log("shot!!")
+                        // 在敌机中心生成一个敌方子弹并移动
+                        enemyBulletShoot(enemyBossPlane.value?.comData);
+                        //重置敌机子弹发射cd
+                        enemyBossPlane.value?.resetShotCD()
                     }
                 }
             }
@@ -826,7 +903,63 @@
                 clearInterval(id1);
                 return;
             }
-        })
+        }, 20)
+        // 设置定时任务，若分数大于一定值后执行逻辑，并移除定时任务
+        let id2 = setInterval(() => {
+            if (gameConfig.value.isGameover) {
+                clearInterval(id1);
+                return;
+            }
+            // 如果游戏为暂停状态，不执行后续逻辑
+            if (gameConfig.value.isPaused) {
+                return;
+            }
+            // 启动boss相关动作
+            if (gameConfig.value.score >= 0 && !gameConfig.value.isBossAppear) {
+                console.log("enemyBossPlane Start Moving")
+                gameConfig.value.isBossAppear = true;
+                // 执行boss入场
+                bossActions()
+                // 定期执行boss动作
+
+                clearInterval(id2);
+                return;
+            }
+        }, 20)
+
+    }
+
+    function bossActions() {
+
+        //启动boss入场动作（一次性）
+        enemyBossPlane.value?.bossEnterAction();
+        //启动boss常态移动任务
+        enemyBossPlane.value?.bossMove();
+        //每10秒尝试执行一次特殊动作
+        let cd = 10000;
+        let interval = 20;
+        console.log("Boss特殊移动检测线程启动")
+        let id = setInterval(() => {
+            if (gameConfig.value.isGameover || !enemyBossPlane.value?.comData.isActive) {
+                clearInterval(id);
+                return;
+            }
+            // 如果游戏为暂停状态，不执行后续逻辑
+            if (gameConfig.value.isPaused) {
+                return;
+            }
+            cd -= interval;
+            if (cd <= 0) {
+                //如果触发动作1，则cd重置为10，否则置为5
+                if (!enemyBossPlane.value?.comData.isAction) {
+                    enemyBossPlane.value?.bossAction_1();
+                    cd = 10000;
+                    return;
+                }
+                cd = 5000;
+            }
+
+        }, interval)
     }
 
     // 道具生成
@@ -999,14 +1132,29 @@
     }
 
     .gameover_board {
-        /* width: 200px;
-        height: 100px; */
-        /* display: flex;
-        justify-content: center;
-        align-items: center; */
+
         text-align: center;
-        /* margin: auto;
-        margin-top: 50%; */
+
+    }
+
+    .warning_board {
+        text-align: center;
+        animation: blink 0.5s infinite;
+    }
+
+    @keyframes blink {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+
     }
 
 

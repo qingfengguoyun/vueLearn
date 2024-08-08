@@ -16,6 +16,7 @@ declare module 'vue' {
     EnemyBullet_1: typeof import('./src/components/planeGame/enemies/EnemyBullet_1.vue')['default']
     EnemyPlane: typeof import('./src/components/planeGame/enemies/EnemyPlane.vue')['default']
     EnemyPlaneBig: typeof import('./src/components/planeGame/enemies/EnemyPlaneBig.vue')['default']
+    EnemyPlaneBoss: typeof import('./src/components/planeGame/enemies/EnemyPlaneBoss.vue')['default']
     Engine: typeof import('./src/components/planeGame/Engine.vue')['default']
     ExtraLife: typeof import('./src/components/planeGame/items/ExtraLife.vue')['default']
     GamePage: typeof import('./src/components/GamePage.vue')['default']

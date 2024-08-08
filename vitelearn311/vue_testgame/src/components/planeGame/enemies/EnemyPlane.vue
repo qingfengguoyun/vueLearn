@@ -93,6 +93,10 @@
             if (gameConfig.value.isPaused) {
                 return;
             }
+            // 如果isActivet为false，不执行后续逻辑
+            if (!comData.value.isActive) {
+                return;
+            }
 
             if (comData.value.left >= displayBoard.width - comData.value.width && h_move == 'right') {
                 // console.log("left")
@@ -125,6 +129,10 @@
             }
             // 如果游戏为暂停状态，不执行后续逻辑
             if (gameConfig.value.isPaused) {
+                return;
+            }
+            // 如果isActivet为false，不执行后续逻辑
+            if (!comData.value.isActive) {
                 return;
             }
             if (comData.value.isActive) {
@@ -191,7 +199,7 @@
         }
 
         to {
-            background-position: -900% 0px;
+            background-position: -800% 0px;
         }
     }
 
@@ -199,7 +207,7 @@
         animation-name: enemy_explode;
         animation-duration: 0.4s;
         animation-iteration-count: 1;
-        animation-timing-function: steps(9);
+        animation-timing-function: steps(8);
         animation-fill-mode: forwards;
     }
 

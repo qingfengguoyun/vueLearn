@@ -43,7 +43,7 @@
         // ...
         comData.value.hp = 1;
         // 组件默认值备份
-        comDataSnipaste=cloneDeep(comData.value)
+        comDataSnipaste = cloneDeep(comData.value)
         comDataDefault = cloneDeep(comData.value)
     }
     // 组件初始化
@@ -91,7 +91,11 @@
                 return;
             }
             // 如果游戏为暂停状态，不执行后续逻辑
-            if(gameConfig.value.isPaused){
+            if (gameConfig.value.isPaused) {
+                return;
+            }
+            // 如果isActivet为false，不执行后续逻辑
+            if (!comData.value.isActive) {
                 return;
             }
 
@@ -136,7 +140,7 @@
         Object.assign(comData.value, comDataDefault)
     }
     // 组件还原初始默认状态
-    function resetDefault(){
+    function resetDefault() {
         // 动画重置
         Object.assign(animationClasses.value, animationClassesDefault)
         // 主配置（位置，默认图片等）重置

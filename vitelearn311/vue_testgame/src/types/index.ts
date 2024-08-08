@@ -22,11 +22,21 @@ export interface HitBox extends BaseCom{
 export interface Enemy extends BaseCom{
 
     type?: string,
+    isProtected:boolean,
     speed?:number,
     score?:number,
     hp?:number,
     shot_cd?:number
 
+}
+
+export interface EnemyBoss extends Enemy{
+    
+    // 是否正在执行动作
+    isAction?:boolean,
+    bossAction_1?:boolean,
+    bossAction_2?:boolean,
+    bossEnter?:boolean,
 }
 
 export interface Player extends BaseCom{
@@ -55,4 +65,6 @@ export interface GameConfig {
     isPaused:boolean,
     score:number,
     lifeRemain?:number,
+    isBossClear?:boolean,
+    isBossAppear?:boolean
 }

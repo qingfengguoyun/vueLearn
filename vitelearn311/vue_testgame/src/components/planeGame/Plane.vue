@@ -88,7 +88,7 @@
         comData.value.top = center_y - comData.value.height / 2;
         // validateHitbox(comData.value)
     }
-    // 防止组件位置超出边界
+    // 监听组件位置，防止组件位置超出边界
     watch(comData.value, (n, o) => {
         if (comData.value.left < 0 - (comData.value.width - comData.value.hitbox_width) / 2) {
             comData.value.left = 0 - (comData.value.width - comData.value.hitbox_width) / 2;
@@ -97,12 +97,13 @@
             console.log("left");
             comData.value.left = displayBoard.width - comData.value.width + (comData.value.width - comData.value.hitbox_width) / 2;
         }
-        if (comData.value.top < 0) {
-            comData.value.top = 0;
-        }
-        if (comData.value.top > displayBoard.height - comData.value.height) {
+        // 组件不得进入距上边界小于40像素的区域
+        if (comData.value.top < 30) {
+            comData.value.top = 30;
+        }        
+        if (comData.value.top > displayBoard.height - comData.value.height ) {
             console.log("height");
-            comData.value.top = displayBoard.height - comData.value.height;
+            comData.value.top = displayBoard.height - comData.value.height ;
         }
     })
 

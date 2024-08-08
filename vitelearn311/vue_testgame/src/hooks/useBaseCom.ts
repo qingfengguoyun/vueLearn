@@ -1,4 +1,4 @@
-import type { BaseCom, Player, Enemy, Item } from "@/types";
+import type { BaseCom, Player, Enemy, Item,EnemyBoss } from "@/types";
 import { computed } from "vue";
 
 export function toStyle(config: BaseCom) {
@@ -180,6 +180,29 @@ export function initEnemy(
   let baseCom = initBaseCom(w, h, left, top, h_w, h_h, display_img);
   let enemy: Enemy = {
     ...baseCom,
+    isProtected:false,
+    speed: speed || 200,
+    score: score || 10,
+    type: "",
+  };
+  return enemy;
+}
+
+export function initEnemyBoss(
+  w?: number,
+  h?: number,
+  left?: number,
+  top?: number,
+  h_w?: number,
+  h_h?: number,
+  speed?: number,
+  score?: number,
+  display_img?: string
+): EnemyBoss {
+  let baseCom = initBaseCom(w, h, left, top, h_w, h_h, display_img);
+  let enemy: EnemyBoss = {
+    ...baseCom,
+    isProtected:false,
     speed: speed || 200,
     score: score || 10,
     type: "",
