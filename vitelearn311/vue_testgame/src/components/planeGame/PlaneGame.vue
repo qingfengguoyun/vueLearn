@@ -915,7 +915,7 @@
                 return;
             }
             // 启动boss相关动作
-            if (gameConfig.value.score >= 0 && !gameConfig.value.isBossAppear) {
+            if (gameConfig.value.score >= 500 && !gameConfig.value.isBossAppear) {
                 console.log("enemyBossPlane Start Moving")
                 gameConfig.value.isBossAppear = true;
                 // 执行boss入场
