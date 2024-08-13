@@ -31,6 +31,17 @@
             </template>
             <!-- 敌方boss组件 -->
             <EnemyPlaneBoss :base-com="enemyBossPlaneData" ref='enemyBossPlane'></EnemyPlaneBoss>
+            <!-- 敌方boss血条组件 -->
+            <template v-if="enemyBossPlane?.comData.isActive">
+                <BaseComponent :base-com="initBaseCom(150, 10, displayBoard.width / 2 - 75, 20)"
+                    style="border: 2px black solid; border-radius: 5px; overflow: hidden;">
+                    <BaseComponent :base-com="initBaseCom(150, 10, 0, 0)" :style="enemyBossPlane?.getBossHpStyle()">
+                    </BaseComponent>
+                </BaseComponent>
+            </template>
+
+
+
 
             <!-- 道具组件 -->
             <ShieldItem :base-com="shieldItemData" ref="shieldItem"></ShieldItem>
@@ -76,14 +87,16 @@
                     <b>重新开始</b>
                 </div>
             </BaseComponent>
-            <BaseComponent :base-com="createBaseComAtMiddle(displayBoard, 150, 100)" v-if="enemyBossPlaneData.bossEnter">
+            <BaseComponent :base-com="createBaseComAtMiddle(displayBoard, 150, 100)"
+                v-if="enemyBossPlaneData.bossEnter">
                 <div class="warning_board">
                     <h1><b>warning!!</b></h1>
                 </div>
             </BaseComponent>
             <!-- 游戏暂停按钮 -->
             <GamePause :base-com="gamePauseButtonData" ref="gamePauseButton"
-                v-if="gameConfig.isGameStart && !gameConfig.isGameover" @click.stop="gamePause()">
+                v-if="gameConfig.isGameStart && !gameConfig.isGameover" @click.stop="gamePause()"
+                @touchstart.stop="gamePause()">
             </GamePause>
         </div>
     </div>
@@ -224,6 +237,7 @@
     // boss敌机配置
     let enemyBossPlaneData: Ref<EnemyBoss> = ref(initEnemy(120, 120, 0, 500, 60, 60, 0, 100));
     let enemyBossPlane = useComponentRef(EnemyPlaneBoss);
+
 
     // 敌机子弹配置(使用预置定量子弹，而非动态生成子弹组件的策略)
     let enemyBulletDatas: Ref<BaseCom[]> = ref([]);
@@ -531,7 +545,11 @@
                     // 再检测子弹与敌机是否碰撞
                     if (isCollision(bd, enemyBossPlane.value?.comData)) {
                         // 根据情况执行不同逻辑
-                        if (enemyBossPlane.value?.comData.hp! > 0) {
+                        // boss处于保护状态
+                        if(enemyBossPlane.value.comData.isProtected){
+                            bd.isActive = false;
+                        }
+                        else if (enemyBossPlane.value?.comData.hp! > 0) {
                             bd.isActive = false;
                             enemyBossPlane.value!.comData.hp! -= 1;
                         } else {
@@ -915,7 +933,7 @@
                 return;
             }
             // 启动boss相关动作
-            if (gameConfig.value.score >= 500 && !gameConfig.value.isBossAppear) {
+            if (gameConfig.value.score >= 0 && !gameConfig.value.isBossAppear) {
                 console.log("enemyBossPlane Start Moving")
                 gameConfig.value.isBossAppear = true;
                 // 执行boss入场

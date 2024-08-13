@@ -47,7 +47,8 @@
         comData.value.display_img = "./img/charactors/enemy/nautolan/Nautolan_boss.png"
         comData.value.speed = 50
         comData.value.shot_cd = 3000;
-        comData.value.hp = 5;
+        comData.value.hp = 50;
+        comData.value.max_hp = 50;
         comData.value.isAction = false;
         comData.value.bossEnter = false;
         comData.value.bossAction_1 = false;
@@ -91,6 +92,7 @@
     function bossEnterAction() {
         let interval = 20
         let h_speed = 50
+        comData.value.hp = 0;
         // 计时器
         let currentTime = 0
         // 动作总持续时间
@@ -108,10 +110,11 @@
             comData.value.bossEnter = true;
             let id = setInterval(() => {
                 //游戏结束或自身失效，则停止移动任务
-                if (gameConfig.value.isGameover || !comData.value.isActive || currentTime > totalTime) {
+                if (gameConfig.value.isGameover || !comData.value.isActive || currentTime >= totalTime) {
                     comData.value.isProtected = false;
                     comData.value.isAction = false;
                     comData.value.bossEnter = false;
+                    comData.value.hp = comData.value.max_hp;
                     clearInterval(id);
                     return;
                 }
@@ -121,6 +124,7 @@
                 }
                 comData.value.top += h_speed * interval / 1000;
                 currentTime += interval;
+                comData.value.hp! += (comData.value.max_hp! / totalTime) * interval
 
             }, interval)
         }
@@ -257,6 +261,15 @@
         }, interval)
     }
 
+    let getBossHpStyle = function () {
+        return {
+            height: `10px`,
+            width: `${comData.value.hp! / comData.value.max_hp! * 150}px`,
+            backgroundColor: `red`,
+            borderRadius: `5px`,
+        }
+    }
+
     //重置子弹发射cd
     function resetShotCD() {
         // 特殊动作1时，射击cd变为1/4
@@ -308,6 +321,7 @@
         bossEnterAction,
         bossMove,
         resetShotCD,
+        getBossHpStyle,
         //自定义逻辑
         // move
     })
@@ -318,13 +332,15 @@
         position: absolute;
         display: flex;
         justify-content: center;
+
         /* align-items: center; */
     }
 
     @keyframes enemy_explode {
 
         from {
-            background-position: 0% 0px
+            background-position: 0% 0px;
+
         }
 
         to {

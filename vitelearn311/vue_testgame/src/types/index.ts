@@ -26,6 +26,7 @@ export interface Enemy extends BaseCom{
     speed?:number,
     score?:number,
     hp?:number,
+    max_hp?:number,
     shot_cd?:number
 
 }
