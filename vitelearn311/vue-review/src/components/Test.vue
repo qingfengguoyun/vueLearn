@@ -5,6 +5,9 @@
         <button @click="add()"> add</button>
         <button @click="insert()">insert</button>
         <h2>{{ testArray }}</h2>
+
+        <h2> DATA:{{ dataRef}}</h2>
+        <button @click="dataRef.name='asd'">change Data</button>
         
 
     </div>
@@ -18,6 +21,10 @@ export default
 </script>
 <script lang='ts' setup>
 import useTest from '@/hooks/useTest';
+import data from '../assets/data/data.json'
+import { ref } from 'vue';
+
+let dataRef=ref(data)
 let {sum,number,add,testArray,insert} =useTest()
 </script>
 <style scoped>

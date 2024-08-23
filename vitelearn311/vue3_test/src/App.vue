@@ -1,16 +1,14 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
   <div>
     <h1>qweqwen</h1>
   </div>
-  <el-image src="img/walk.gif" style="width: 50px; height:50px" fit='fill'></el-image>
+  <!-- <el-image src="img/walk.gif" style="width: 50px; height:50px" fit='fill'></el-image> -->
 
 </template>
 
-<style scoped>
+<script setup lang="ts">
+  import HelloWorld from './components/HelloWorld.vue'
+  import TheWelcome from './components/TheWelcome.vue'
 
-</style>
+</script>
+<style scoped></style>
